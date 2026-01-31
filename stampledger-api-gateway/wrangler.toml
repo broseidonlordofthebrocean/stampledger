@@ -1,0 +1,38 @@
+# Cloudflare Worker configuration for StampLedger API Gateway
+name = "stampledger-api-gateway"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# KV namespace for caching (create with: wrangler kv:namespace create "CACHE")
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "<your-kv-namespace-id>"
+
+# Rate limiting with Durable Objects
+# [[durable_objects.bindings]]
+# name = "RATE_LIMITER"
+# class_name = "RateLimiter"
+
+# [[migrations]]
+# tag = "v1"
+# new_classes = ["RateLimiter"]
+
+[vars]
+# Blockchain RPC endpoint (internal - via Cloudflare Tunnel)
+CHAIN_RPC_URL = "http://localhost:26657"
+# Allowed origins for CORS
+ALLOWED_ORIGINS = "https://stampledger.com,https://app.stampledger.com"
+# Rate limit: requests per minute
+RATE_LIMIT_RPM = "60"
+
+[env.preview]
+vars = { CHAIN_RPC_URL = "http://localhost:26657", ALLOWED_ORIGINS = "*" }
+
+[env.production]
+vars = { CHAIN_RPC_URL = "http://stampledger-chain.internal:26657" }
+
+# Routes (uncomment when ready to deploy)
+# routes = [
+#   { pattern = "api.stampledger.com/*", zone_name = "stampledger.com" }
+# ]

@@ -1,0 +1,14 @@
+syntax = "proto3";
+package stampledgerchain.stampledgerchain.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "stampledger-chain/x/stampledgerchain/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (amino.name) = "stampledgerchain/x/stampledgerchain/Params";
+  option (gogoproto.equal) = true;
+  
+}

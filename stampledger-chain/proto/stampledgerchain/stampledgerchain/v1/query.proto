@@ -1,0 +1,217 @@
+syntax = "proto3";
+package stampledgerchain.stampledgerchain.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "stampledgerchain/stampledgerchain/v1/params.proto";
+import "stampledgerchain/stampledgerchain/v1/stamp.proto";
+
+option go_package = "stampledger-chain/x/stampledgerchain/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/params";
+  }
+
+  // ============================================================================
+  // STAMP QUERIES
+  // ============================================================================
+
+  // Stamp returns a stamp by ID
+  rpc Stamp(QueryStampRequest) returns (QueryStampResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/stamp/{id}";
+  }
+
+  // StampsByPE returns all stamps by a specific PE
+  rpc StampsByPE(QueryStampsByPERequest) returns (QueryStampsByPEResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/stamps/pe/{pe_public_key}";
+  }
+
+  // StampsByJurisdiction returns all stamps for a jurisdiction
+  rpc StampsByJurisdiction(QueryStampsByJurisdictionRequest) returns (QueryStampsByJurisdictionResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/stamps/jurisdiction/{jurisdiction_id}";
+  }
+
+  // AllStamps returns all stamps with pagination
+  rpc AllStamps(QueryAllStampsRequest) returns (QueryAllStampsResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/stamps";
+  }
+
+  // ============================================================================
+  // DOCUMENT STORAGE QUERIES
+  // ============================================================================
+
+  // Document returns a document by ID
+  rpc Document(QueryDocumentRequest) returns (QueryDocumentResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/document/{id}";
+  }
+
+  // DocumentsByStamp returns all documents for a stamp
+  rpc DocumentsByStamp(QueryDocumentsByStampRequest) returns (QueryDocumentsByStampResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/documents/stamp/{stamp_id}";
+  }
+
+  // ============================================================================
+  // ENTITY QUERIES
+  // ============================================================================
+
+  // Entity returns an entity by ID
+  rpc Entity(QueryEntityRequest) returns (QueryEntityResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/entity/{id}";
+  }
+
+  // EntitiesByOwner returns all entities owned by an address
+  rpc EntitiesByOwner(QueryEntitiesByOwnerRequest) returns (QueryEntitiesByOwnerResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/entities/owner/{owner_address}";
+  }
+
+  // ============================================================================
+  // SPEC TRACKING QUERIES
+  // ============================================================================
+
+  // SpecVersion returns a spec version by ID
+  rpc SpecVersion(QuerySpecVersionRequest) returns (QuerySpecVersionResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/specversion/{id}";
+  }
+
+  // SpecVersionsByProject returns all versions for a project
+  rpc SpecVersionsByProject(QuerySpecVersionsByProjectRequest) returns (QuerySpecVersionsByProjectResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/specversions/project/{project_id}";
+  }
+
+  // SpecHistory returns the version history starting from a version
+  rpc SpecHistory(QuerySpecHistoryRequest) returns (QuerySpecHistoryResponse) {
+    option (google.api.http).get = "/stampledger-chain/stampledgerchain/v1/spechistory/{starting_version_id}";
+  }
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// ============================================================================
+// STAMP QUERY MESSAGES
+// ============================================================================
+
+message QueryStampRequest {
+  string id = 1;
+}
+
+message QueryStampResponse {
+  Stamp stamp = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryStampsByPERequest {
+  string pe_public_key = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryStampsByPEResponse {
+  repeated Stamp stamps = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryStampsByJurisdictionRequest {
+  string jurisdiction_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryStampsByJurisdictionResponse {
+  repeated Stamp stamps = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllStampsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllStampsResponse {
+  repeated Stamp stamps = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// ============================================================================
+// DOCUMENT STORAGE QUERY MESSAGES
+// ============================================================================
+
+message QueryDocumentRequest {
+  string id = 1;
+}
+
+message QueryDocumentResponse {
+  DocumentStorage document = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryDocumentsByStampRequest {
+  string stamp_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryDocumentsByStampResponse {
+  repeated DocumentStorage documents = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// ============================================================================
+// ENTITY QUERY MESSAGES
+// ============================================================================
+
+message QueryEntityRequest {
+  string id = 1;
+}
+
+message QueryEntityResponse {
+  EntityAccount entity = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryEntitiesByOwnerRequest {
+  string owner_address = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryEntitiesByOwnerResponse {
+  repeated EntityAccount entities = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// ============================================================================
+// SPEC TRACKING QUERY MESSAGES
+// ============================================================================
+
+message QuerySpecVersionRequest {
+  string id = 1;
+}
+
+message QuerySpecVersionResponse {
+  SpecVersion version = 1 [(gogoproto.nullable) = false];
+}
+
+message QuerySpecVersionsByProjectRequest {
+  string project_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QuerySpecVersionsByProjectResponse {
+  repeated SpecVersion versions = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QuerySpecHistoryRequest {
+  string starting_version_id = 1;
+}
+
+message QuerySpecHistoryResponse {
+  repeated SpecVersion history = 1 [(gogoproto.nullable) = false];
+}

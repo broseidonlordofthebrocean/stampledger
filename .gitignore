@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+*.exe
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test coverage
+coverage/
+
+# Cloudflare
+.wrangler/
+.dev.vars
+
+# Go
+*.test
+*.out
+
+# Blockchain data (don't commit chain state)
+.stampledger-chain/
+data/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Credentials (never commit these!)
+*.json.enc
+credentials/
+secrets/
+*.pem
+*.key

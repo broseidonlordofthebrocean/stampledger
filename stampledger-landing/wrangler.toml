@@ -1,0 +1,19 @@
+# Cloudflare Pages configuration for StampLedger Landing Page
+name = "stampledger-landing"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Pages-specific configuration
+pages_build_output_dir = ".next"
+
+[vars]
+NEXT_PUBLIC_SITE_URL = "https://stampledger.com"
+NEXT_PUBLIC_API_URL = "https://api.stampledger.com"
+NEXT_PUBLIC_CHAIN_RPC = "https://rpc.stampledger.com"
+
+# Environment-specific overrides
+[env.preview]
+vars = { NEXT_PUBLIC_SITE_URL = "https://preview.stampledger.pages.dev" }
+
+[env.production]
+vars = { NEXT_PUBLIC_SITE_URL = "https://stampledger.com" }

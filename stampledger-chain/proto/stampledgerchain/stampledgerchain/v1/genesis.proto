@@ -1,0 +1,30 @@
+syntax = "proto3";
+package stampledgerchain.stampledgerchain.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "stampledgerchain/stampledgerchain/v1/params.proto";
+import "stampledgerchain/stampledgerchain/v1/stamp.proto";
+
+option go_package = "stampledger-chain/x/stampledgerchain/types";
+
+// GenesisState defines the stampledgerchain module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+
+  // stamps is the list of all stamps
+  repeated Stamp stamps = 2 [(gogoproto.nullable) = false];
+
+  // documents is the list of all stored documents
+  repeated DocumentStorage documents = 3 [(gogoproto.nullable) = false];
+
+  // entities is the list of all entity accounts
+  repeated EntityAccount entities = 4 [(gogoproto.nullable) = false];
+
+  // spec_versions is the list of all spec versions
+  repeated SpecVersion spec_versions = 5 [(gogoproto.nullable) = false];
+}

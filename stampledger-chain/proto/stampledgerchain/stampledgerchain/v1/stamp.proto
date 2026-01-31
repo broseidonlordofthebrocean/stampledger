@@ -1,0 +1,80 @@
+syntax = "proto3";
+package stampledgerchain.stampledgerchain.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "stampledger-chain/x/stampledgerchain/types";
+
+// Stamp represents a PE stamp record on the blockchain
+message Stamp {
+  option (gogoproto.equal) = true;
+
+  string id = 1;                      // UUID
+  string document_hash = 2;           // SHA-256 hash (64 hex chars)
+  string pe_public_key = 3;           // Ed25519 public key (64 hex chars)
+  string signature = 4;               // Ed25519 signature (128 hex chars)
+  string jurisdiction_id = 5;         // e.g., "wisconsin", "california"
+  int64 created_at = 6;               // Unix timestamp
+  string creator = 7;                 // Cosmos SDK address
+  bool revoked = 8;                   // Revocation status
+  int64 revoked_at = 9;               // Unix timestamp if revoked
+  string revoked_reason = 10;         // Why revoked
+
+  // PE metadata
+  string pe_license_number = 11;      // PE license number
+  string pe_name = 12;                // PE full name
+  string project_name = 13;           // Optional project identifier
+
+  // Document storage (IPFS integration)
+  string document_ipfs_hash = 14;     // IPFS hash if document stored
+  int64 document_size = 15;           // File size in bytes
+  string document_filename = 16;      // Original filename
+}
+
+// DocumentStorage for immutable document storage
+message DocumentStorage {
+  option (gogoproto.equal) = true;
+
+  string id = 1;                      // UUID
+  string stamp_id = 2;                // Associated stamp ID
+  string ipfs_hash = 3;               // IPFS content hash
+  string filename = 4;                // Original filename
+  int64 size = 5;                     // File size
+  string mime_type = 6;               // File type
+  int64 uploaded_at = 7;              // Timestamp
+  string uploaded_by = 8;             // User address
+  bool pinned = 9;                    // Pinned to IPFS forever
+}
+
+// EntityAccount for organizations (companies, municipalities, firms)
+message EntityAccount {
+  option (gogoproto.equal) = true;
+
+  string id = 1;                      // UUID
+  string name = 2;                    // Company/organization name
+  string entity_type = 3;             // "company", "municipality", "firm"
+  string owner_address = 4;           // Creator address
+  repeated string member_addresses = 5;  // Team members
+  repeated string admin_addresses = 6;   // Admins
+  int64 created_at = 7;               // Timestamp
+  bool active = 8;                    // Active status
+
+  // Permissions map: address -> role (viewer, editor, admin)
+  map<string, string> permissions = 9;
+}
+
+// SpecVersion for specification tracking with version history
+message SpecVersion {
+  option (gogoproto.equal) = true;
+
+  string id = 1;                      // UUID
+  string project_id = 2;              // Project identifier
+  string version = 3;                 // Semver (e.g., "1.2.3")
+  string spec_hash = 4;               // Hash of spec document
+  string spec_ipfs = 5;               // IPFS hash of spec
+  int64 created_at = 6;               // Timestamp
+  string created_by = 7;              // Author address
+  string changelog = 8;               // What changed
+  string parent_version_id = 9;       // Previous version (for history)
+}

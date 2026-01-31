@@ -1,0 +1,197 @@
+syntax = "proto3";
+package stampledgerchain.stampledgerchain.v1;
+
+import "amino/amino.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "stampledgerchain/stampledgerchain/v1/params.proto";
+
+option go_package = "stampledger-chain/x/stampledgerchain/types";
+
+// Msg defines the Msg service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // UpdateParams defines a (governance) operation for updating the module
+  // parameters. The authority defaults to the x/gov module account.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+
+  // Stamp operations
+  rpc CreateStamp(MsgCreateStamp) returns (MsgCreateStampResponse);
+  rpc RevokeStamp(MsgRevokeStamp) returns (MsgRevokeStampResponse);
+
+  // Document storage operations
+  rpc StoreDocument(MsgStoreDocument) returns (MsgStoreDocumentResponse);
+
+  // Entity account operations
+  rpc CreateEntity(MsgCreateEntity) returns (MsgCreateEntityResponse);
+  rpc AddEntityMember(MsgAddEntityMember) returns (MsgAddEntityMemberResponse);
+  rpc RemoveEntityMember(MsgRemoveEntityMember) returns (MsgRemoveEntityMemberResponse);
+
+  // Spec tracking operations
+  rpc CreateSpecVersion(MsgCreateSpecVersion) returns (MsgCreateSpecVersionResponse);
+}
+
+// MsgUpdateParams is the Msg/UpdateParams request type.
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name) = "stampledgerchain/x/stampledgerchain/MsgUpdateParams";
+
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // params defines the module parameters to update.
+  //
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+message MsgUpdateParamsResponse {}
+
+// ============================================================================
+// STAMP MESSAGES
+// ============================================================================
+
+// MsgCreateStamp creates a new PE stamp on the blockchain
+message MsgCreateStamp {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "stampledgerchain/CreateStamp";
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string document_hash = 2;           // SHA-256 hash of document (64 hex chars)
+  string pe_public_key = 3;           // Ed25519 public key (64 hex chars)
+  string signature = 4;               // Ed25519 signature (128 hex chars)
+  string jurisdiction_id = 5;         // Jurisdiction identifier
+  string pe_license_number = 6;       // PE license number
+  string pe_name = 7;                 // PE full name
+  string project_name = 8;            // Optional project identifier
+
+  // Optional: Store full document on IPFS
+  string document_ipfs_hash = 9;      // IPFS hash if document stored
+  int64 document_size = 10;           // File size in bytes
+  string document_filename = 11;      // Original filename
+}
+
+// MsgCreateStampResponse is the response for CreateStamp
+message MsgCreateStampResponse {
+  string stamp_id = 1;
+  string tx_hash = 2;
+}
+
+// MsgRevokeStamp revokes an existing stamp
+message MsgRevokeStamp {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "stampledgerchain/RevokeStamp";
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string stamp_id = 2;
+  string reason = 3;
+}
+
+// MsgRevokeStampResponse is the response for RevokeStamp
+message MsgRevokeStampResponse {
+  bool success = 1;
+}
+
+// ============================================================================
+// DOCUMENT STORAGE MESSAGES
+// ============================================================================
+
+// MsgStoreDocument stores a document reference on the blockchain
+message MsgStoreDocument {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "stampledgerchain/StoreDocument";
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string stamp_id = 2;                // Associated stamp ID
+  string ipfs_hash = 3;               // IPFS content hash
+  string filename = 4;                // Original filename
+  int64 size = 5;                     // File size in bytes
+  string mime_type = 6;               // MIME type
+  bool pin_forever = 7;               // Pin to IPFS forever
+}
+
+// MsgStoreDocumentResponse is the response for StoreDocument
+message MsgStoreDocumentResponse {
+  string document_id = 1;
+  string ipfs_url = 2;
+}
+
+// ============================================================================
+// ENTITY ACCOUNT MESSAGES
+// ============================================================================
+
+// MsgCreateEntity creates a new organization/entity account
+message MsgCreateEntity {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "stampledgerchain/CreateEntity";
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string name = 2;                    // Entity name
+  string entity_type = 3;             // "company", "municipality", "firm"
+}
+
+// MsgCreateEntityResponse is the response for CreateEntity
+message MsgCreateEntityResponse {
+  string entity_id = 1;
+}
+
+// MsgAddEntityMember adds a member to an entity
+message MsgAddEntityMember {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "stampledgerchain/AddEntityMember";
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string entity_id = 2;
+  string member_address = 3;
+  string role = 4;                    // "viewer", "editor", "admin"
+}
+
+// MsgAddEntityMemberResponse is the response for AddEntityMember
+message MsgAddEntityMemberResponse {
+  bool success = 1;
+}
+
+// MsgRemoveEntityMember removes a member from an entity
+message MsgRemoveEntityMember {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "stampledgerchain/RemoveEntityMember";
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string entity_id = 2;
+  string member_address = 3;
+}
+
+// MsgRemoveEntityMemberResponse is the response for RemoveEntityMember
+message MsgRemoveEntityMemberResponse {
+  bool success = 1;
+}
+
+// ============================================================================
+// SPEC TRACKING MESSAGES
+// ============================================================================
+
+// MsgCreateSpecVersion creates a new version of a spec on the blockchain
+message MsgCreateSpecVersion {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "stampledgerchain/CreateSpecVersion";
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string project_id = 2;              // Project identifier
+  string version = 3;                 // Semver version
+  string spec_hash = 4;               // Hash of spec document
+  string spec_ipfs = 5;               // IPFS hash of spec
+  string changelog = 6;               // What changed
+  string parent_version_id = 7;       // Previous version ID (for history)
+}
+
+// MsgCreateSpecVersionResponse is the response for CreateSpecVersion
+message MsgCreateSpecVersionResponse {
+  string version_id = 1;
+}
