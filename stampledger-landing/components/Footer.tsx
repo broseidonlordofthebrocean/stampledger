@@ -17,7 +17,7 @@ export default function Footer() {
     ],
     resources: [
       { name: 'Documentation', href: '/docs' },
-      { name: 'API Reference', href: '/api' },
+      { name: 'API Reference', href: '/api-reference' },
       { name: 'Support', href: 'mailto:support@stampledger.com' },
     ],
   }

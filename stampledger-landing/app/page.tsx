@@ -261,8 +261,8 @@ export default function Home() {
               <Lock className="w-10 h-10 text-accent mb-4" />
               <h3 className="text-xl font-semibold mb-2">Compliance Ready</h3>
               <p className="text-primary-100">
-                SOC 2 Type II certified. GDPR compliant. Ready for government
-                contracts and procurement requirements.
+                Designed for SOC 2 compliance. GDPR compliant. Built to meet
+                government contracts and procurement requirements.
               </p>
             </div>
             <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
@@ -277,8 +277,7 @@ export default function Home() {
               <Smartphone className="w-10 h-10 text-accent mb-4" />
               <h3 className="text-xl font-semibold mb-2">Mobile Inspector App</h3>
               <p className="text-primary-100">
-                iOS and Android apps for field verification. Works offline
-                with cached recent stamps.
+                Mobile-first verification for inspectors. Apps coming Q3 2026.
               </p>
             </div>
             <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
@@ -352,7 +351,7 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-2 text-gray-500">
               <Lock className="w-6 h-6" />
-              <span className="font-medium">SOC 2 Compliant</span>
+              <span className="font-medium">SOC 2 Ready</span>
             </div>
             <div className="flex items-center gap-2 text-gray-500">
               <Database className="w-6 h-6" />
@@ -360,7 +359,7 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-2 text-gray-500">
               <CheckCircle className="w-6 h-6" />
-              <span className="font-medium">99.9% Uptime</span>
+              <span className="font-medium">High Availability</span>
             </div>
           </div>
         </div>

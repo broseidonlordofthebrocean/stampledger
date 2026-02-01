@@ -271,7 +271,7 @@ export default function HowItWorks() {
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
-                  <span>SOC 2 Type II certified</span>
+                  <span>SOC 2 ready</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />

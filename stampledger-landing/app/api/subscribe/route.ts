@@ -88,8 +88,10 @@ export async function POST(req: NextRequest) {
         })
       }
     } else {
-      // Log to console if no email service configured
-      console.log('New signup:', { email, org, role, timestamp: new Date().toISOString() })
+      return NextResponse.json(
+        { error: 'Email service not configured. Please contact hello@stampledger.com directly.' },
+        { status: 503 }
+      )
     }
 
     return NextResponse.json({ success: true })

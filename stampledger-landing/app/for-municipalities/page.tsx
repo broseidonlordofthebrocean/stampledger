@@ -263,10 +263,6 @@ export default function ForMunicipalities() {
         <div className="container-custom">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 bg-accent/10 text-accent-dark px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <span className="w-2 h-2 bg-accent rounded-full animate-pulse"></span>
-                Limited pilot spots available
-              </div>
               <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
                 Free 12-Month Pilot Program
               </h2>

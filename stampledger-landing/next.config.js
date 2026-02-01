@@ -2,8 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  // Required for Cloudflare Pages deployment
-  output: 'standalone',
+  // Static export for Cloudflare Pages
+  output: 'export',
 
   // Image optimization config for Cloudflare
   images: {
