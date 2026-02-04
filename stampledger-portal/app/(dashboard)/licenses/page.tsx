@@ -1,0 +1,400 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useAuth } from '@/lib/auth-context'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Award,
+  Plus,
+  Calendar,
+  MapPin,
+  Hash,
+  Coins,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  X,
+  Loader2,
+  Shield,
+  Briefcase,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+interface License {
+  id: string
+  licenseType: string
+  licenseNumber: string
+  issuingState: string
+  status: string
+  stampTokenCount: number
+  expirationDate: string | null
+  verificationUrl: string | null
+  disciplines: string[]
+  createdAt: string
+}
+
+const LICENSE_TYPES = [
+  { value: 'PE', label: 'Professional Engineer (PE)' },
+  { value: 'SE', label: 'Structural Engineer (SE)' },
+  { value: 'LS', label: 'Land Surveyor (LS)' },
+  { value: 'PLS', label: 'Professional Land Surveyor (PLS)' },
+  { value: 'RA', label: 'Registered Architect (RA)' },
+  { value: 'GE', label: 'Geotechnical Engineer (GE)' },
+]
+
+const US_STATES = [
+  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+  'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+  'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+  'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+  'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'
+]
+
+export default function LicensesPage() {
+  const { token, licenses, totalTokens, refreshUser } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+
+  const [createForm, setCreateForm] = useState({
+    licenseType: 'PE',
+    licenseNumber: '',
+    issuingState: '',
+    expirationDate: '',
+    verificationUrl: '',
+    disciplines: [] as string[],
+  })
+
+  const handleAddLicense = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!token) return
+    setError('')
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/licenses', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(createForm),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Failed to add license')
+      }
+
+      setShowAddModal(false)
+      setCreateForm({
+        licenseType: 'PE',
+        licenseNumber: '',
+        issuingState: '',
+        expirationDate: '',
+        verificationUrl: '',
+        disciplines: [],
+      })
+      setSuccess('License added successfully')
+      await refreshUser()
+      setTimeout(() => setSuccess(''), 3000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add license')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getStatusBadge = (status: string, expirationDate: string | null) => {
+    const isExpiringSoon = expirationDate &&
+      new Date(expirationDate) <= new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+
+    if (status === 'verified') {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <CheckCircle2 className="h-3 w-3 mr-1" />
+          Verified
+        </span>
+      )
+    }
+    if (status === 'expired') {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+          <AlertCircle className="h-3 w-3 mr-1" />
+          Expired
+        </span>
+      )
+    }
+    if (isExpiringSoon) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+          <Clock className="h-3 w-3 mr-1" />
+          Expiring Soon
+        </span>
+      )
+    }
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+        <Clock className="h-3 w-3 mr-1" />
+        {status}
+      </span>
+    )
+  }
+
+  const getLicenseIcon = (type: string) => {
+    switch (type) {
+      case 'PE':
+      case 'SE':
+      case 'GE':
+        return <Shield className="h-6 w-6 text-primary" />
+      case 'RA':
+        return <Briefcase className="h-6 w-6 text-primary" />
+      default:
+        return <Award className="h-6 w-6 text-primary" />
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Professional Licenses</h1>
+          <p className="text-gray-600 mt-1">Manage your professional licenses and certifications</p>
+        </div>
+        <Button onClick={() => setShowAddModal(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add License
+        </Button>
+      </div>
+
+      {/* Alerts */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+          {success}
+        </div>
+      )}
+
+      {/* Token Summary */}
+      <div className="bg-gradient-to-r from-primary to-primary-dark rounded-lg p-6 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-white/80 text-sm">Total Stamp Tokens</p>
+            <p className="text-4xl font-bold mt-1">{totalTokens.toLocaleString()}</p>
+            <p className="text-white/60 text-sm mt-2">
+              Earned across all licenses
+            </p>
+          </div>
+          <div className="bg-white/20 p-4 rounded-full">
+            <Coins className="h-10 w-10" />
+          </div>
+        </div>
+        <div className="mt-4 pt-4 border-t border-white/20 text-sm text-white/80">
+          Milestone bonuses: +50 at 5th stamp, +200 at 25th stamp, +1000 at 100th stamp
+        </div>
+      </div>
+
+      {/* Licenses List */}
+      {licenses.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+          <Award className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Licenses Added</h2>
+          <p className="text-gray-500 mb-4">
+            Add your professional licenses to start stamping documents
+          </p>
+          <Button onClick={() => setShowAddModal(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Your First License
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {licenses.map((license) => (
+            <div
+              key={license.id}
+              className="bg-white rounded-lg border border-gray-200 p-6"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex items-start">
+                  <div className="bg-primary/10 p-3 rounded-lg mr-4">
+                    {getLicenseIcon(license.licenseType)}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <h3 className="font-semibold text-gray-900">
+                        {LICENSE_TYPES.find((t) => t.value === license.licenseType)?.label ||
+                          license.licenseType}
+                      </h3>
+                      {getStatusBadge(license.status, license.expirationDate || null)}
+                    </div>
+                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                      <span className="flex items-center">
+                        <Hash className="h-4 w-4 mr-1" />
+                        {license.licenseNumber}
+                      </span>
+                      <span className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-1" />
+                        {license.issuingState}
+                      </span>
+                      {license.expirationDate && (
+                        <span className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          Expires: {new Date(license.expirationDate).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                    {license.disciplines && license.disciplines.length > 0 && (
+                      <div className="flex items-center gap-2 mt-3">
+                        {license.disciplines.map((d) => (
+                          <span
+                            key={d}
+                            className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded"
+                          >
+                            {d}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center text-primary font-semibold">
+                    <Coins className="h-4 w-4 mr-1" />
+                    {license.stampTokenCount.toLocaleString()} tokens
+                  </div>
+                  {license.verificationUrl && (
+                    <a
+                      href={license.verificationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-600 hover:underline mt-1 block"
+                    >
+                      Verify License
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add License Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Add Professional License</h3>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <form onSubmit={handleAddLicense} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  License Type *
+                </label>
+                <select
+                  value={createForm.licenseType}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, licenseType: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                >
+                  {LICENSE_TYPES.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    License Number *
+                  </label>
+                  <Input
+                    value={createForm.licenseNumber}
+                    onChange={(e) =>
+                      setCreateForm({ ...createForm, licenseNumber: e.target.value })
+                    }
+                    placeholder="123456"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    State/Jurisdiction *
+                  </label>
+                  <select
+                    value={createForm.issuingState}
+                    onChange={(e) =>
+                      setCreateForm({ ...createForm, issuingState: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    required
+                  >
+                    <option value="">Select State</option>
+                    {US_STATES.map((state) => (
+                      <option key={state} value={state}>
+                        {state}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Expiration Date
+                </label>
+                <Input
+                  type="date"
+                  value={createForm.expirationDate}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, expirationDate: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Verification URL
+                </label>
+                <Input
+                  type="url"
+                  value={createForm.verificationUrl}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, verificationUrl: e.target.value })
+                  }
+                  placeholder="https://pels.texas.gov/verify/..."
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Link to state board verification page (optional)
+                </p>
+              </div>
+              <div className="flex justify-end gap-3 pt-4">
+                <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={loading}>
+                  {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  Add License
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

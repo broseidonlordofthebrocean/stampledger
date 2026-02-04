@@ -1,0 +1,19 @@
+name = "stampledger-portal"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "stampledger-portal"
+database_id = "1b2e1b01-5c01-4558-979c-06aa28ed4b72"
+
+# R2 Bucket for document storage
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "stampledger-documents"
+
+# Environment variables (secrets should be set via wrangler secret put)
+[vars]
+CHAIN_RPC_URL = "http://localhost:26657"
