@@ -7,6 +7,7 @@ on:
       - master
     paths:
       - 'stampledger-portal/**'
+      - '.github/workflows/deploy-portal.yml'
   workflow_dispatch:
 
 jobs:
@@ -29,9 +30,11 @@ jobs:
         working-directory: stampledger-portal
         run: npm ci
 
-      - name: Build with OpenNext
+      - name: Build with next-on-pages
         working-directory: stampledger-portal
-        run: npx opennextjs-cloudflare build
+        run: npx @cloudflare/next-on-pages
+        env:
+          NODE_ENV: production
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
@@ -39,4 +42,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: stampledger-portal
-          command: pages deploy .open-next/assets --project-name=stampledger-portal
+          command: pages deploy .vercel/output/static --project-name=stampledger-portal
