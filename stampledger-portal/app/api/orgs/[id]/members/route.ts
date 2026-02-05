@@ -341,3 +341,4 @@ export async function DELETE(
     return NextResponse.json({ error: 'Failed to remove member' }, { status: 500 })
   }
 }
+export const runtime = 'edge'

@@ -125,3 +125,4 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to revoke stamp' }, { status: 500 })
   }
 }
+export const runtime = 'edge'

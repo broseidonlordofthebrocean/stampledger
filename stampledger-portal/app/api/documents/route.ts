@@ -33,3 +33,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to get documents' }, { status: 500 })
   }
 }
+export const runtime = 'edge'

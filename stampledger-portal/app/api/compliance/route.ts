@@ -110,3 +110,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to get compliance data' }, { status: 500 })
   }
 }
+export const runtime = 'edge'

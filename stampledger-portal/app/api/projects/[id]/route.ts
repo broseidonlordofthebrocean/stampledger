@@ -256,3 +256,4 @@ export async function DELETE(
     return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 })
   }
 }
+export const runtime = 'edge'

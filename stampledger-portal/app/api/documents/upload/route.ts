@@ -102,3 +102,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to upload document' }, { status: 500 })
   }
 }
+export const runtime = 'edge'

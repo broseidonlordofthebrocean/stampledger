@@ -396,3 +396,4 @@ export async function PUT(
     return NextResponse.json({ error: 'Failed to link specification' }, { status: 500 })
   }
 }
+export const runtime = 'edge'

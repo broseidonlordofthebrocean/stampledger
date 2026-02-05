@@ -340,3 +340,4 @@ export default function StampDetailPage({
     </div>
   )
 }
+export const runtime = 'edge'

@@ -186,3 +186,4 @@ export async function DELETE(
     return NextResponse.json({ error: 'Failed to delete organization' }, { status: 500 })
   }
 }
+export const runtime = 'edge'

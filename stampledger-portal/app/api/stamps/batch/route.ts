@@ -273,3 +273,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to get batch history' }, { status: 500 })
   }
 }
+export const runtime = 'edge'

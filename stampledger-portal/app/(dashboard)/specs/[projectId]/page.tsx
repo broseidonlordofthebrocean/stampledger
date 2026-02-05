@@ -345,3 +345,4 @@ export default function ProjectDetailPage({
     </div>
   )
 }
+export const runtime = 'edge'
