@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { createDb, professionalLicenses, users } from '@/lib/db'
+import { getDb, professionalLicenses, users } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 
 // GET /api/licenses - List user's professional licenses
@@ -18,8 +18,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const licenses = await db
       .select()
@@ -89,8 +88,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Check if license already exists
     const existing = await db
@@ -173,8 +171,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Verify ownership
     const license = await db

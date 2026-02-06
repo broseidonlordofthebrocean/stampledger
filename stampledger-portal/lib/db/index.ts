@@ -1,4 +1,5 @@
 import { drizzle } from 'drizzle-orm/d1'
+import { getRequestContext } from '@cloudflare/next-on-pages'
 import * as schema from './schema'
 
 // D1Database type for Cloudflare Workers
@@ -31,8 +32,20 @@ interface D1ExecResult {
 
 // For Cloudflare D1, we get the database from the request context
 // This function creates a database client from the D1 binding
-export function createDb(d1: D1Database) {
-  return drizzle(d1 as any, { schema })
+export function createDb(d1?: D1Database) {
+  // If d1 is provided directly, use it
+  if (d1) {
+    return drizzle(d1 as any, { schema })
+  }
+  // Otherwise, get from Cloudflare Pages context
+  const { env } = getRequestContext()
+  return drizzle((env as any).DB as any, { schema })
+}
+
+// Helper to get the database - preferred method
+export function getDb() {
+  const { env } = getRequestContext()
+  return drizzle((env as any).DB as any, { schema })
 }
 
 // Type for the database client

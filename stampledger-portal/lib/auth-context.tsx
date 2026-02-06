@@ -48,6 +48,7 @@ interface AuthContextType {
   totalTokens: number
   login: (email: string, password: string) => Promise<void>
   register: (data: RegisterData) => Promise<void>
+  demoLogin: () => Promise<void>
   logout: () => void
   switchOrg: (orgId: string) => void
   refreshUser: () => Promise<void>
@@ -183,6 +184,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push('/')
   }
 
+  const demoLogin = async () => {
+    const res = await fetch('/api/auth/demo', {
+      method: 'POST',
+    })
+
+    if (!res.ok) {
+      const data = await res.json()
+      throw new Error(data.error || 'Demo login failed')
+    }
+
+    const data = await res.json()
+    localStorage.setItem('token', data.token)
+    setToken(data.token)
+    setUser(data.user)
+
+    // Fetch full user data (orgs, licenses, etc.)
+    await fetchUser(data.token)
+
+    router.push('/')
+  }
+
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('currentOrgId')
@@ -215,6 +237,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         totalTokens,
         login,
         register,
+        demoLogin,
         logout,
         switchOrg,
         refreshUser,

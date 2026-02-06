@@ -3,18 +3,19 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-lg font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
   {
     variants: {
       variant: {
-        default: "bg-cta text-white hover:bg-cta-hover shadow-md hover:shadow-lg focus-visible:ring-cta",
-        secondary: "border-2 border-primary text-primary hover:bg-primary hover:text-white",
-        outline: "border-2 border-gray-300 text-gray-700 hover:bg-gray-50",
+        default: "bg-gradient-to-r from-cta to-cta-light text-white hover:from-cta-hover hover:to-cta shadow-sm hover:shadow-md focus-visible:ring-cta",
+        primary: "bg-gradient-to-r from-primary to-primary-light text-white hover:from-primary-dark hover:to-primary shadow-sm hover:shadow-md focus-visible:ring-primary",
+        secondary: "border border-primary/20 text-primary hover:bg-primary hover:text-white bg-white",
+        outline: "border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 bg-white",
         ghost: "hover:bg-gray-100 text-gray-700",
-        link: "text-cta underline-offset-4 hover:underline",
-        accent: "bg-accent text-white hover:bg-accent-dark shadow-md hover:shadow-lg",
-        teal: "bg-secondary text-white hover:bg-secondary-dark shadow-md hover:shadow-lg",
-        danger: "bg-red-600 text-white hover:bg-red-700 shadow-md hover:shadow-lg",
+        link: "text-primary underline-offset-4 hover:underline",
+        accent: "bg-gradient-to-r from-accent to-accent-light text-white hover:from-accent-dark hover:to-accent shadow-sm hover:shadow-md",
+        teal: "bg-gradient-to-r from-secondary to-secondary-light text-white hover:from-secondary-dark hover:to-secondary shadow-sm hover:shadow-md",
+        danger: "bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 shadow-sm hover:shadow-md focus-visible:ring-red-500",
       },
       size: {
         default: "px-6 py-3",

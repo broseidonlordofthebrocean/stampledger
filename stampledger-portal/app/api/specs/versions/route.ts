@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { createDb, specVersions, specProjects } from '@/lib/db'
+import { getDb, specVersions, specProjects } from '@/lib/db'
 import { eq, desc, and } from 'drizzle-orm'
 
 // POST /api/specs/versions - Create a new version
@@ -28,8 +28,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Verify project exists and belongs to user
     const project = await db

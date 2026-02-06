@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { createDb, specifications, specRevisions, orgMemberships } from '@/lib/db'
+import { getDb, specifications, specRevisions, orgMemberships } from '@/lib/db'
 import { eq, and, desc } from 'drizzle-orm'
 
 // Helper to check org membership
@@ -42,8 +42,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Check user has access to this org
     const membership = await checkOrgAccess(db, payload.userId, orgId)
@@ -89,8 +88,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Check user has permission to create specs
     const membership = await checkOrgAccess(db, payload.userId, orgId)

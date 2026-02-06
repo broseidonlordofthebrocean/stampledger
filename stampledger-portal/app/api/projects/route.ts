@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { createDb, projects, programs, orgMemberships, projectSpecifications, changeNotifications } from '@/lib/db'
+import { getDb, projects, programs, orgMemberships, projectSpecifications, changeNotifications } from '@/lib/db'
 import { eq, and, desc, sql } from 'drizzle-orm'
 
 // Helper to check org membership
@@ -43,8 +43,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Check user has access to this org
     const membership = await checkOrgAccess(db, payload.userId, orgId)
@@ -105,8 +104,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Check user has permission to create projects (owner, admin, manager)
     const membership = await checkOrgAccess(db, payload.userId, orgId)

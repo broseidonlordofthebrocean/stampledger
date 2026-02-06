@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { createDb, documents } from '@/lib/db'
+import { getDb, documents } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 
 // GET /api/documents - List user's documents
@@ -18,8 +18,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const userDocs = await db
       .select()

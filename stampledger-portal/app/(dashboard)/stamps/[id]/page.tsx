@@ -13,6 +13,9 @@ import {
   Copy,
   ExternalLink,
   AlertTriangle,
+  Download,
+  Eye,
+  Link as LinkIcon,
 } from 'lucide-react'
 
 interface StampData {
@@ -47,6 +50,8 @@ export default function StampDetailPage({
   const [showRevokeModal, setShowRevokeModal] = useState(false)
   const [revokeReason, setRevokeReason] = useState('')
   const [copied, setCopied] = useState(false)
+  const [copiedLink, setCopiedLink] = useState(false)
+  const [verifyCount, setVerifyCount] = useState<number | null>(null)
 
   useEffect(() => {
     fetchStamp()
@@ -102,6 +107,23 @@ export default function StampDetailPage({
       navigator.clipboard.writeText(stamp.documentHash)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  const copyVerifyLink = () => {
+    if (stamp?.verifyUrl) {
+      navigator.clipboard.writeText(stamp.verifyUrl)
+      setCopiedLink(true)
+      setTimeout(() => setCopiedLink(false), 2000)
+    }
+  }
+
+  const downloadQR = () => {
+    if (stamp?.qrCodeDataUrl) {
+      const link = document.createElement('a')
+      link.download = `stamp-${stamp.id}-qr.png`
+      link.href = stamp.qrCodeDataUrl
+      link.click()
     }
   }
 
@@ -265,7 +287,7 @@ export default function StampDetailPage({
           )}
         </div>
 
-        {/* QR Code */}
+        {/* QR Code & Verification */}
         <div className="space-y-6">
           {stamp.qrCodeDataUrl && (
             <div className="card text-center">
@@ -278,19 +300,65 @@ export default function StampDetailPage({
               <p className="text-sm text-gray-600 mt-4">
                 Scan to verify this stamp
               </p>
-              {stamp.verifyUrl && (
-                <a
-                  href={stamp.verifyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center text-sm text-cta hover:underline mt-2"
+              <div className="mt-3 space-y-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={downloadQR}
                 >
-                  Open verification page
-                  <ExternalLink className="h-3 w-3 ml-1" />
-                </a>
-              )}
+                  <Download className="h-4 w-4 mr-2" />
+                  Download QR
+                </Button>
+                {stamp.verifyUrl && (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={copyVerifyLink}
+                    >
+                      {copiedLink ? (
+                        <>
+                          <CheckCircle className="h-4 w-4 mr-2 text-accent" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <LinkIcon className="h-4 w-4 mr-2" />
+                          Copy Verify Link
+                        </>
+                      )}
+                    </Button>
+                    <a
+                      href={stamp.verifyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-sm text-cta hover:underline"
+                    >
+                      Open verification page
+                      <ExternalLink className="h-3 w-3 ml-1" />
+                    </a>
+                  </>
+                )}
+              </div>
             </div>
           )}
+
+          {/* Verification Certificate */}
+          <div className="card text-center">
+            <h3 className="font-semibold text-gray-900 mb-3">Certificate</h3>
+            <a
+              href={`/api/verify/${stamp.id}/certificate`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline" size="sm" className="w-full">
+                <Eye className="h-4 w-4 mr-2" />
+                View Certificate
+              </Button>
+            </a>
+          </div>
         </div>
       </div>
 

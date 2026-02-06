@@ -10,17 +10,16 @@ import {
   GitBranch,
   Plus,
   ArrowRight,
-  Shield,
-  CheckCircle,
   FolderKanban,
   AlertCircle,
   Coins,
   ClipboardCheck,
   Award,
   Building2,
-  TrendingUp,
   Layers,
-  Loader2,
+  Sparkles,
+  TrendingUp,
+  ChevronRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -79,28 +78,28 @@ export default function DashboardPage() {
       description: 'Stamp a document with your PE seal',
       href: '/stamps/create',
       icon: Stamp,
-      color: 'bg-cta',
+      gradient: 'from-orange-500 to-orange-600',
     },
     {
       title: 'Batch Stamp',
       description: 'Stamp multiple projects at once',
       href: '/stamps/batch',
       icon: Layers,
-      color: 'bg-primary',
+      gradient: 'from-primary to-primary-light',
     },
     {
       title: 'New Project',
       description: 'Start tracking a new project',
       href: '/projects',
       icon: FolderKanban,
-      color: 'bg-secondary',
+      gradient: 'from-secondary to-secondary-light',
     },
     {
       title: 'Add Specification',
       description: 'Track a new specification',
       href: '/specifications',
       icon: GitBranch,
-      color: 'bg-accent',
+      gradient: 'from-accent to-accent-light',
     },
   ]
 
@@ -108,16 +107,26 @@ export default function DashboardPage() {
   const firstName = user?.firstName || user?.name?.split(' ')[0] || 'there'
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-primary to-primary-dark rounded-xl p-6 text-white">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+      <div className="relative overflow-hidden rounded-2xl gradient-hero p-8">
+        {/* Background decorations */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+
+        <div className="relative flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Welcome back, {firstName}</h1>
-            <p className="mt-1 text-white/80">
+            <div className="flex items-center gap-2 text-white/60 text-sm mb-2">
+              <Sparkles className="h-4 w-4" />
+              <span>Dashboard</span>
+            </div>
+            <h1 className="text-3xl font-bold text-white">
+              Welcome back, {firstName}
+            </h1>
+            <p className="mt-2 text-white/70">
               {currentOrg ? (
-                <span className="flex items-center">
-                  <Building2 className="h-4 w-4 mr-1" />
+                <span className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
                   {currentOrg.name}
                 </span>
               ) : (
@@ -126,12 +135,14 @@ export default function DashboardPage() {
             </p>
           </div>
           {hasLicense && totalTokens > 0 && (
-            <div className="mt-4 md:mt-0 bg-white/10 rounded-lg px-4 py-3">
-              <div className="flex items-center">
-                <Coins className="h-5 w-5 mr-2" />
+            <div className="mt-6 md:mt-0 glass-dark rounded-xl px-5 py-4 border border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="bg-white/20 p-2 rounded-lg">
+                  <Coins className="h-5 w-5 text-white" />
+                </div>
                 <div>
-                  <p className="text-xs text-white/70">Stamp Tokens</p>
-                  <p className="text-xl font-bold">{totalTokens.toLocaleString()}</p>
+                  <p className="text-xs text-white/60 uppercase tracking-wide">Stamp Tokens</p>
+                  <p className="text-2xl font-bold text-white">{totalTokens.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -139,14 +150,16 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* No Org / No License Prompts */}
+      {/* Onboarding Cards */}
       {!currentOrg && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <div className="flex items-start">
-            <Building2 className="h-6 w-6 text-blue-500 mr-4 mt-0.5" />
-            <div>
-              <h3 className="font-semibold text-gray-900">Create or Join an Organization</h3>
-              <p className="text-sm text-gray-600 mt-1">
+        <div className="card-elevated border-blue-100 bg-gradient-to-br from-blue-50 to-white">
+          <div className="flex items-start gap-4">
+            <div className="bg-blue-100 p-3 rounded-xl">
+              <Building2 className="h-6 w-6 text-blue-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-900 text-lg">Create or Join an Organization</h3>
+              <p className="text-gray-600 mt-1">
                 Organizations help you manage projects, team members, and specifications.
               </p>
               <Link href="/organizations">
@@ -161,12 +174,14 @@ export default function DashboardPage() {
       )}
 
       {currentOrg && !hasLicense && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
-          <div className="flex items-start">
-            <Award className="h-6 w-6 text-amber-500 mr-4 mt-0.5" />
-            <div>
-              <h3 className="font-semibold text-gray-900">Add Your Professional License</h3>
-              <p className="text-sm text-gray-600 mt-1">
+        <div className="card-elevated border-amber-100 bg-gradient-to-br from-amber-50 to-white">
+          <div className="flex items-start gap-4">
+            <div className="bg-amber-100 p-3 rounded-xl">
+              <Award className="h-6 w-6 text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-900 text-lg">Add Your Professional License</h3>
+              <p className="text-gray-600 mt-1">
                 Add your PE license to start stamping documents and earning tokens.
               </p>
               <Link href="/licenses">
@@ -183,18 +198,24 @@ export default function DashboardPage() {
       {/* Quick Actions */}
       {currentOrg && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((action) => (
               <Link key={action.href} href={action.href}>
-                <div className="card-hover h-full">
+                <div className="group card-hover h-full relative overflow-hidden">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${action.gradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
                   <div
-                    className={`${action.color} w-10 h-10 rounded-lg flex items-center justify-center mb-3`}
+                    className={`bg-gradient-to-br ${action.gradient} w-11 h-11 rounded-xl flex items-center justify-center mb-4 shadow-sm`}
                   >
                     <action.icon className="h-5 w-5 text-white" />
                   </div>
-                  <h3 className="font-semibold text-gray-900">{action.title}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{action.description}</p>
+                  <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
+                    {action.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">{action.description}</p>
+                  <ChevronRight className="absolute bottom-6 right-6 h-5 w-5 text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </div>
               </Link>
             ))}
@@ -205,114 +226,123 @@ export default function DashboardPage() {
       {/* Stats Grid */}
       {currentOrg && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Overview</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Overview</h2>
+            <Link href="/compliance" className="text-sm text-primary hover:text-primary-light transition-colors flex items-center gap-1">
+              View all metrics
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="card animate-pulse">
-                  <div className="h-16 bg-gray-200 rounded" />
+                <div key={i} className="card">
+                  <div className="animate-pulse space-y-3">
+                    <div className="h-4 bg-gray-200 rounded w-24" />
+                    <div className="h-8 bg-gray-200 rounded w-16" />
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="card">
-                <div className="flex items-center justify-between">
+              <Link href="/stamps" className="card hover:shadow-md hover:border-gray-200 transition-all group">
+                <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Total Stamps</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                    <p className="text-sm font-medium text-gray-500">Total Stamps</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">
                       {stats?.stamps || 0}
                     </p>
                   </div>
-                  <div className="bg-cta/10 p-3 rounded-lg">
-                    <Stamp className="h-6 w-6 text-cta" />
+                  <div className="bg-orange-50 p-3 rounded-xl group-hover:bg-orange-100 transition-colors">
+                    <Stamp className="h-6 w-6 text-orange-500" />
                   </div>
                 </div>
-                <Link
-                  href="/stamps"
-                  className="text-sm text-primary hover:underline mt-3 inline-block"
-                >
-                  View all stamps
-                </Link>
-              </div>
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <span className="text-sm text-gray-500 group-hover:text-primary transition-colors flex items-center gap-1">
+                    View all stamps
+                    <ArrowRight className="h-3 w-3" />
+                  </span>
+                </div>
+              </Link>
 
-              <div className="card">
-                <div className="flex items-center justify-between">
+              <Link href="/projects" className="card hover:shadow-md hover:border-gray-200 transition-all group">
+                <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Active Projects</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                    <p className="text-sm font-medium text-gray-500">Active Projects</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">
                       {stats?.projects || 0}
                     </p>
                   </div>
-                  <div className="bg-secondary/10 p-3 rounded-lg">
-                    <FolderKanban className="h-6 w-6 text-secondary" />
+                  <div className="bg-teal-50 p-3 rounded-xl group-hover:bg-teal-100 transition-colors">
+                    <FolderKanban className="h-6 w-6 text-teal-500" />
                   </div>
                 </div>
-                <Link
-                  href="/projects"
-                  className="text-sm text-primary hover:underline mt-3 inline-block"
-                >
-                  View projects
-                </Link>
-              </div>
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <span className="text-sm text-gray-500 group-hover:text-primary transition-colors flex items-center gap-1">
+                    View projects
+                    <ArrowRight className="h-3 w-3" />
+                  </span>
+                </div>
+              </Link>
 
-              <div className="card">
-                <div className="flex items-center justify-between">
+              <Link href="/specifications" className="card hover:shadow-md hover:border-gray-200 transition-all group">
+                <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Specifications</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                    <p className="text-sm font-medium text-gray-500">Specifications</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">
                       {stats?.specifications || 0}
                     </p>
                   </div>
-                  <div className="bg-accent/10 p-3 rounded-lg">
-                    <GitBranch className="h-6 w-6 text-accent" />
+                  <div className="bg-green-50 p-3 rounded-xl group-hover:bg-green-100 transition-colors">
+                    <GitBranch className="h-6 w-6 text-green-500" />
                   </div>
                 </div>
-                <Link
-                  href="/specifications"
-                  className="text-sm text-primary hover:underline mt-3 inline-block"
-                >
-                  View specs
-                </Link>
-              </div>
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <span className="text-sm text-gray-500 group-hover:text-primary transition-colors flex items-center gap-1">
+                    View specs
+                    <ArrowRight className="h-3 w-3" />
+                  </span>
+                </div>
+              </Link>
 
-              <div className="card">
-                <div className="flex items-center justify-between">
+              <Link href="/compliance" className="card hover:shadow-md hover:border-gray-200 transition-all group">
+                <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Compliance Rate</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
-                      {stats?.compliance?.percentage || 0}%
+                    <p className="text-sm font-medium text-gray-500">Compliance Rate</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                      {stats?.compliance?.percentage || 100}%
                     </p>
                   </div>
                   <div
                     className={cn(
-                      'p-3 rounded-lg',
-                      (stats?.compliance?.percentage || 0) >= 90
-                        ? 'bg-green-100'
+                      'p-3 rounded-xl transition-colors',
+                      (stats?.compliance?.percentage || 100) >= 90
+                        ? 'bg-green-50 group-hover:bg-green-100'
                         : (stats?.compliance?.percentage || 0) >= 70
-                        ? 'bg-yellow-100'
-                        : 'bg-red-100'
+                        ? 'bg-amber-50 group-hover:bg-amber-100'
+                        : 'bg-red-50 group-hover:bg-red-100'
                     )}
                   >
                     <ClipboardCheck
                       className={cn(
                         'h-6 w-6',
-                        (stats?.compliance?.percentage || 0) >= 90
-                          ? 'text-green-600'
+                        (stats?.compliance?.percentage || 100) >= 90
+                          ? 'text-green-500'
                           : (stats?.compliance?.percentage || 0) >= 70
-                          ? 'text-yellow-600'
-                          : 'text-red-600'
+                          ? 'text-amber-500'
+                          : 'text-red-500'
                       )}
                     />
                   </div>
                 </div>
-                <Link
-                  href="/compliance"
-                  className="text-sm text-primary hover:underline mt-3 inline-block"
-                >
-                  View compliance
-                </Link>
-              </div>
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <span className="text-sm text-gray-500 group-hover:text-primary transition-colors flex items-center gap-1">
+                    View compliance
+                    <ArrowRight className="h-3 w-3" />
+                  </span>
+                </div>
+              </Link>
             </div>
           )}
         </div>
@@ -320,18 +350,20 @@ export default function DashboardPage() {
 
       {/* Compliance Alert */}
       {currentOrg && stats && stats.compliance && stats.compliance.total > 0 && stats.compliance.percentage < 100 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <div className="flex items-start">
-            <AlertCircle className="h-5 w-5 text-amber-500 mr-3 mt-0.5" />
+        <div className="card border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+          <div className="flex items-start gap-4">
+            <div className="bg-amber-100 p-2 rounded-lg">
+              <AlertCircle className="h-5 w-5 text-amber-600" />
+            </div>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900">Compliance Attention Needed</h3>
               <p className="text-sm text-gray-600 mt-1">
                 {stats.compliance.total - stats.compliance.compliant} project-specification link
                 {stats.compliance.total - stats.compliance.compliant !== 1 ? 's' : ''} need
-                review.
+                review to ensure your projects are using the latest specifications.
               </p>
               <Link href="/compliance">
-                <Button size="sm" variant="outline" className="mt-3">
+                <Button size="sm" variant="outline" className="mt-4 border-amber-300 hover:bg-amber-100">
                   Review Now
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
@@ -344,32 +376,54 @@ export default function DashboardPage() {
       {/* Recent Activity */}
       {currentOrg && stats?.recentActivity && stats.recentActivity.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
-          <div className="card divide-y divide-gray-100">
-            {stats.recentActivity.map((activity) => (
-              <div key={activity.id} className="py-3 first:pt-0 last:pb-0">
-                <div className="flex items-center">
-                  {activity.type === 'stamp' && (
-                    <Stamp className="h-4 w-4 text-cta mr-3" />
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+          </div>
+          <div className="card">
+            <div className="divide-y divide-gray-100">
+              {stats.recentActivity.map((activity, index) => (
+                <div
+                  key={activity.id}
+                  className={cn(
+                    "flex items-center gap-4 py-4",
+                    index === 0 && "pt-0",
+                    index === stats.recentActivity.length - 1 && "pb-0"
                   )}
-                  {activity.type === 'document' && (
-                    <FileText className="h-4 w-4 text-secondary mr-3" />
-                  )}
-                  {activity.type === 'spec_change' && (
-                    <GitBranch className="h-4 w-4 text-accent mr-3" />
-                  )}
-                  {activity.type === 'project' && (
-                    <FolderKanban className="h-4 w-4 text-primary mr-3" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900 truncate">{activity.title}</p>
+                >
+                  <div className={cn(
+                    "p-2 rounded-lg",
+                    activity.type === 'stamp' && "bg-orange-50",
+                    activity.type === 'document' && "bg-blue-50",
+                    activity.type === 'spec_change' && "bg-green-50",
+                    activity.type === 'project' && "bg-primary/10"
+                  )}>
+                    {activity.type === 'stamp' && (
+                      <Stamp className="h-4 w-4 text-orange-500" />
+                    )}
+                    {activity.type === 'document' && (
+                      <FileText className="h-4 w-4 text-blue-500" />
+                    )}
+                    {activity.type === 'spec_change' && (
+                      <GitBranch className="h-4 w-4 text-green-500" />
+                    )}
+                    {activity.type === 'project' && (
+                      <FolderKanban className="h-4 w-4 text-primary" />
+                    )}
                   </div>
-                  <span className="text-xs text-gray-400 ml-4">
-                    {new Date(activity.timestamp).toLocaleDateString()}
-                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{activity.title}</p>
+                    <p className="text-xs text-gray-400">
+                      {new Date(activity.timestamp).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       )}

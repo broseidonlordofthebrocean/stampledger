@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { createDb, organizations, orgMemberships } from '@/lib/db'
+import { getDb, organizations, orgMemberships } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 
 // GET /api/orgs - List orgs the current user belongs to
@@ -18,8 +18,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Get all memberships for this user
     const memberships = await db
@@ -73,8 +72,7 @@ export async function POST(req: NextRequest) {
     // Generate slug from name if not provided
     const orgSlug = slug || name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Check if slug is already taken
     const existingOrg = await db

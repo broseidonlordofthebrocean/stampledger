@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { createDb, documents } from '@/lib/db'
+import { getDb, documents } from '@/lib/db'
 import { eq } from 'drizzle-orm'
 
 // POST /api/documents/upload - Upload a document
@@ -59,8 +59,7 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const now = new Date()
 

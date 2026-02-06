@@ -48,6 +48,14 @@ data/
 tmp/
 temp/
 *.tmp
+*.tar
+nul
+
+# Vercel build output
+.vercel/
+
+# Claude
+.claude/
 
 # Credentials (never commit these!)
 *.json.enc

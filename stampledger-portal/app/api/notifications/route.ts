@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
-import { createDb, changeNotifications, specifications, specRevisions, specChanges, projects, projectSpecifications, orgMemberships } from '@/lib/db'
+import { getDb, changeNotifications, specifications, specRevisions, specChanges, projects, projectSpecifications, orgMemberships } from '@/lib/db'
 import { eq, and, desc, inArray } from 'drizzle-orm'
 
 // GET /api/notifications - Get change notifications (for user or project)
@@ -22,8 +22,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     if (projectId) {
       // Get notifications for a specific project
@@ -155,8 +154,7 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json()
     const { status, assignedTo, resolutionNotes } = body
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Get notification and check access
     const notification = await db

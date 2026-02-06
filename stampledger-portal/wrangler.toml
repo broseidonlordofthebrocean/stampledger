@@ -1,6 +1,6 @@
 name = "stampledger-portal"
-compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat_v2"]
 pages_build_output_dir = ".vercel/output/static"
 
 # D1 Database
@@ -9,10 +9,10 @@ binding = "DB"
 database_name = "stampledger-portal"
 database_id = "1b2e1b01-5c01-4558-979c-06aa28ed4b72"
 
-# R2 Bucket for document storage
-[[r2_buckets]]
-binding = "R2_BUCKET"
-bucket_name = "stampledger-documents"
+# R2 Bucket for document storage (enable R2 in Cloudflare dashboard first)
+# [[r2_buckets]]
+# binding = "R2_BUCKET"
+# bucket_name = "stampledger-documents"
 
 # Environment variables (secrets should be set via wrangler secret put)
 [vars]

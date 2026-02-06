@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { createDb, specifications, specRevisions, specChanges, projectSpecifications, changeNotifications, orgMemberships, projects } from '@/lib/db'
+import { getDb, specifications, specRevisions, specChanges, projectSpecifications, changeNotifications, orgMemberships, projects } from '@/lib/db'
 import { eq, and, desc } from 'drizzle-orm'
 
 // Helper to check spec access
@@ -49,8 +49,7 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const access = await checkSpecAccess(db, payload.userId, id)
     if (!access) {
@@ -134,8 +133,7 @@ export async function POST(
       return NextResponse.json({ error: 'Revision number is required' }, { status: 400 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const access = await checkSpecAccess(db, payload.userId, id)
     if (!access) {
@@ -273,8 +271,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const access = await checkSpecAccess(db, payload.userId, id)
     if (!access) {
@@ -336,8 +333,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Project IDs are required' }, { status: 400 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const access = await checkSpecAccess(db, payload.userId, id)
     if (!access) {

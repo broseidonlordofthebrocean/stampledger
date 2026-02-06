@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { createDb, specProjects, specVersions } from '@/lib/db'
+import { getDb, specProjects, specVersions } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 
 // GET /api/specs/projects - List user's spec projects
@@ -18,8 +18,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const projects = await db
       .select()
@@ -71,8 +70,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Project name is required' }, { status: 400 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const projectId = generateId()
 

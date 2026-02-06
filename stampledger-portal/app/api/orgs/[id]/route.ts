@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
-import { createDb, organizations, orgMemberships } from '@/lib/db'
+import { getDb, organizations, orgMemberships } from '@/lib/db'
 import { eq, and } from 'drizzle-orm'
 
 // Helper to check if user has permission on org
@@ -46,8 +46,7 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Check user has access to this org
     const membership = await checkOrgPermission(
@@ -96,8 +95,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Only owner/admin can update org settings
     const membership = await checkOrgPermission(db, payload.userId, id, ['owner', 'admin'])
@@ -168,8 +166,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Only owner can delete org
     const membership = await checkOrgPermission(db, payload.userId, id, ['owner'])

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
-import { createDb, projects, programs, orgMemberships, projectSpecifications, specifications, changeNotifications, users } from '@/lib/db'
+import { getDb, projects, programs, orgMemberships, projectSpecifications, specifications, changeNotifications, users } from '@/lib/db'
 import { eq, and, desc, sql } from 'drizzle-orm'
 
 // Helper to check project access
@@ -49,8 +49,7 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const access = await checkProjectAccess(db, payload.userId, id)
     if (!access) {
@@ -140,8 +139,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const access = await checkProjectAccess(db, payload.userId, id)
     if (!access) {
@@ -227,8 +225,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const access = await checkProjectAccess(db, payload.userId, id)
     if (!access) {

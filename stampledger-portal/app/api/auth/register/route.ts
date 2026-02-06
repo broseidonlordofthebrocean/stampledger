@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { hashPassword, signToken, generateId } from '@/lib/auth'
-import { createDb, users, professionalLicenses } from '@/lib/db'
+import { getDb, users, professionalLicenses } from '@/lib/db'
 import { eq } from 'drizzle-orm'
 
 export async function POST(req: NextRequest) {
@@ -51,8 +51,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // @ts-ignore - Cloudflare Pages provides this
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Check if user already exists
     const existingUser = await db

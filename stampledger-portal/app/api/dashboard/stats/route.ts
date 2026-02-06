@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
 import {
-  createDb,
+  getDb,
   stamps,
   documents,
   projects,
@@ -33,8 +33,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Organization ID required' }, { status: 400 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Verify user has access to org
     const membership = await db

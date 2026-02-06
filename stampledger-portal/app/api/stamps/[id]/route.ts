@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
-import { createDb, stamps } from '@/lib/db'
+import { getDb, stamps } from '@/lib/db'
 import { eq, and } from 'drizzle-orm'
 
 // GET /api/stamps/[id] - Get stamp details
@@ -22,8 +22,7 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const stamp = await db
       .select()
@@ -76,8 +75,7 @@ export async function POST(
       )
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Check stamp exists and belongs to user
     const stamp = await db

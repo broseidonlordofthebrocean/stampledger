@@ -1,10 +1,12 @@
 import { SignJWT, jwtVerify } from 'jose'
+import { getRequestContext } from '@cloudflare/next-on-pages'
 
 const JWT_EXPIRY = '24h'
 
 // Get JWT secret as Uint8Array for jose
 function getJwtSecret(): Uint8Array {
-  const secret = process.env.JWT_SECRET || 'dev-secret-change-in-production'
+  const { env } = getRequestContext()
+  const secret = (env as any).JWT_SECRET || 'dev-secret-change-in-production'
   return new TextEncoder().encode(secret)
 }
 

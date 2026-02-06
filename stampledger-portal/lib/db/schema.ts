@@ -419,6 +419,9 @@ export const stamps = sqliteTable('stamps', {
   specChangeIds: text('spec_change_ids'), // JSON array
   reviewStatement: text('review_statement'),
 
+  // QR code versioned payload
+  qrCodeData: text('qr_code_data'),
+
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   userId: text('user_id').notNull().references(() => users.id),
 })
@@ -442,6 +445,23 @@ export const batchStamps = sqliteTable('batch_stamps', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   completedAt: integer('completed_at', { mode: 'timestamp' }),
 })
+
+// =============================================================================
+// VERIFICATION LOGS
+// =============================================================================
+
+export const verificationLogs = sqliteTable('verification_logs', {
+  id: text('id').primaryKey(),
+  stampId: text('stamp_id').notNull().references(() => stamps.id),
+  verifiedAt: integer('verified_at', { mode: 'timestamp' }).notNull(),
+  verifierIpHash: text('verifier_ip_hash'),
+  verificationMethod: text('verification_method').notNull().default('web'), // 'web', 'api', 'extension', 'acrobat'
+  result: text('result').notNull(), // 'valid', 'invalid', 'revoked', 'not_found'
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ({
+  idxStamp: index('idx_verification_logs_stamp').on(table.stampId),
+  idxTime: index('idx_verification_logs_time').on(table.verifiedAt),
+}))
 
 // =============================================================================
 // LEGACY TABLES (kept for backward compatibility)
@@ -510,3 +530,5 @@ export type SpecProject = typeof specProjects.$inferSelect
 export type NewSpecProject = typeof specProjects.$inferInsert
 export type SpecVersion = typeof specVersions.$inferSelect
 export type NewSpecVersion = typeof specVersions.$inferInsert
+export type VerificationLog = typeof verificationLogs.$inferSelect
+export type NewVerificationLog = typeof verificationLogs.$inferInsert

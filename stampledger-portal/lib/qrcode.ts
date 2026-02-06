@@ -12,7 +12,7 @@ export async function generateStampQR(stampId: string): Promise<string> {
       dark: '#1a3a52', // Primary navy
       light: '#ffffff',
     },
-    errorCorrectionLevel: 'M',
+    errorCorrectionLevel: 'L',
   })
 
   return dataUrl

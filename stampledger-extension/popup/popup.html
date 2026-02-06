@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=400">
+  <title>StampLedger Verifier</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- ============================================================ -->
+  <!-- LOGIN VIEW                                                    -->
+  <!-- ============================================================ -->
+  <div id="login-view" class="view" hidden>
+    <header class="header">
+      <div class="logo-row">
+        <img src="../icons/icon48.png" alt="StampLedger" class="logo-icon" width="32" height="32">
+        <h1>StampLedger</h1>
+      </div>
+      <p class="subtitle">Engineering Stamp Verification</p>
+    </header>
+
+    <form id="login-form" class="card">
+      <h2>Sign In</h2>
+
+      <div id="login-error" class="error-message" hidden></div>
+
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" placeholder="you@company.com" required autocomplete="email">
+
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" placeholder="Password" required autocomplete="current-password">
+
+      <button type="submit" id="login-btn" class="btn btn-primary">
+        <span class="btn-text">Sign In</span>
+        <span class="btn-loading" hidden>Signing in...</span>
+      </button>
+
+      <p class="help-text">
+        <a href="https://portal.stampledger.com/register" target="_blank" rel="noopener">Create an account</a>
+      </p>
+    </form>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MAIN VIEW (authenticated)                                     -->
+  <!-- ============================================================ -->
+  <div id="main-view" class="view" hidden>
+    <header class="header">
+      <div class="header-top">
+        <div class="logo-row">
+          <img src="../icons/icon48.png" alt="StampLedger" class="logo-icon" width="24" height="24">
+          <h1>StampLedger</h1>
+        </div>
+        <button id="logout-btn" class="btn btn-ghost" title="Sign out">Sign Out</button>
+      </div>
+      <div id="user-info" class="user-info">
+        <span id="user-name" class="user-name"></span>
+        <span id="user-email" class="user-email"></span>
+      </div>
+    </header>
+
+    <!-- Verify Stamp -->
+    <section class="card">
+      <h2>Verify Stamp</h2>
+      <p class="card-desc">Enter a stamp ID or a StampLedger verification URL.</p>
+
+      <div class="input-group">
+        <input type="text" id="stamp-input" placeholder="Stamp ID or https://portal.stampledger.com/verify/...">
+        <button id="verify-btn" class="btn btn-primary btn-sm">Verify</button>
+      </div>
+
+      <div id="stamp-result" class="result" hidden></div>
+    </section>
+
+    <!-- Document Integrity -->
+    <section class="card">
+      <h2>Check Document Integrity</h2>
+      <p class="card-desc">Select a file to compute its SHA-256 hash and verify against StampLedger records.</p>
+
+      <div class="file-input-wrapper">
+        <label for="file-input" class="btn btn-outline btn-sm file-label">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 1v10M4 5l4-4 4 4M2 11v2a2 2 0 002 2h8a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Choose File
+        </label>
+        <input type="file" id="file-input" hidden>
+        <span id="file-name" class="file-name">No file selected</span>
+      </div>
+
+      <button id="integrity-btn" class="btn btn-primary btn-sm" disabled>Check Integrity</button>
+
+      <div id="hash-display" class="hash-display" hidden>
+        <span class="hash-label">SHA-256:</span>
+        <code id="hash-value"></code>
+      </div>
+
+      <div id="integrity-result" class="result" hidden></div>
+    </section>
+
+    <!-- Recent Verifications -->
+    <section class="card">
+      <h2>Recent Verifications</h2>
+      <div id="recent-list" class="recent-list">
+        <p class="empty-state">No recent verifications.</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <a href="https://portal.stampledger.com" target="_blank" rel="noopener">Open Portal</a>
+      <span class="sep">&middot;</span>
+      <a href="#" id="open-options">Settings</a>
+    </footer>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- LOADING VIEW                                                  -->
+  <!-- ============================================================ -->
+  <div id="loading-view" class="view loading-view">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

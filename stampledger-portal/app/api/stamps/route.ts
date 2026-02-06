@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { createDb, stamps, users } from '@/lib/db'
+import { getDb, stamps, users } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 import { generateStampQR, getVerifyUrl } from '@/lib/qrcode'
 
@@ -19,8 +19,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const userStamps = await db
       .select()
@@ -76,8 +75,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Get user for PE info
     const user = await db

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { createDb, batchStamps, stamps, professionalLicenses, projects, projectSpecifications, changeNotifications, documentRevisions, orgMemberships, users } from '@/lib/db'
+import { getDb, batchStamps, stamps, professionalLicenses, projects, projectSpecifications, changeNotifications, documentRevisions, orgMemberships, users } from '@/lib/db'
 import { eq, and, inArray, sql } from 'drizzle-orm'
 import { generateStampQR, getVerifyUrl } from '@/lib/qrcode'
 
@@ -44,8 +44,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Review statement is required' }, { status: 400 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Verify the license exists and belongs to the user
     const license = await db
@@ -251,8 +250,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const batches = await db
       .select()

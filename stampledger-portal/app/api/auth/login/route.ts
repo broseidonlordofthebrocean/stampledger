@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyPassword, signToken } from '@/lib/auth'
-import { createDb, users, orgMemberships, organizations } from '@/lib/db'
+import { getDb, users, orgMemberships, organizations } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 
 export async function POST(req: NextRequest) {
@@ -16,8 +16,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // @ts-ignore - Cloudflare Pages provides this
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     // Find user
     const user = await db

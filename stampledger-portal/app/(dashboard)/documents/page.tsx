@@ -16,12 +16,17 @@ import { hashDocument } from '@/lib/crypto'
 
 interface DocumentData {
   id: string
-  filename: string
-  mimeType: string
-  size: number
-  r2Key: string
+  title: string
+  documentType: string
+  documentNumber: string | null
+  discipline: string | null
+  status: string
+  filename: string | null
+  mimeType: string | null
+  size: number | null
+  r2Key: string | null
   ipfsHash: string | null
-  sha256Hash: string
+  sha256Hash: string | null
   createdAt: string
 }
 
@@ -176,21 +181,24 @@ export default function DocumentsPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 truncate">
-                      {doc.filename}
+                      {doc.title || doc.filename || 'Untitled'}
                     </h3>
                     <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
-                      <span>{formatFileSize(doc.size)}</span>
+                      {doc.size != null && <span>{formatFileSize(doc.size)}</span>}
+                      {doc.discipline && <span className="capitalize">{doc.discipline}</span>}
                       <span className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1" />
                         {new Date(doc.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Hash className="h-3 w-3 text-gray-400" />
-                      <code className="text-xs text-gray-500 font-mono truncate">
-                        {doc.sha256Hash.slice(0, 32)}...
-                      </code>
-                    </div>
+                    {doc.sha256Hash && (
+                      <div className="flex items-center gap-2 mt-2">
+                        <Hash className="h-3 w-3 text-gray-400" />
+                        <code className="text-xs text-gray-500 font-mono truncate">
+                          {doc.sha256Hash.slice(0, 32)}...
+                        </code>
+                      </div>
+                    )}
                     {doc.ipfsHash && (
                       <div className="flex items-center gap-2 mt-1">
                         <CheckCircle className="h-3 w-3 text-accent" />

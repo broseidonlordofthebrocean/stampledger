@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
-import { createDb, specProjects, specVersions } from '@/lib/db'
+import { getDb, specProjects, specVersions } from '@/lib/db'
 import { eq, and, desc } from 'drizzle-orm'
 
 // GET /api/specs/projects/[id] - Get project with versions
@@ -22,8 +22,7 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // @ts-ignore
-    const db = createDb(process.env.DB)
+    const db = getDb()
 
     const project = await db
       .select()
