@@ -18,9 +18,9 @@ database_id = "e6b5cea5-3915-4f03-b468-6c16ffb6fdc3"
 [vars]
 CHAIN_RPC_URL = "http://localhost:26657"
 # OAuth providers (secrets set via wrangler secret put)
-GOOGLE_CLIENT_ID = ""
-MICROSOFT_CLIENT_ID = ""
-MICROSOFT_TENANT_ID = "common"
+GOOGLE_CLIENT_ID = "999740795006-0qoj50uilpbvkh3b1u4et0abovgo4dmo.apps.googleusercontent.com"
+MICROSOFT_CLIENT_ID = "e4dc248f-fb2e-44c8-879f-66bbf8edb9d6"
+MICROSOFT_TENANT_ID = "4a87b2f4z-f0ed-4a6c-b368-6d68c6f16342"
 OAUTH_REDIRECT_BASE = "https://portal.stampledger.com"
 # WebAuthn / FIDO2
 WEBAUTHN_RP_NAME = "StampLedger"
