@@ -9,6 +9,7 @@ export default function Header() {
 
   const navigation = [
     { name: 'How It Works', href: '/how-it-works' },
+    { name: 'Integrations', href: '/integrations' },
     { name: 'For Municipalities', href: '/for-municipalities' },
     { name: 'For Engineers', href: '/for-engineers' },
     { name: 'Pricing', href: '/pricing' },

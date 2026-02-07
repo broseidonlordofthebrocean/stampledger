@@ -15,6 +15,10 @@ import {
   Smartphone,
   TrendingDown,
   ArrowRight,
+  Globe,
+  FileText,
+  QrCode,
+  Puzzle,
 } from 'lucide-react'
 
 export default function Home() {
@@ -274,10 +278,11 @@ export default function Home() {
               </p>
             </div>
             <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
-              <Smartphone className="w-10 h-10 text-accent mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Mobile Inspector App</h3>
+              <Puzzle className="w-10 h-10 text-accent mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Desktop Extensions</h3>
               <p className="text-primary-100">
-                Mobile-first verification for inspectors. Apps coming Q3 2026.
+                Browser and Adobe Acrobat extensions for instant verification
+                without leaving your current workflow.
               </p>
             </div>
             <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
@@ -292,8 +297,77 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Integrations & Extensions Section */}
+      <section className="section-padding bg-gray-50">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+              Works Where You Work
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Verify stamps directly from your browser, Adobe Acrobat, or any device with a camera
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mb-4">
+                <Globe className="w-6 h-6 text-secondary" />
+              </div>
+              <h3 className="text-xl font-semibold text-primary mb-2">Browser Extension</h3>
+              <p className="text-gray-600 mb-4">
+                Chrome and Edge extension for instant stamp verification.
+                Right-click any StampLedger link to verify, or check document integrity by hash.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full font-medium">Chrome</span>
+                <span className="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full font-medium">Edge</span>
+                <span className="text-xs bg-accent/10 text-accent-dark px-2 py-1 rounded-full font-medium">Available Now</span>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mb-4">
+                <FileText className="w-6 h-6 text-secondary" />
+              </div>
+              <h3 className="text-xl font-semibold text-primary mb-2">Adobe Acrobat</h3>
+              <p className="text-gray-600 mb-4">
+                Verify stamps and check document integrity directly inside Adobe Acrobat.
+                One-click verification from the menu bar while reviewing PDFs.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full font-medium">Acrobat Pro</span>
+                <span className="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full font-medium">Reader</span>
+                <span className="text-xs bg-accent/10 text-accent-dark px-2 py-1 rounded-full font-medium">Available Now</span>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mb-4">
+                <QrCode className="w-6 h-6 text-secondary" />
+              </div>
+              <h3 className="text-xl font-semibold text-primary mb-2">QR Verification</h3>
+              <p className="text-gray-600 mb-4">
+                Every stamped document includes a QR code. Scan with any smartphone camera
+                for instant verification — no app required.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full font-medium">iOS</span>
+                <span className="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full font-medium">Android</span>
+                <span className="text-xs bg-accent/10 text-accent-dark px-2 py-1 rounded-full font-medium">No App Needed</span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-8 text-center">
+            <Link href="/integrations">
+              <Button variant="secondary" size="lg">
+                View All Integrations
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
-      <section className="section-padding bg-gray-50" id="demo">
+      <section className="section-padding" id="demo">
         <div className="container-custom">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>

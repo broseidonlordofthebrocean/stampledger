@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Zap,
   Lock,
+  Smartphone,
 } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -296,8 +297,59 @@ export default function ForEngineers() {
         </div>
       </section>
 
-      {/* Pricing Preview */}
+      {/* Extensions Section */}
       <section className="section-padding bg-gray-50">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+              Verify From Any Tool
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              StampLedger extensions bring verification to your existing workflow
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+              <div className="w-14 h-14 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-7 h-7 text-secondary" />
+              </div>
+              <h3 className="text-lg font-semibold text-primary mb-2">Browser Extension</h3>
+              <p className="text-gray-600 text-sm">
+                Verify stamps and check document integrity from Chrome or Edge.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+              <div className="w-14 h-14 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <FileText className="w-7 h-7 text-secondary" />
+              </div>
+              <h3 className="text-lg font-semibold text-primary mb-2">Adobe Acrobat</h3>
+              <p className="text-gray-600 text-sm">
+                One-click verification and stamp annotations directly in Acrobat.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+              <div className="w-14 h-14 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Smartphone className="w-7 h-7 text-secondary" />
+              </div>
+              <h3 className="text-lg font-semibold text-primary mb-2">QR Verification</h3>
+              <p className="text-gray-600 text-sm">
+                Clients scan the QR code on stamped documents to verify instantly.
+              </p>
+            </div>
+          </div>
+          <div className="mt-8 text-center">
+            <Link href="/integrations">
+              <Button variant="secondary" size="lg">
+                View All Integrations
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Preview */}
+      <section className="section-padding">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">

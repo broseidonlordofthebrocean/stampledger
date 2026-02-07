@@ -332,20 +332,38 @@ export default function HowItWorks() {
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-primary mb-4">
-              Easy Integration
+              Works Where You Work
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              StampLedger works with your existing systems
+              StampLedger integrates with browsers, desktop apps, and mobile devices
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             <div className="text-center">
               <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Smartphone className="w-8 h-8 text-secondary" />
+                <QrCode className="w-8 h-8 text-secondary" />
               </div>
-              <h3 className="text-lg font-semibold text-primary mb-2">Mobile Apps</h3>
+              <h3 className="text-lg font-semibold text-primary mb-2">QR Verification</h3>
               <p className="text-gray-600">
-                iOS and Android apps for inspectors. Scan QR codes, verify stamps, work offline.
+                Scan the QR code on any stamped document with your phone camera. No app required.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-secondary" />
+              </div>
+              <h3 className="text-lg font-semibold text-primary mb-2">Browser Extension</h3>
+              <p className="text-gray-600">
+                Chrome and Edge extension for instant verification and document integrity checks.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-secondary" />
+              </div>
+              <h3 className="text-lg font-semibold text-primary mb-2">Adobe Acrobat</h3>
+              <p className="text-gray-600">
+                Verify stamps and check document integrity directly inside Acrobat Pro or Reader.
               </p>
             </div>
             <div className="text-center">
@@ -354,18 +372,17 @@ export default function HowItWorks() {
               </div>
               <h3 className="text-lg font-semibold text-primary mb-2">REST API</h3>
               <p className="text-gray-600">
-                Full API for integration with permit software (Accela, CityView, Tyler Technologies).
+                Full API for integration with permit software and custom workflows.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <QrCode className="w-8 h-8 text-secondary" />
-              </div>
-              <h3 className="text-lg font-semibold text-primary mb-2">QR Codes</h3>
-              <p className="text-gray-600">
-                Any smartphone can verify stamps by scanning the QR code. No app required for basic checks.
-              </p>
-            </div>
+          </div>
+          <div className="mt-8 text-center">
+            <Link href="/integrations">
+              <Button variant="secondary" size="lg">
+                View All Integrations
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

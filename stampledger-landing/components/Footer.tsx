@@ -5,6 +5,7 @@ export default function Footer() {
   const footerLinks = {
     product: [
       { name: 'How It Works', href: '/how-it-works' },
+      { name: 'Integrations', href: '/integrations' },
       { name: 'Pricing', href: '/pricing' },
       { name: 'For Municipalities', href: '/for-municipalities' },
       { name: 'For Engineers', href: '/for-engineers' },

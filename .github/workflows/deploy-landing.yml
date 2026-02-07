@@ -1,0 +1,45 @@
+name: Deploy StampLedger Landing to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'stampledger-landing/**'
+      - '.github/workflows/deploy-landing.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy Landing to Cloudflare Pages
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: stampledger-landing/package-lock.json
+
+      - name: Install dependencies
+        working-directory: stampledger-landing
+        run: npm ci
+
+      - name: Build with next-on-pages
+        working-directory: stampledger-landing
+        run: npx @cloudflare/next-on-pages
+        env:
+          NODE_ENV: production
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: stampledger-landing
+          command: pages deploy .vercel/output/static --project-name=stampledger-landing --branch=main --commit-dirty=true
