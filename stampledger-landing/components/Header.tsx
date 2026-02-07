@@ -39,18 +39,18 @@ export default function Header() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <Link
-            href="#demo"
+          <a
+            href="https://portal.stampledger.com/login"
             className="text-primary font-semibold hover:text-primary-light transition-colors"
           >
-            Request Demo
-          </Link>
-          <Link
-            href="#signup"
+            Sign In
+          </a>
+          <a
+            href="https://portal.stampledger.com/register"
             className="btn-primary"
           >
             Get Started
-          </Link>
+          </a>
         </div>
 
         {/* Mobile Menu Button */}
@@ -81,20 +81,20 @@ export default function Header() {
               </Link>
             ))}
             <hr className="my-2" />
-            <Link
-              href="#demo"
+            <a
+              href="https://portal.stampledger.com/login"
               className="text-primary font-semibold py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Request Demo
-            </Link>
-            <Link
-              href="#signup"
+              Sign In
+            </a>
+            <a
+              href="https://portal.stampledger.com/register"
               className="btn-primary text-center"
               onClick={() => setMobileMenuOpen(false)}
             >
               Get Started
-            </Link>
+            </a>
           </div>
         </div>
       )}
