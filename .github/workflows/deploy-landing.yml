@@ -28,7 +28,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: stampledger-landing
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Build with next-on-pages
         working-directory: stampledger-landing
