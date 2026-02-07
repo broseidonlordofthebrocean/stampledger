@@ -17,3 +17,12 @@ database_id = "e6b5cea5-3915-4f03-b468-6c16ffb6fdc3"
 # Environment variables (secrets should be set via wrangler secret put)
 [vars]
 CHAIN_RPC_URL = "http://localhost:26657"
+# OAuth providers (secrets set via wrangler secret put)
+GOOGLE_CLIENT_ID = ""
+MICROSOFT_CLIENT_ID = ""
+MICROSOFT_TENANT_ID = "common"
+OAUTH_REDIRECT_BASE = "https://portal.stampledger.com"
+# WebAuthn / FIDO2
+WEBAUTHN_RP_NAME = "StampLedger"
+WEBAUTHN_RP_ID = "portal.stampledger.com"
+WEBAUTHN_ORIGIN = "https://portal.stampledger.com"

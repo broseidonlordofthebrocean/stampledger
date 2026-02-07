@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
-import { getDb, users, professionalLicenses, orgMemberships, organizations } from '@/lib/db'
+import { hasPassword } from '@/lib/auth'
+import { getDb, users, professionalLicenses, orgMemberships, organizations, oauthAccounts, webauthnCredentials } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 
 export async function GET(req: NextRequest) {
@@ -77,6 +78,24 @@ export async function GET(req: NextRequest) {
     // Calculate total token count across all licenses
     const totalTokens = licenses.reduce((sum, l) => sum + (l.stampTokenCount || 0), 0)
 
+    // Get linked OAuth accounts
+    const linkedOAuth = await db.select({
+      id: oauthAccounts.id,
+      provider: oauthAccounts.provider,
+      providerEmail: oauthAccounts.providerEmail,
+      providerName: oauthAccounts.providerName,
+      createdAt: oauthAccounts.createdAt,
+    }).from(oauthAccounts).where(eq(oauthAccounts.userId, user.id))
+
+    // Get WebAuthn credentials
+    const waCredentials = await db.select({
+      id: webauthnCredentials.id,
+      deviceName: webauthnCredentials.deviceName,
+      credentialDeviceType: webauthnCredentials.credentialDeviceType,
+      lastUsedAt: webauthnCredentials.lastUsedAt,
+      createdAt: webauthnCredentials.createdAt,
+    }).from(webauthnCredentials).where(eq(webauthnCredentials.userId, user.id))
+
     return NextResponse.json({
       user: {
         id: user.id,
@@ -98,6 +117,9 @@ export async function GET(req: NextRequest) {
       licenses: parsedLicenses,
       organizations: orgs,
       totalTokens,
+      linkedAccounts: linkedOAuth,
+      webauthnCredentials: waCredentials,
+      hasPassword: hasPassword(user.passwordHash),
     })
   } catch (error) {
     console.error('Get user error:', error)

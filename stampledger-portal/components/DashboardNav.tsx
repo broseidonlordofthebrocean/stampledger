@@ -40,6 +40,7 @@ const navItems = [
 ]
 
 const settingsItems = [
+  { href: '/settings', label: 'Account & Security', icon: Shield },
   { href: '/organizations', label: 'Organizations', icon: Building2 },
   { href: '/licenses', label: 'Licenses', icon: Award },
 ]

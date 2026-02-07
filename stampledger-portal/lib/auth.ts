@@ -120,6 +120,11 @@ export function generateId(): string {
   return crypto.randomUUID()
 }
 
+// Check if user has a real password (not OAuth-only sentinel)
+export function hasPassword(passwordHash: string | null): boolean {
+  return passwordHash !== null && passwordHash !== 'NO_PASSWORD'
+}
+
 // Extract token from Authorization header
 export function extractToken(authHeader: string | null): string | null {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {

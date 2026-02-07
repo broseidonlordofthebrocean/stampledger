@@ -38,6 +38,22 @@ interface License {
   createdAt?: string
 }
 
+interface LinkedAccount {
+  id: string
+  provider: string
+  providerEmail: string | null
+  providerName: string | null
+  createdAt: string
+}
+
+interface WebAuthnCredentialInfo {
+  id: string
+  deviceName: string | null
+  credentialDeviceType: string
+  lastUsedAt: string | null
+  createdAt: string
+}
+
 interface AuthContextType {
   user: User | null
   token: string | null
@@ -46,9 +62,15 @@ interface AuthContextType {
   currentOrg: Organization | null
   licenses: License[]
   totalTokens: number
+  linkedAccounts: LinkedAccount[]
+  webauthnCredentials: WebAuthnCredentialInfo[]
+  hasPassword: boolean
   login: (email: string, password: string) => Promise<void>
   register: (data: RegisterData) => Promise<void>
   demoLogin: () => Promise<void>
+  loginWithOAuth: (provider: 'google' | 'microsoft') => Promise<void>
+  loginWithWebAuthn: (email?: string) => Promise<void>
+  handleOAuthCallback: (token: string) => Promise<void>
   logout: () => void
   switchOrg: (orgId: string) => void
   refreshUser: () => Promise<void>
@@ -74,6 +96,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentOrg, setCurrentOrg] = useState<Organization | null>(null)
   const [licenses, setLicenses] = useState<License[]>([])
   const [totalTokens, setTotalTokens] = useState(0)
+  const [linkedAccounts, setLinkedAccounts] = useState<LinkedAccount[]>([])
+  const [webauthnCredentials, setWebauthnCredentials] = useState<WebAuthnCredentialInfo[]>([])
+  const [userHasPassword, setUserHasPassword] = useState(true)
   const router = useRouter()
 
   // Load user from localStorage on mount
@@ -99,6 +124,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setOrganizations(data.organizations || [])
         setLicenses(data.licenses || [])
         setTotalTokens(data.totalTokens || 0)
+        setLinkedAccounts(data.linkedAccounts || [])
+        setWebauthnCredentials(data.webauthnCredentials || [])
+        setUserHasPassword(data.hasPassword !== false)
 
         // Set current org from saved or first active org
         if (data.organizations?.length > 0) {
@@ -205,6 +233,72 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push('/')
   }
 
+  const loginWithOAuth = async (provider: 'google' | 'microsoft') => {
+    const res = await fetch(`/api/auth/oauth/${provider}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+
+    if (!res.ok) {
+      const data = await res.json()
+      throw new Error(data.error || 'Failed to initiate OAuth')
+    }
+
+    const data = await res.json()
+    window.location.href = data.url
+  }
+
+  const handleOAuthCallback = async (callbackToken: string) => {
+    localStorage.setItem('token', callbackToken)
+    setToken(callbackToken)
+    await fetchUser(callbackToken)
+  }
+
+  const loginWithWebAuthn = async (email?: string) => {
+    // Dynamic import to avoid bundling in non-supporting browsers
+    const { startAuthentication, browserSupportsWebAuthn } = await import('@simplewebauthn/browser')
+
+    if (!browserSupportsWebAuthn()) {
+      throw new Error('Your browser does not support security key authentication')
+    }
+
+    // Get authentication options
+    const optionsRes = await fetch('/api/auth/webauthn/authenticate/options', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    })
+
+    if (!optionsRes.ok) {
+      const data = await optionsRes.json()
+      throw new Error(data.error || 'Failed to get authentication options')
+    }
+
+    const { options, challengeId } = await optionsRes.json()
+
+    // Trigger the browser prompt
+    const authResponse = await startAuthentication({ optionsJSON: options })
+
+    // Verify with the server
+    const verifyRes = await fetch('/api/auth/webauthn/authenticate/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ challengeId, response: authResponse }),
+    })
+
+    if (!verifyRes.ok) {
+      const data = await verifyRes.json()
+      throw new Error(data.error || 'Security key verification failed')
+    }
+
+    const data = await verifyRes.json()
+    localStorage.setItem('token', data.token)
+    setToken(data.token)
+    await fetchUser(data.token)
+    router.push('/')
+  }
+
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('currentOrgId')
@@ -214,6 +308,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCurrentOrg(null)
     setLicenses([])
     setTotalTokens(0)
+    setLinkedAccounts([])
+    setWebauthnCredentials([])
+    setUserHasPassword(true)
     router.push('/login')
   }
 
@@ -238,9 +335,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         register,
         demoLogin,
+        loginWithOAuth,
+        loginWithWebAuthn,
+        handleOAuthCallback,
         logout,
         switchOrg,
         refreshUser,
+        linkedAccounts,
+        webauthnCredentials,
+        hasPassword: userHasPassword,
       }}
     >
       {children}

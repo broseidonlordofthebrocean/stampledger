@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyPassword, signToken } from '@/lib/auth'
-import { getDb, users, orgMemberships, organizations } from '@/lib/db'
+import { verifyPassword, signToken, hasPassword } from '@/lib/auth'
+import { getDb, users, orgMemberships, organizations, oauthAccounts } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 
 export async function POST(req: NextRequest) {
@@ -29,6 +29,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
+      )
+    }
+
+    // Check if this is an OAuth-only account
+    if (!hasPassword(user.passwordHash)) {
+      const linked = await db.select({ provider: oauthAccounts.provider })
+        .from(oauthAccounts)
+        .where(eq(oauthAccounts.userId, user.id))
+      const providers = linked.map(p => p.provider).join(', ') || 'external'
+      return NextResponse.json(
+        { error: `This account uses ${providers} sign-in. Please use the appropriate sign-in button.` },
+        { status: 400 }
       )
     }
 

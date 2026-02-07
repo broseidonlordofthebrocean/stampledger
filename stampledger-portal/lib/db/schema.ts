@@ -464,6 +464,63 @@ export const verificationLogs = sqliteTable('verification_logs', {
 }))
 
 // =============================================================================
+// OAUTH & MULTI-PROVIDER AUTHENTICATION
+// =============================================================================
+
+// OAuth linked accounts (Google, Microsoft, Apple)
+export const oauthAccounts = sqliteTable('oauth_accounts', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+
+  provider: text('provider').notNull(), // 'google', 'microsoft', 'apple'
+  providerAccountId: text('provider_account_id').notNull(),
+
+  accessToken: text('access_token'),
+  refreshToken: text('refresh_token'),
+  accessTokenExpiresAt: integer('access_token_expires_at', { mode: 'timestamp' }),
+  idToken: text('id_token'),
+
+  providerEmail: text('provider_email'),
+  providerName: text('provider_name'),
+  providerAvatarUrl: text('provider_avatar_url'),
+
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ({
+  uniqueProviderAccount: uniqueIndex('unique_provider_account').on(table.provider, table.providerAccountId),
+  idxOauthUser: index('idx_oauth_user').on(table.userId),
+}))
+
+// WebAuthn credentials (CAC, YubiKey, platform authenticators)
+export const webauthnCredentials = sqliteTable('webauthn_credentials', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+
+  credentialId: text('credential_id').notNull().unique(),
+  credentialPublicKey: text('credential_public_key').notNull(),
+  counter: integer('counter').notNull().default(0),
+  credentialDeviceType: text('credential_device_type').notNull(), // 'singleDevice' or 'multiDevice'
+  credentialBackedUp: integer('credential_backed_up', { mode: 'boolean' }).notNull().default(false),
+  transports: text('transports'), // JSON array: ['usb', 'nfc', 'ble', 'internal', 'smart-card']
+
+  deviceName: text('device_name'), // User label: "YubiKey 5", "CAC Reader"
+  lastUsedAt: integer('last_used_at', { mode: 'timestamp' }),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ({
+  idxWaUser: index('idx_wa_user').on(table.userId),
+}))
+
+// Ephemeral auth challenges (OAuth state/PKCE, WebAuthn challenges)
+export const authChallenges = sqliteTable('auth_challenges', {
+  id: text('id').primaryKey(),
+  challengeType: text('challenge_type').notNull(), // 'oauth_state', 'webauthn_register', 'webauthn_authenticate'
+  challengeData: text('challenge_data').notNull(), // JSON blob
+  userId: text('user_id'), // Set when linking to existing account
+  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+})
+
+// =============================================================================
 // LEGACY TABLES (kept for backward compatibility)
 // =============================================================================
 
@@ -532,3 +589,9 @@ export type SpecVersion = typeof specVersions.$inferSelect
 export type NewSpecVersion = typeof specVersions.$inferInsert
 export type VerificationLog = typeof verificationLogs.$inferSelect
 export type NewVerificationLog = typeof verificationLogs.$inferInsert
+export type OAuthAccount = typeof oauthAccounts.$inferSelect
+export type NewOAuthAccount = typeof oauthAccounts.$inferInsert
+export type WebAuthnCredential = typeof webauthnCredentials.$inferSelect
+export type NewWebAuthnCredential = typeof webauthnCredentials.$inferInsert
+export type AuthChallenge = typeof authChallenges.$inferSelect
+export type NewAuthChallenge = typeof authChallenges.$inferInsert
