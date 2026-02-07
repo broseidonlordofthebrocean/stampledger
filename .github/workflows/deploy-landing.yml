@@ -42,4 +42,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: stampledger-landing
-          command: pages deploy .vercel/output/static --project-name=stampledger-landing --branch=main --commit-dirty=true
+          command: pages deploy .vercel/output/static --project-name=stampledger-landing --branch=master --commit-dirty=true
