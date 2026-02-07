@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyToken, extractToken, verifyPassword, generateId } from '@/lib/auth'
+import { verifyToken, extractToken, verifyPassword, signToken } from '@/lib/auth'
 import { getDb, users } from '@/lib/db'
 import { eq } from 'drizzle-orm'
-import { SignJWT } from 'jose'
-import { getRequestContext } from '@cloudflare/next-on-pages'
-
-const EXTENSION_TOKEN_EXPIRY = '7d'
 
 // POST /api/auth/extension-token
 // Two modes:
@@ -17,7 +13,7 @@ export async function POST(req: NextRequest) {
     const authHeader = req.headers.get('Authorization')
     const existingToken = extractToken(authHeader)
 
-    let userId: string
+    let userId: string | null = null
 
     if (existingToken) {
       // Mode 1: Exchange existing token for extension token
@@ -28,7 +24,16 @@ export async function POST(req: NextRequest) {
       userId = payload.userId
     } else {
       // Mode 2: Direct login with email/password
-      const body = await req.json()
+      let body: any
+      try {
+        body = await req.json()
+      } catch {
+        return NextResponse.json(
+          { error: 'Request body required when no Authorization header provided' },
+          { status: 400 }
+        )
+      }
+
       const { email, password } = body
 
       if (!email || !password) {
@@ -56,6 +61,10 @@ export async function POST(req: NextRequest) {
       userId = user.id
     }
 
+    if (!userId) {
+      return NextResponse.json({ error: 'Authentication failed' }, { status: 401 })
+    }
+
     // Get user info
     const user = await db
       .select({
@@ -72,24 +81,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Sign extension token with limited scope
-    const { env } = getRequestContext()
-    const secret = (env as any).JWT_SECRET || 'dev-secret-change-in-production'
-    const jwtSecret = new TextEncoder().encode(secret)
-
-    const extensionToken = await new SignJWT({
-      userId: user.id,
-      scope: 'extension',
-      type: 'extension',
-    })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime(EXTENSION_TOKEN_EXPIRY)
-      .sign(jwtSecret)
+    // Sign extension token (reuses same JWT signing as regular tokens)
+    const extensionToken = await signToken(user.id)
 
     return NextResponse.json({
       token: extensionToken,
-      expiresIn: '7d',
+      expiresIn: '24h',
       user: {
         id: user.id,
         email: user.email,

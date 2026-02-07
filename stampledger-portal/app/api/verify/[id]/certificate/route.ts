@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb, stamps, users, professionalLicenses } from '@/lib/db'
 import { eq } from 'drizzle-orm'
-import { generateStampQR } from '@/lib/qrcode'
 
 // GET /api/verify/[id]/certificate - Generate verification certificate HTML
 // No auth required (public)
@@ -45,8 +44,9 @@ export async function GET(
         .get()
     }
 
-    // Generate QR code
-    const qrDataUrl = stamp.qrCodeDataUrl || await generateStampQR(stamp.id)
+    // Use stored QR code or generate verify URL for display
+    const verifyUrl = `https://portal.stampledger.com/verify/${stamp.id}`
+    const qrDataUrl = stamp.qrCodeDataUrl || null
 
     const isValid = stamp.status === 'active'
     const peName = pe ? `${pe.firstName || ''} ${pe.lastName || ''}`.trim() : 'Unknown'
@@ -170,8 +170,8 @@ export async function GET(
     </div>
 
     <div class="qr-section">
-      <img src="${qrDataUrl}" alt="Verification QR Code" />
-      <div class="qr-label">Scan to verify this stamp online</div>
+      ${qrDataUrl ? `<img src="${qrDataUrl}" alt="Verification QR Code" />` : ''}
+      <div class="qr-label">Verify online: <a href="${verifyUrl}" style="color: #1a3a52;">${verifyUrl}</a></div>
     </div>
 
     <div class="footer">
