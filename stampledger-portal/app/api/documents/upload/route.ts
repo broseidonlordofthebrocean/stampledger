@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
 import { getDb, documents } from '@/lib/db'
 import { eq } from 'drizzle-orm'
+import { getRequestContext } from '@cloudflare/next-on-pages'
 
 // POST /api/documents/upload - Upload a document
 export async function POST(req: NextRequest) {
@@ -38,8 +39,8 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // @ts-ignore - R2 bucket from Cloudflare bindings
-    const r2Bucket = process.env.R2_BUCKET
+    const { env } = getRequestContext()
+    const r2Bucket = (env as any).R2_BUCKET
 
     // Generate unique key for R2
     const docId = generateId()

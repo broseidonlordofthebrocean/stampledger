@@ -9,10 +9,10 @@ binding = "DB"
 database_name = "stampledger-portal"
 database_id = "e6b5cea5-3915-4f03-b468-6c16ffb6fdc3"
 
-# R2 Bucket for document storage (enable R2 in Cloudflare dashboard first)
-# [[r2_buckets]]
-# binding = "R2_BUCKET"
-# bucket_name = "stampledger-documents"
+# R2 Bucket for document storage
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "stampledger-documents"
 
 # Environment variables (secrets should be set via wrangler secret put)
 [vars]
