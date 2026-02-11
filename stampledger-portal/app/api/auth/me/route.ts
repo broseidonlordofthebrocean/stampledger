@@ -3,6 +3,7 @@ import { verifyToken, extractToken } from '@/lib/auth'
 import { hasPassword } from '@/lib/auth'
 import { getDb, users, professionalLicenses, orgMemberships, organizations, oauthAccounts, webauthnCredentials } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
+import { isAdminEmail } from '@/lib/admin'
 
 export async function GET(req: NextRequest) {
   try {
@@ -120,6 +121,7 @@ export async function GET(req: NextRequest) {
       linkedAccounts: linkedOAuth,
       webauthnCredentials: waCredentials,
       hasPassword: hasPassword(user.passwordHash),
+      isAdmin: isAdminEmail(user.email),
     })
   } catch (error) {
     console.error('Get user error:', error)

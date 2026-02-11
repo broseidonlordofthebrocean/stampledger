@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
-import { getDb, professionalLicenses, orgMemberships } from '@/lib/db'
-import { eq, and } from 'drizzle-orm'
+import { isAdminEmail } from '@/lib/admin'
+import { getDb, professionalLicenses, users } from '@/lib/db'
+import { eq } from 'drizzle-orm'
 
 // POST /api/admin/licenses/verify - Admin manual license verification
 export async function POST(req: NextRequest) {
@@ -18,24 +19,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // Check if user has admin role in any org
     const db = getDb()
-    const adminMembership = await db
-      .select()
-      .from(orgMemberships)
-      .where(
-        and(
-          eq(orgMemberships.userId, payload.userId),
-          eq(orgMemberships.status, 'active')
-        )
-      )
-      .all()
 
-    const isAdmin = adminMembership.some((m) =>
-      ['owner', 'admin'].includes(m.role)
-    )
-
-    if (!isAdmin) {
+    const user = await db.select().from(users).where(eq(users.id, payload.userId)).get()
+    if (!user || !isAdminEmail(user.email)) {
       return NextResponse.json(
         { error: 'Admin access required' },
         { status: 403 }

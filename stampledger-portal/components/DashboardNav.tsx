@@ -24,6 +24,9 @@ import {
   Award,
   Settings,
   Puzzle,
+  ShieldAlert,
+  Users,
+  BarChart3,
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { Button } from './ui/button'
@@ -45,9 +48,16 @@ const settingsItems = [
   { href: '/licenses', label: 'Licenses', icon: Award },
 ]
 
+const adminItems = [
+  { href: '/admin', label: 'Overview', icon: BarChart3 },
+  { href: '/admin/users', label: 'Users', icon: Users },
+  { href: '/admin/orgs', label: 'Organizations', icon: Building2 },
+  { href: '/admin/licenses', label: 'Licenses', icon: Award },
+]
+
 export function DashboardNav() {
   const pathname = usePathname()
-  const { user, logout, organizations, currentOrg, switchOrg, totalTokens } = useAuth()
+  const { user, logout, organizations, currentOrg, switchOrg, totalTokens, isAdmin } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [orgDropdownOpen, setOrgDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -197,6 +207,40 @@ export function DashboardNav() {
                 )
               })}
             </div>
+
+            {/* Admin Section */}
+            {isAdmin && (
+              <div className="pt-6 mt-4">
+                <p className="px-3 text-[10px] font-semibold text-amber-300/70 uppercase tracking-widest mb-2">
+                  Admin
+                </p>
+                {adminItems.map((item) => {
+                  const isActive = item.href === '/admin'
+                    ? pathname === '/admin'
+                    : pathname.startsWith(item.href)
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        'group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200',
+                        isActive
+                          ? 'bg-amber-400/20 text-amber-100 shadow-sm'
+                          : 'text-white/70 hover:bg-white/10 hover:text-white'
+                      )}
+                    >
+                      <div className={cn(
+                        "p-1.5 rounded-lg mr-3 transition-colors",
+                        isActive ? "bg-amber-400/20" : "bg-white/5 group-hover:bg-white/10"
+                      )}>
+                        <item.icon className={cn("h-4 w-4", isActive ? "text-amber-300" : "text-white/80")} />
+                      </div>
+                      {item.label}
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
           </nav>
 
           {/* Footer Section */}
@@ -352,6 +396,36 @@ export function DashboardNav() {
                 )
               })}
             </div>
+
+            {/* Admin Section Mobile */}
+            {isAdmin && (
+              <div className="pt-6 mt-4 pb-32">
+                <p className="px-4 text-[10px] font-semibold text-amber-300/70 uppercase tracking-widest mb-3">
+                  Admin
+                </p>
+                {adminItems.map((item) => {
+                  const isActive = item.href === '/admin'
+                    ? pathname === '/admin'
+                    : pathname.startsWith(item.href)
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={cn(
+                        'flex items-center px-4 py-3.5 text-base font-medium rounded-xl transition-all duration-200',
+                        isActive
+                          ? 'bg-amber-400/20 text-amber-100 shadow-sm'
+                          : 'text-white/70 hover:bg-white/10 hover:text-white'
+                      )}
+                    >
+                      <item.icon className={cn("h-5 w-5 mr-3", isActive ? "text-amber-300" : "text-white/60")} />
+                      {item.label}
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
           </nav>
 
           <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 p-4 bg-primary-dark/50 backdrop-blur-sm">

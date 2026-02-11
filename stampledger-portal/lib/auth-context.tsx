@@ -60,6 +60,7 @@ interface AuthContextType {
   user: User | null
   token: string | null
   loading: boolean
+  isAdmin: boolean
   organizations: Organization[]
   currentOrg: Organization | null
   licenses: License[]
@@ -101,6 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [linkedAccounts, setLinkedAccounts] = useState<LinkedAccount[]>([])
   const [webauthnCredentials, setWebauthnCredentials] = useState<WebAuthnCredentialInfo[]>([])
   const [userHasPassword, setUserHasPassword] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
   const router = useRouter()
 
   // Load user from localStorage on mount
@@ -129,6 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLinkedAccounts(data.linkedAccounts || [])
         setWebauthnCredentials(data.webauthnCredentials || [])
         setUserHasPassword(data.hasPassword !== false)
+        setIsAdmin(data.isAdmin === true)
 
         // Set current org from saved or first active org
         if (data.organizations?.length > 0) {
@@ -313,6 +316,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLinkedAccounts([])
     setWebauthnCredentials([])
     setUserHasPassword(true)
+    setIsAdmin(false)
     router.push('/login')
   }
 
@@ -330,6 +334,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         token,
         loading,
+        isAdmin,
         organizations,
         currentOrg,
         licenses,

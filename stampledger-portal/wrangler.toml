@@ -26,3 +26,5 @@ OAUTH_REDIRECT_BASE = "https://portal.stampledger.com"
 WEBAUTHN_RP_NAME = "StampLedger"
 WEBAUTHN_RP_ID = "portal.stampledger.com"
 WEBAUTHN_ORIGIN = "https://portal.stampledger.com"
+# Platform admin emails (comma-separated)
+ADMIN_EMAILS = "txbrigman@gmail.com,demo@stampledger.com"
