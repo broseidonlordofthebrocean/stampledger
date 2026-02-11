@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
 import { getDb, professionalLicenses, users } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
+import {
+  verifyTexasLicense,
+  isAutomatedVerificationSupported,
+  getStateBoardUrl,
+  type VerificationResult,
+} from '@/lib/license-verification'
 
 // GET /api/licenses - List user's professional licenses
 export async function GET(req: NextRequest) {
@@ -130,6 +136,39 @@ export async function POST(req: NextRequest) {
       .set({ isLicensedProfessional: true, updatedAt: now })
       .where(eq(users.id, payload.userId))
 
+    // Auto-verify TX PE licenses against TBPE roster
+    let verificationResult: VerificationResult | null = null
+    const upperState = issuingState.toUpperCase()
+
+    if (licenseType === 'PE' && isAutomatedVerificationSupported(upperState)) {
+      const user = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, payload.userId))
+        .get()
+
+      if (user) {
+        verificationResult = await verifyTexasLicense(
+          licenseNumber,
+          user.firstName,
+          user.lastName
+        )
+
+        if (verificationResult.verified) {
+          await db
+            .update(professionalLicenses)
+            .set({
+              status: 'active',
+              verificationSource: 'state_board_api',
+              lastVerifiedAt: now,
+              issuingBody: verificationResult.boardName || issuingBody || null,
+              updatedAt: now,
+            })
+            .where(eq(professionalLicenses.id, licenseId))
+        }
+      }
+    }
+
     const newLicense = await db
       .select()
       .from(professionalLicenses)
@@ -141,7 +180,11 @@ export async function POST(req: NextRequest) {
         ...newLicense,
         disciplines: newLicense?.disciplines ? JSON.parse(newLicense.disciplines) : [],
       },
-      message: 'License added. Verification pending.',
+      verificationResult,
+      lookupUrl: getStateBoardUrl(upperState),
+      message: verificationResult?.verified
+        ? 'License added and verified!'
+        : 'License added. Verification pending.',
     })
   } catch (error) {
     console.error('Add license error:', error)

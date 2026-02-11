@@ -34,6 +34,8 @@ interface License {
   stampTokenCount: number
   expirationDate?: string
   verificationUrl?: string
+  verificationSource?: string
+  lastVerifiedAt?: string
   disciplines?: string[]
   createdAt?: string
 }

@@ -18,20 +18,63 @@ import {
   Loader2,
   Shield,
   Briefcase,
+  ExternalLink,
+  ShieldCheck,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 
-interface License {
-  id: string
-  licenseType: string
-  licenseNumber: string
-  issuingState: string
-  status: string
-  stampTokenCount: number
-  expirationDate: string | null
-  verificationUrl: string | null
-  disciplines: string[]
-  createdAt: string
+// State board lookup URLs (subset used for UI links)
+const STATE_BOARD_URLS: Record<string, string> = {
+  AL: 'https://www.bels.alabama.gov/search/',
+  AK: 'https://www.commerce.alaska.gov/cbp/main/search/professional',
+  AZ: 'https://btr.az.gov/licensee-search',
+  AR: 'https://www.pels.arkansas.gov/verify-a-license/',
+  CA: 'https://www.bpelsg.ca.gov/consumers/lic_lookup.shtml',
+  CO: 'https://apps.colorado.gov/dora/licensing/Lookup/LicenseLookup.aspx',
+  CT: 'https://www.elicense.ct.gov/Lookup/LicenseLookup.aspx',
+  DE: 'https://delpros.delaware.gov/OH_VerifyLicense',
+  FL: 'https://www.myfloridalicense.com/wl11.asp',
+  GA: 'https://sos.ga.gov/PLB/PLBSearch.aspx',
+  HI: 'https://pvl.ehawaii.gov/pvlsearch/',
+  ID: 'https://isee.ibol.idaho.gov/',
+  IL: 'https://ilesonline.idfpr.illinois.gov/DPR/Lookup/LicenseLookup.aspx',
+  IN: 'https://mylicense.in.gov/everification/',
+  IA: 'https://plb.iowa.gov/licensee-search',
+  KS: 'https://www.kansas.gov/btp-verify/',
+  KY: 'https://elicensing.ky.gov/verification/',
+  LA: 'https://www.lapels.com/LicenseeSearch.aspx',
+  ME: 'https://www.pfr.maine.gov/ALMSOnline/ALMSQuery/SearchIndividual.aspx',
+  MD: 'https://www.dllr.state.md.us/cgi-bin/ElectronicLicensing/OP_Search/OP_search.cgi',
+  MA: 'https://www.mass.gov/how-to/check-a-professional-engineers-license',
+  MI: 'https://aca-prod.accela.com/MILARA/GeneralProperty/PropertyLookUp.aspx',
+  MN: 'https://mn.gov/aelslagid/roster.html',
+  MS: 'https://www.pepls.ms.gov/verification/',
+  MO: 'https://pr.mo.gov/licensee-search.asp',
+  MT: 'https://ebizws.mt.gov/PUBLICPORTAL/',
+  NE: 'https://www.nebraska.gov/LISSearch/search.cgi',
+  NV: 'https://nvbpels.org/verify-a-license/',
+  NH: 'https://nhlicenses.nh.gov/',
+  NJ: 'https://newjersey.mylicense.com/verification/',
+  NM: 'https://www.rld.nm.gov/boards-and-commissions/engineering-and-surveying/',
+  NY: 'http://www.op.nysed.gov/opsearches.htm',
+  NC: 'https://www.ncbels.org/licensee-roster',
+  ND: 'https://www.ndpelsboard.org/verify',
+  OH: 'https://elicense.ohio.gov/oh_verifylicense',
+  OK: 'https://www.pels.ok.gov/verify/',
+  OR: 'https://www.oregon.gov/osbeels/Pages/Verify-a-License.aspx',
+  PA: 'https://www.pals.pa.gov/#/page/search',
+  RI: 'https://elicensing.ri.gov/Lookup/LicenseLookup.aspx',
+  SC: 'https://verify.llr.sc.gov/',
+  SD: 'https://dlr.sd.gov/bdcomm/engineer/pe_roster.aspx',
+  TN: 'https://verify.tn.gov/',
+  TX: 'https://pels.texas.gov/roster/pesearch.html',
+  UT: 'https://secure.utah.gov/llv/search/index.html',
+  VT: 'https://sos.vermont.gov/opr/engineers/',
+  VA: 'https://www.dpor.virginia.gov/LicenseLookup',
+  WA: 'https://fortress.wa.gov/lni/bbip/',
+  WV: 'https://www.wvpebd.org/verify',
+  WI: 'https://licensesearch.wi.gov/',
+  WY: 'https://engineersandsurveyors.wyo.gov/verify-a-license',
+  DC: 'https://dcra.dc.gov/service/verify-license',
 }
 
 const LICENSE_TYPES = [
@@ -57,6 +100,12 @@ export default function LicensesPage() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [verifyingId, setVerifyingId] = useState<string | null>(null)
+  const [verifyResult, setVerifyResult] = useState<{
+    licenseId: string
+    verified: boolean
+    message: string
+  } | null>(null)
 
   const [createForm, setCreateForm] = useState({
     licenseType: 'PE',
@@ -88,6 +137,7 @@ export default function LicensesPage() {
         throw new Error(data.error || 'Failed to add license')
       }
 
+      const data = await res.json()
       setShowAddModal(false)
       setCreateForm({
         licenseType: 'PE',
@@ -97,9 +147,13 @@ export default function LicensesPage() {
         verificationUrl: '',
         disciplines: [],
       })
-      setSuccess('License added successfully')
+      if (data.verificationResult?.verified) {
+        setSuccess('License added and verified against state board!')
+      } else {
+        setSuccess('License added successfully')
+      }
       await refreshUser()
-      setTimeout(() => setSuccess(''), 3000)
+      setTimeout(() => setSuccess(''), 5000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add license')
     } finally {
@@ -107,11 +161,59 @@ export default function LicensesPage() {
     }
   }
 
+  const handleVerifyLicense = async (licenseId: string) => {
+    if (!token) return
+    setVerifyingId(licenseId)
+    setVerifyResult(null)
+
+    try {
+      const res = await fetch('/api/licenses/verify', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ licenseId }),
+      })
+
+      const data = await res.json()
+
+      if (data.verified) {
+        setVerifyResult({
+          licenseId,
+          verified: true,
+          message: `License verified against ${data.boardName || 'state board'}`,
+        })
+        await refreshUser()
+      } else if (data.supported === false) {
+        setVerifyResult({
+          licenseId,
+          verified: false,
+          message: data.message || 'Automated verification not available for this state.',
+        })
+      } else {
+        setVerifyResult({
+          licenseId,
+          verified: false,
+          message: data.error || 'License could not be verified.',
+        })
+      }
+    } catch (err) {
+      setVerifyResult({
+        licenseId,
+        verified: false,
+        message: 'Verification service unavailable. Try again later.',
+      })
+    } finally {
+      setVerifyingId(null)
+    }
+  }
+
   const getStatusBadge = (status: string, expirationDate: string | null) => {
     const isExpiringSoon = expirationDate &&
       new Date(expirationDate) <= new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
 
-    if (status === 'verified') {
+    if (status === 'active' || status === 'verified') {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
           <CheckCircle2 className="h-3 w-3 mr-1" />
@@ -127,6 +229,14 @@ export default function LicensesPage() {
         </span>
       )
     }
+    if (status === 'suspended' || status === 'revoked') {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+          <AlertCircle className="h-3 w-3 mr-1" />
+          {status === 'suspended' ? 'Suspended' : 'Revoked'}
+        </span>
+      )
+    }
     if (isExpiringSoon) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
@@ -138,7 +248,7 @@ export default function LicensesPage() {
     return (
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
         <Clock className="h-3 w-3 mr-1" />
-        {status}
+        Pending
       </span>
     )
   }
@@ -264,23 +374,66 @@ export default function LicensesPage() {
                     )}
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="flex items-center text-primary font-semibold">
+                <div className="text-right space-y-2">
+                  <div className="flex items-center justify-end text-primary font-semibold">
                     <Coins className="h-4 w-4 mr-1" />
                     {license.stampTokenCount.toLocaleString()} tokens
                   </div>
-                  {license.verificationUrl && (
+                  {license.status === 'active' && license.lastVerifiedAt && (
+                    <p className="text-xs text-gray-400">
+                      Verified {new Date(license.lastVerifiedAt).toLocaleDateString()}
+                    </p>
+                  )}
+                  {license.status === 'pending_verification' && license.issuingState === 'TX' && license.licenseType === 'PE' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleVerifyLicense(license.id)}
+                      disabled={verifyingId === license.id}
+                    >
+                      {verifyingId === license.id ? (
+                        <>
+                          <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                          Verifying...
+                        </>
+                      ) : (
+                        <>
+                          <ShieldCheck className="h-3 w-3 mr-1" />
+                          Verify License
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  {STATE_BOARD_URLS[license.issuingState] && (
                     <a
-                      href={license.verificationUrl}
+                      href={STATE_BOARD_URLS[license.issuingState]}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-blue-600 hover:underline mt-1 block"
+                      className="inline-flex items-center text-xs text-blue-600 hover:underline"
                     >
-                      Verify License
+                      Lookup on State Board
+                      <ExternalLink className="h-3 w-3 ml-1" />
                     </a>
                   )}
                 </div>
               </div>
+              {/* Verification result banner */}
+              {verifyResult && verifyResult.licenseId === license.id && (
+                <div
+                  className={`mt-4 px-4 py-3 rounded-lg text-sm ${
+                    verifyResult.verified
+                      ? 'bg-green-50 border border-green-200 text-green-700'
+                      : 'bg-yellow-50 border border-yellow-200 text-yellow-700'
+                  }`}
+                >
+                  {verifyResult.verified ? (
+                    <CheckCircle2 className="h-4 w-4 inline mr-2" />
+                  ) : (
+                    <AlertCircle className="h-4 w-4 inline mr-2" />
+                  )}
+                  {verifyResult.message}
+                </div>
+              )}
             </div>
           ))}
         </div>
