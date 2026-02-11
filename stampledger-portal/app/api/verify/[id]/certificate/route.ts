@@ -44,9 +44,8 @@ export async function GET(
         .get()
     }
 
-    // Use stored QR code or generate verify URL for display
     const verifyUrl = `https://portal.stampledger.com/verify/${stamp.id}`
-    const qrDataUrl = stamp.qrCodeDataUrl || null
+    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifyUrl)}&color=1a3a52`
 
     const isValid = stamp.status === 'active'
     const peName = pe ? `${pe.firstName || ''} ${pe.lastName || ''}`.trim() : 'Unknown'
@@ -170,7 +169,7 @@ export async function GET(
     </div>
 
     <div class="qr-section">
-      ${qrDataUrl ? `<img src="${qrDataUrl}" alt="Verification QR Code" />` : ''}
+      <img src="${qrImageUrl}" alt="Verification QR Code" />
       <div class="qr-label">Verify online: <a href="${verifyUrl}" style="color: #1a3a52;">${verifyUrl}</a></div>
     </div>
 

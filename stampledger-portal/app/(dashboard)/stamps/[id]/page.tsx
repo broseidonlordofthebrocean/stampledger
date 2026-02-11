@@ -17,6 +17,7 @@ import {
   Eye,
   Link as LinkIcon,
 } from 'lucide-react'
+import { QRCodeImage, generateQRDataUrl } from '@/components/QRCode'
 
 interface StampData {
   id: string
@@ -118,11 +119,12 @@ export default function StampDetailPage({
     }
   }
 
-  const downloadQR = () => {
-    if (stamp?.qrCodeDataUrl) {
+  const downloadQR = async () => {
+    if (stamp?.verifyUrl) {
+      const dataUrl = await generateQRDataUrl(stamp.verifyUrl)
       const link = document.createElement('a')
       link.download = `stamp-${stamp.id}-qr.png`
-      link.href = stamp.qrCodeDataUrl
+      link.href = dataUrl
       link.click()
     }
   }
@@ -289,12 +291,12 @@ export default function StampDetailPage({
 
         {/* QR Code & Verification */}
         <div className="space-y-6">
-          {stamp.qrCodeDataUrl && (
+          {stamp.verifyUrl && (
             <div className="card text-center">
               <h3 className="font-semibold text-gray-900 mb-4">Verification QR</h3>
-              <img
-                src={stamp.qrCodeDataUrl}
-                alt="Verification QR Code"
+              <QRCodeImage
+                value={stamp.verifyUrl}
+                size={200}
                 className="w-full max-w-[200px] mx-auto rounded-lg"
               />
               <p className="text-sm text-gray-600 mt-4">
@@ -408,4 +410,3 @@ export default function StampDetailPage({
     </div>
   )
 }
-export const runtime = 'edge'

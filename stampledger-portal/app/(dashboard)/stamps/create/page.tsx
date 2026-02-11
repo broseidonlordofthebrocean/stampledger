@@ -17,6 +17,7 @@ import {
   Hash,
 } from 'lucide-react'
 import { hashDocument } from '@/lib/crypto'
+import { QRCodeImage } from '@/components/QRCode'
 
 const JURISDICTIONS = [
   { id: 'wisconsin', name: 'Wisconsin' },
@@ -384,12 +385,12 @@ export default function CreateStampPage() {
             </p>
           </div>
 
-          {stamp.qrCodeDataUrl && (
+          {stamp.verifyUrl && (
             <div className="bg-white border rounded-xl p-6 inline-block">
-              <img
-                src={stamp.qrCodeDataUrl}
-                alt="Verification QR Code"
-                className="w-48 h-48 mx-auto"
+              <QRCodeImage
+                value={stamp.verifyUrl}
+                size={192}
+                className="mx-auto"
               />
               <p className="text-sm text-gray-600 mt-2">
                 Scan to verify this stamp

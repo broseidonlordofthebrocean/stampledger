@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
 import { getDb, batchStamps, stamps, professionalLicenses, projects, projectSpecifications, changeNotifications, documentRevisions, orgMemberships, users } from '@/lib/db'
 import { eq, and, inArray, sql } from 'drizzle-orm'
-import { generateStampQR, getVerifyUrl } from '@/lib/qrcode'
+import { getVerifyUrl } from '@/lib/qrcode'
 
 // Calculate milestone bonus tokens
 function calculateMilestoneBonus(currentCount: number, stampsToAdd: number): number {
@@ -132,7 +132,6 @@ export async function POST(req: NextRequest) {
 
         // Create stamp
         const stampId = generateId()
-        const qrCodeDataUrl = await generateStampQR(stampId)
         const verifyUrl = getVerifyUrl(stampId)
 
         // Create a document hash based on project and spec changes
@@ -150,7 +149,7 @@ export async function POST(req: NextRequest) {
           jurisdictionId: license.issuingState,
           projectName: project.name,
           status: 'active',
-          qrCodeDataUrl,
+          qrCodeDataUrl: null,
           verifyUrl,
           projectId: project.id,
           orgId: project.orgId,

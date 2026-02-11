@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
 import { getDb, stamps, users } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
-import { generateStampQR, getVerifyUrl } from '@/lib/qrcode'
+import { getVerifyUrl } from '@/lib/qrcode'
 
 // GET /api/stamps - List user's stamps
 export async function GET(req: NextRequest) {
@@ -92,8 +92,6 @@ export async function POST(req: NextRequest) {
     const stampId = generateId()
     const now = new Date()
 
-    // Generate QR code
-    const qrCodeDataUrl = await generateStampQR(stampId)
     const verifyUrl = getVerifyUrl(stampId)
 
     // TODO: Submit to blockchain
@@ -111,7 +109,7 @@ export async function POST(req: NextRequest) {
       documentFilename: documentFilename || null,
       documentSize: documentSize || null,
       status: 'active',
-      qrCodeDataUrl,
+      qrCodeDataUrl: null,
       verifyUrl,
       createdAt: now,
       userId: payload.userId,
@@ -126,7 +124,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       stamp: newStamp,
-      qrCode: qrCodeDataUrl,
       verifyUrl,
     })
   } catch (error) {
