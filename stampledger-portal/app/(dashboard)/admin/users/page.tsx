@@ -13,6 +13,9 @@ import {
   Award,
   Building2,
   Stamp,
+  KeyRound,
+  X,
+  Check,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -42,6 +45,10 @@ export default function AdminUsersPage() {
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20, total: 0, pages: 0 })
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
+  const [resetTarget, setResetTarget] = useState<AdminUser | null>(null)
+  const [newPassword, setNewPassword] = useState('')
+  const [resetLoading, setResetLoading] = useState(false)
+  const [resetResult, setResetResult] = useState<{ success: boolean; message: string } | null>(null)
 
   useEffect(() => {
     if (!authLoading && !isAdmin) {
@@ -83,6 +90,39 @@ export default function AdminUsersPage() {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleSearch()
+  }
+
+  const handleResetPassword = async () => {
+    if (!token || !resetTarget || !newPassword) return
+    setResetLoading(true)
+    setResetResult(null)
+    try {
+      const res = await fetch('/api/admin/users/reset-password', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: resetTarget.id, newPassword }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setResetResult({ success: true, message: data.message })
+        setNewPassword('')
+      } else {
+        setResetResult({ success: false, message: data.error })
+      }
+    } catch (err) {
+      setResetResult({ success: false, message: 'Failed to reset password' })
+    } finally {
+      setResetLoading(false)
+    }
+  }
+
+  const closeModal = () => {
+    setResetTarget(null)
+    setNewPassword('')
+    setResetResult(null)
   }
 
   if (authLoading || !isAdmin) {
@@ -160,6 +200,7 @@ export default function AdminUsersPage() {
                     <Stamp className="h-4 w-4 inline" />
                   </th>
                   <th className="text-left font-medium text-gray-500 pb-3">Joined</th>
+                  <th className="text-left font-medium text-gray-500 pb-3">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -192,6 +233,16 @@ export default function AdminUsersPage() {
                         day: 'numeric',
                         year: 'numeric',
                       })}
+                    </td>
+                    <td className="py-3">
+                      <button
+                        onClick={() => setResetTarget(user)}
+                        className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-primary transition-colors"
+                        title="Reset password"
+                      >
+                        <KeyRound className="h-3.5 w-3.5" />
+                        Reset PW
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -227,6 +278,79 @@ export default function AdminUsersPage() {
           </div>
         )}
       </div>
+
+      {/* Reset Password Modal */}
+      {resetTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <KeyRound className="h-5 w-5 text-amber-500" />
+                Reset Password
+              </h3>
+              <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-600 mb-4">
+              Set a new password for <span className="font-medium text-gray-900">{resetTarget.email}</span>
+            </p>
+
+            {resetResult && (
+              <div className={`mb-4 p-3 rounded-lg text-sm flex items-center gap-2 ${
+                resetResult.success
+                  ? 'bg-green-50 text-green-700 border border-green-200'
+                  : 'bg-red-50 text-red-700 border border-red-200'
+              }`}>
+                {resetResult.success ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+                {resetResult.message}
+              </div>
+            )}
+
+            {!resetResult?.success && (
+              <>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="New password (min 8 characters)"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary mb-4"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && newPassword.length >= 8) handleResetPassword()
+                  }}
+                />
+
+                <div className="flex gap-3 justify-end">
+                  <Button variant="outline" size="sm" onClick={closeModal}>
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handleResetPassword}
+                    disabled={newPassword.length < 8 || resetLoading}
+                    className="bg-amber-600 hover:bg-amber-700"
+                  >
+                    {resetLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      'Reset Password'
+                    )}
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {resetResult?.success && (
+              <div className="flex justify-end">
+                <Button size="sm" onClick={closeModal}>
+                  Done
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
