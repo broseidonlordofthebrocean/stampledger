@@ -27,7 +27,6 @@ import {
   ShieldAlert,
   Users,
   BarChart3,
-  Activity,
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { Button } from './ui/button'
@@ -53,7 +52,6 @@ const adminItems = [
   { href: '/admin', label: 'Overview', icon: BarChart3 },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/orgs', label: 'Organizations', icon: Building2 },
-  { href: '/admin/pipeline', label: 'Pipeline', icon: Activity },
   { href: '/admin/licenses', label: 'Licenses', icon: Award },
 ]
 
