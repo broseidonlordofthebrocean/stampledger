@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb, stamps, users, professionalLicenses } from '@/lib/db'
 import { eq } from 'drizzle-orm'
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 // GET /api/verify/[id]/certificate - Generate verification certificate HTML
 // No auth required (public)
 export async function GET(
@@ -49,12 +58,12 @@ export async function GET(
 
     const isValid = stamp.status === 'active'
     const isSuperseded = stamp.status === 'superseded'
-    const peName = pe ? `${pe.firstName || ''} ${pe.lastName || ''}`.trim() : 'Unknown'
-    const licenseInfo = license
+    const peName = escapeHtml(pe ? `${pe.firstName || ''} ${pe.lastName || ''}`.trim() : 'Unknown')
+    const licenseInfo = escapeHtml(license
       ? `${license.licenseType} #${license.licenseNumber} (${license.issuingState})`
       : pe?.peLicenseNumber
         ? `PE #${pe.peLicenseNumber} (${pe.peState})`
-        : 'Not specified'
+        : 'Not specified')
     const now = new Date()
 
     // Parse insurance snapshot
@@ -131,8 +140,8 @@ export async function GET(
     ${isSuperseded ? `
     <div class="alert-banner">
       <strong>This stamp has been superseded.</strong>
-      ${stamp.supersessionReason ? `<br>Reason: ${stamp.supersessionReason}` : ''}
-      ${stamp.supersededBy ? `<br><a href="/api/verify/${stamp.supersededBy}/certificate">View current version</a>` : ''}
+      ${stamp.supersessionReason ? `<br>Reason: ${escapeHtml(stamp.supersessionReason)}` : ''}
+      ${stamp.supersededBy ? `<br><a href="/api/verify/${encodeURIComponent(stamp.supersededBy)}/certificate">View current version</a>` : ''}
     </div>` : ''}
 
     <div class="details">
@@ -151,16 +160,16 @@ export async function GET(
       ${stamp.projectName ? `
       <div class="detail-row">
         <span class="detail-label">Project</span>
-        <span class="detail-value">${stamp.projectName}</span>
+        <span class="detail-value">${escapeHtml(stamp.projectName)}</span>
       </div>` : ''}
       <div class="detail-row">
         <span class="detail-label">Jurisdiction</span>
-        <span class="detail-value" style="text-transform: capitalize;">${stamp.jurisdictionId.replace(/-/g, ' ')}</span>
+        <span class="detail-value" style="text-transform: capitalize;">${escapeHtml(stamp.jurisdictionId.replace(/-/g, ' '))}</span>
       </div>
       ${stamp.permitNumber ? `
       <div class="detail-row">
         <span class="detail-label">Permit Number</span>
-        <span class="detail-value">${stamp.permitNumber}</span>
+        <span class="detail-value">${escapeHtml(stamp.permitNumber)}</span>
       </div>` : ''}
       <div class="detail-row">
         <span class="detail-label">Stamped Date</span>
@@ -182,15 +191,15 @@ export async function GET(
       </div>
       <div class="detail-row" style="background: #fff5f5;">
         <span class="detail-label" style="color: #c53030;">Revocation Reason</span>
-        <span class="detail-value" style="color: #c53030;">${stamp.revokedReason || 'Not specified'}</span>
+        <span class="detail-value" style="color: #c53030;">${escapeHtml(stamp.revokedReason || 'Not specified')}</span>
       </div>` : ''}
     </div>
 
     ${stamp.scopeNotes ? `
-    <div class="section-header">Scope & Liability Notes</div>
+    <div class="section-header">Scope &amp; Liability Notes</div>
     <div class="details">
       <div class="detail-row">
-        <span class="detail-value">${stamp.scopeNotes}</span>
+        <span class="detail-value">${escapeHtml(stamp.scopeNotes)}</span>
       </div>
     </div>` : ''}
 
@@ -199,12 +208,12 @@ export async function GET(
     <div class="details">
       <div class="detail-row">
         <span class="detail-label">Provider</span>
-        <span class="detail-value">${insuranceInfo.provider || 'N/A'}</span>
+        <span class="detail-value">${escapeHtml(insuranceInfo.provider || 'N/A')}</span>
       </div>
       ${insuranceInfo.policyNumber ? `
       <div class="detail-row">
         <span class="detail-label">Policy Number</span>
-        <span class="detail-value">${insuranceInfo.policyNumber}</span>
+        <span class="detail-value">${escapeHtml(insuranceInfo.policyNumber)}</span>
       </div>` : ''}
       ${insuranceInfo.coverageAmount ? `
       <div class="detail-row">

@@ -22,8 +22,10 @@ import {
   Plus,
   Trash2,
   Info,
+  Upload,
 } from 'lucide-react'
 import { QRCodeImage, generateQRDataUrl } from '@/components/QRCode'
+import { hashDocument } from '@/lib/crypto'
 
 interface StampData {
   id: string
@@ -85,6 +87,8 @@ export default function StampDetailPage({
   const [showSupersedeModal, setShowSupersedeModal] = useState(false)
   const [superseding, setSuperseding] = useState(false)
   const [supersedeReason, setSupersedeReason] = useState('')
+  const [supersedeFile, setSupersedeFile] = useState<File | null>(null)
+  const [supersedeHash, setSupersedeHash] = useState('')
 
   // Analytics state
   const [analytics, setAnalytics] = useState<Analytics | null>(null)
@@ -180,18 +184,37 @@ export default function StampDetailPage({
     }
   }
 
+  const handleSupersedeFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0]
+    if (!selectedFile) return
+    setSupersedeFile(selectedFile)
+    try {
+      const hash = await hashDocument(selectedFile)
+      setSupersedeHash(hash)
+    } catch {
+      setSupersedeHash('')
+    }
+  }
+
   const handleSupersede = async () => {
     if (!token || !supersedeReason) return
     setSuperseding(true)
 
     try {
+      const body: Record<string, unknown> = { reason: supersedeReason }
+      if (supersedeFile && supersedeHash) {
+        body.newDocumentHash = supersedeHash
+        body.newDocumentFilename = supersedeFile.name
+        body.newDocumentSize = supersedeFile.size
+      }
+
       const res = await fetch(`/api/stamps/${id}/supersede`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ reason: supersedeReason }),
+        body: JSON.stringify(body),
       })
 
       if (res.ok) {
@@ -698,8 +721,45 @@ export default function StampDetailPage({
               Supersede Stamp
             </h3>
             <p className="text-gray-600 mb-4">
-              This will mark the current stamp as superseded. The old version will link to the new one.
+              Upload a revised document to create a replacement stamp, or leave blank to just mark this stamp as superseded.
             </p>
+
+            {/* New document upload */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Revised Document (optional)
+              </label>
+              <div className={`border-2 border-dashed rounded-lg p-4 text-center ${supersedeFile ? 'border-green-300 bg-green-50' : 'border-gray-300'}`}>
+                {supersedeFile ? (
+                  <div>
+                    <CheckCircle className="h-5 w-5 text-green-500 mx-auto mb-1" />
+                    <p className="text-sm font-medium text-gray-900">{supersedeFile.name}</p>
+                    <p className="text-xs text-gray-500">{(supersedeFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                    {supersedeHash && (
+                      <p className="text-xs font-mono text-gray-400 mt-1 break-all">{supersedeHash.slice(0, 16)}...</p>
+                    )}
+                    <button
+                      onClick={() => { setSupersedeFile(null); setSupersedeHash('') }}
+                      className="text-xs text-red-500 hover:underline mt-1"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <label className="cursor-pointer">
+                    <Upload className="h-5 w-5 text-gray-400 mx-auto mb-1" />
+                    <p className="text-sm text-gray-600">Click to upload revised document</p>
+                    <input
+                      type="file"
+                      accept=".pdf,.dwg"
+                      onChange={handleSupersedeFileChange}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
+
             <textarea
               className="w-full rounded-lg border border-gray-300 p-3 mb-4"
               rows={3}
@@ -710,7 +770,12 @@ export default function StampDetailPage({
             <div className="flex gap-3 justify-end">
               <Button
                 variant="outline"
-                onClick={() => setShowSupersedeModal(false)}
+                onClick={() => {
+                  setShowSupersedeModal(false)
+                  setSupersedeFile(null)
+                  setSupersedeHash('')
+                  setSupersedeReason('')
+                }}
               >
                 Cancel
               </Button>
@@ -726,7 +791,7 @@ export default function StampDetailPage({
                 ) : (
                   <>
                     <ArrowRightLeft className="h-4 w-4 mr-2" />
-                    Supersede
+                    {supersedeFile ? 'Supersede & Create New' : 'Supersede'}
                   </>
                 )}
               </Button>

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
 import { getDb, stamps, stampStakeholders } from '@/lib/db'
 import { eq, and } from 'drizzle-orm'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, EMAIL_CONFIG } from '@/lib/email'
 
 // GET /api/stamps/[id] - Get stamp details
 export async function GET(
@@ -121,8 +121,12 @@ export async function POST(
     for (const s of stakeholders) {
       await sendEmail({
         to: s.email,
-        subject: `Stamp revoked: ${stamp.projectName || stamp.id}`,
-        body: `Hello${s.name ? ` ${s.name}` : ''},\n\nA stamp you are listed as a stakeholder on has been revoked.\n\nProject: ${stamp.projectName || 'N/A'}\nStamp ID: ${stamp.id}\nReason: ${reason}\nRevoked: ${revokedAt.toISOString()}\n\nBest regards,\nThe StampLedger Team`,
+        subject: EMAIL_CONFIG.templates.stampRevoked.subject(stamp.projectName || 'Unknown Project'),
+        body: EMAIL_CONFIG.templates.stampRevoked.getBody(
+          stamp.projectName || 'Unknown Project',
+          reason,
+          stamp.id
+        ),
       })
     }
 

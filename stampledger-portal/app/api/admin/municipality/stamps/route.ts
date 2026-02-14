@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
 import { isAdminEmail } from '@/lib/admin'
 import { getDb, stamps, users, professionalLicenses } from '@/lib/db'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, inArray } from 'drizzle-orm'
 
 // GET /api/admin/municipality/stamps - All stamps with compliance data
 export async function GET(req: NextRequest) {
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 
     const now = new Date()
 
-    // Get all stamps with PE info
+    // Get all stamps
     const allStamps = await db
       .select({
         id: stamps.id,
@@ -47,34 +47,63 @@ export async function GET(req: NextRequest) {
       .orderBy(desc(stamps.createdAt))
       .limit(500)
 
+    // Batch: collect unique user IDs and license IDs
+    const userIds = [...new Set(allStamps.map(s => s.userId))]
+    const licenseIds = [...new Set(allStamps.map(s => s.licenseId).filter(Boolean))] as string[]
+
+    // Batch fetch all users at once
+    const userMap = new Map<string, { firstName: string | null; lastName: string | null }>()
+    if (userIds.length > 0) {
+      const allUsers = await db
+        .select({ id: users.id, firstName: users.firstName, lastName: users.lastName })
+        .from(users)
+        .where(inArray(users.id, userIds))
+      for (const u of allUsers) {
+        userMap.set(u.id, { firstName: u.firstName, lastName: u.lastName })
+      }
+    }
+
+    // Batch fetch all licenses at once (by ID + by userId for stamps missing licenseId)
+    const licenseByIdMap = new Map<string, typeof professionalLicenses.$inferSelect>()
+    const licenseByUserMap = new Map<string, typeof professionalLicenses.$inferSelect>()
+
+    if (licenseIds.length > 0) {
+      const licensesById = await db
+        .select()
+        .from(professionalLicenses)
+        .where(inArray(professionalLicenses.id, licenseIds))
+      for (const l of licensesById) {
+        licenseByIdMap.set(l.id, l)
+      }
+    }
+
+    // For stamps without licenseId, fetch licenses by userId
+    const userIdsWithoutLicenseId = [...new Set(
+      allStamps.filter(s => !s.licenseId).map(s => s.userId)
+    )]
+    if (userIdsWithoutLicenseId.length > 0) {
+      const licensesByUser = await db
+        .select()
+        .from(professionalLicenses)
+        .where(inArray(professionalLicenses.userId, userIdsWithoutLicenseId))
+      for (const l of licensesByUser) {
+        // Only keep the first license per user (matching old behavior)
+        if (!licenseByUserMap.has(l.userId)) {
+          licenseByUserMap.set(l.userId, l)
+        }
+      }
+    }
+
     const alerts: { type: string; message: string; stampId: string }[] = []
     const enriched = []
 
     for (const stamp of allStamps) {
-      // Get PE name
-      const pe = await db
-        .select({ firstName: users.firstName, lastName: users.lastName })
-        .from(users)
-        .where(eq(users.id, stamp.userId))
-        .get()
-
+      const pe = userMap.get(stamp.userId)
       const peName = pe ? `${pe.firstName || ''} ${pe.lastName || ''}`.trim() : 'Unknown'
 
-      // Get license info
-      let license = null
-      if (stamp.licenseId) {
-        license = await db
-          .select()
-          .from(professionalLicenses)
-          .where(eq(professionalLicenses.id, stamp.licenseId))
-          .get()
-      } else {
-        license = await db
-          .select()
-          .from(professionalLicenses)
-          .where(eq(professionalLicenses.userId, stamp.userId))
-          .get()
-      }
+      const license = stamp.licenseId
+        ? licenseByIdMap.get(stamp.licenseId) || null
+        : licenseByUserMap.get(stamp.userId) || null
 
       const licenseExpired = license?.expirationDate
         ? new Date(license.expirationDate) < now

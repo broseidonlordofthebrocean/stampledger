@@ -71,6 +71,50 @@ The StampLedger Team
       `.trim(),
     },
 
+    stampSuperseded: {
+      subject: (projectName: string) => `Stamp superseded: ${projectName}`,
+      getBody: (
+        projectName: string,
+        reason: string,
+        oldStampId: string,
+        newStampId: string | null,
+        verifyUrl: string | null
+      ) => `
+A stamp you are a stakeholder on has been superseded.
+
+Project: ${projectName}
+Reason: ${reason}
+Old Stamp ID: ${oldStampId}
+${newStampId ? `New Stamp ID: ${newStampId}` : 'No replacement stamp was created.'}
+${verifyUrl ? `\nVerification URL: ${verifyUrl}` : ''}
+
+If a new version was created, please verify it at the link above.
+
+Best regards,
+The StampLedger Team
+      `.trim(),
+    },
+
+    stampRevoked: {
+      subject: (projectName: string) => `Stamp revoked: ${projectName}`,
+      getBody: (
+        projectName: string,
+        reason: string,
+        stampId: string
+      ) => `
+A stamp you are a stakeholder on has been revoked.
+
+Project: ${projectName}
+Stamp ID: ${stampId}
+Reason: ${reason}
+
+This stamp is no longer valid. Please contact the responsible Professional Engineer for further information.
+
+Best regards,
+The StampLedger Team
+      `.trim(),
+    },
+
     batchStampConfirmation: {
       subject: (count: number) => `${count} projects stamped successfully`,
       getBody: (

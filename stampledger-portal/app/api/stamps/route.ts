@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
       documentFilename,
       documentSize,
       scopeNotes,
+      licenseId: requestedLicenseId,
     } = body
 
     // Validation
@@ -100,21 +101,41 @@ export async function POST(req: NextRequest) {
     const blockchainId = `local-${stampId}` // Placeholder
 
     // Capture insurance snapshot from user's license at stamp time
+    // Prefer specific license if provided, otherwise fall back to user's first license
     let insuranceSnapshot: string | null = null
-    const userLicense = await db
-      .select()
-      .from(professionalLicenses)
-      .where(eq(professionalLicenses.userId, payload.userId))
-      .get()
+    let matchedLicenseId: string | null = null
 
-    if (userLicense && userLicense.insuranceProvider) {
-      insuranceSnapshot = JSON.stringify({
-        provider: userLicense.insuranceProvider,
-        policyNumber: userLicense.insurancePolicyNumber,
-        coverageAmount: userLicense.insuranceCoverageAmount,
-        expirationDate: userLicense.insuranceExpirationDate,
-        capturedAt: now.toISOString(),
-      })
+    let userLicense = null
+    if (requestedLicenseId) {
+      userLicense = await db
+        .select()
+        .from(professionalLicenses)
+        .where(eq(professionalLicenses.id, requestedLicenseId))
+        .get()
+      // Verify the license belongs to this user
+      if (userLicense && userLicense.userId !== payload.userId) {
+        userLicense = null
+      }
+    }
+    if (!userLicense) {
+      userLicense = await db
+        .select()
+        .from(professionalLicenses)
+        .where(eq(professionalLicenses.userId, payload.userId))
+        .get()
+    }
+
+    if (userLicense) {
+      matchedLicenseId = userLicense.id
+      if (userLicense.insuranceProvider) {
+        insuranceSnapshot = JSON.stringify({
+          provider: userLicense.insuranceProvider,
+          policyNumber: userLicense.insurancePolicyNumber,
+          coverageAmount: userLicense.insuranceCoverageAmount,
+          expirationDate: userLicense.insuranceExpirationDate,
+          capturedAt: now.toISOString(),
+        })
+      }
     }
 
     await db.insert(stamps).values({
@@ -130,6 +151,7 @@ export async function POST(req: NextRequest) {
       status: 'active',
       scopeNotes: scopeNotes || null,
       insuranceSnapshot,
+      licenseId: matchedLicenseId,
       qrCodeDataUrl: null,
       verifyUrl,
       createdAt: now,

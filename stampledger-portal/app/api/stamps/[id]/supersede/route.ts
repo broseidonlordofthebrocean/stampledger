@@ -128,9 +128,11 @@ export async function POST(
       for (const s of oldStakeholders) {
         await sendEmail({
           to: s.email,
-          subject: `Stamp superseded: ${oldStamp.projectName || oldStamp.id}`,
-          body: EMAIL_CONFIG.templates.stampConfirmation.getBody(
+          subject: EMAIL_CONFIG.templates.stampSuperseded.subject(oldStamp.projectName || 'Unknown Project'),
+          body: EMAIL_CONFIG.templates.stampSuperseded.getBody(
             oldStamp.projectName || 'Unknown Project',
+            reason,
+            id,
             newStampId,
             verifyUrl
           ),
