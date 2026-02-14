@@ -38,6 +38,10 @@ interface License {
   lastVerifiedAt?: string
   disciplines?: string[]
   createdAt?: string
+  insuranceProvider?: string
+  insurancePolicyNumber?: string
+  insuranceCoverageAmount?: number
+  insuranceExpirationDate?: string
 }
 
 interface LinkedAccount {

@@ -114,6 +114,10 @@ export default function LicensesPage() {
     expirationDate: '',
     verificationUrl: '',
     disciplines: [] as string[],
+    insuranceProvider: '',
+    insurancePolicyNumber: '',
+    insuranceCoverageAmount: '',
+    insuranceExpirationDate: '',
   })
 
   const handleAddLicense = async (e: React.FormEvent) => {
@@ -129,7 +133,12 @@ export default function LicensesPage() {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(createForm),
+        body: JSON.stringify({
+          ...createForm,
+          insuranceCoverageAmount: createForm.insuranceCoverageAmount
+            ? parseInt(createForm.insuranceCoverageAmount, 10)
+            : undefined,
+        }),
       })
 
       if (!res.ok) {
@@ -146,6 +155,10 @@ export default function LicensesPage() {
         expirationDate: '',
         verificationUrl: '',
         disciplines: [],
+        insuranceProvider: '',
+        insurancePolicyNumber: '',
+        insuranceCoverageAmount: '',
+        insuranceExpirationDate: '',
       })
       if (data.verificationResult?.verified) {
         setSuccess('License added and verified against state board!')
@@ -372,6 +385,16 @@ export default function LicensesPage() {
                         ))}
                       </div>
                     )}
+                    {license.insuranceProvider && (
+                      <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                        <Shield className="h-3 w-3" />
+                        <span>
+                          {license.insuranceProvider}
+                          {license.insuranceCoverageAmount ? ` - $${Number(license.insuranceCoverageAmount).toLocaleString()}` : ''}
+                          {license.insuranceExpirationDate ? ` (exp ${new Date(license.insuranceExpirationDate).toLocaleDateString()})` : ''}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="text-right space-y-2">
@@ -535,6 +558,67 @@ export default function LicensesPage() {
                   Link to state board verification page (optional)
                 </p>
               </div>
+
+              {/* Insurance Section */}
+              <div className="border-t border-gray-200 pt-4">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                  Professional Liability Insurance (Optional)
+                </h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Insurance Provider
+                    </label>
+                    <Input
+                      value={createForm.insuranceProvider}
+                      onChange={(e) =>
+                        setCreateForm({ ...createForm, insuranceProvider: e.target.value })
+                      }
+                      placeholder="e.g., Hartford, CNA, Beazley"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Policy Number
+                      </label>
+                      <Input
+                        value={createForm.insurancePolicyNumber}
+                        onChange={(e) =>
+                          setCreateForm({ ...createForm, insurancePolicyNumber: e.target.value })
+                        }
+                        placeholder="PLI-12345"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Coverage Amount ($)
+                      </label>
+                      <Input
+                        type="number"
+                        value={createForm.insuranceCoverageAmount}
+                        onChange={(e) =>
+                          setCreateForm({ ...createForm, insuranceCoverageAmount: e.target.value })
+                        }
+                        placeholder="1000000"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Insurance Expiration Date
+                    </label>
+                    <Input
+                      type="date"
+                      value={createForm.insuranceExpirationDate}
+                      onChange={(e) =>
+                        setCreateForm({ ...createForm, insuranceExpirationDate: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="flex justify-end gap-3 pt-4">
                 <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
                   Cancel

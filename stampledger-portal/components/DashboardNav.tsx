@@ -27,6 +27,8 @@ import {
   ShieldAlert,
   Users,
   BarChart3,
+  Key,
+  Landmark,
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { Button } from './ui/button'
@@ -46,6 +48,7 @@ const settingsItems = [
   { href: '/settings', label: 'Account & Security', icon: Shield },
   { href: '/organizations', label: 'Organizations', icon: Building2 },
   { href: '/licenses', label: 'Licenses', icon: Award },
+  { href: '/settings/api-keys', label: 'API Keys', icon: Key },
 ]
 
 const adminItems = [
@@ -53,6 +56,7 @@ const adminItems = [
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/orgs', label: 'Organizations', icon: Building2 },
   { href: '/admin/licenses', label: 'Licenses', icon: Award },
+  { href: '/admin/municipality', label: 'Municipality', icon: Landmark },
 ]
 
 export function DashboardNav() {

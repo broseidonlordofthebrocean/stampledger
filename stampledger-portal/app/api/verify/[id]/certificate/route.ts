@@ -48,6 +48,7 @@ export async function GET(
     const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifyUrl)}&color=1a3a52`
 
     const isValid = stamp.status === 'active'
+    const isSuperseded = stamp.status === 'superseded'
     const peName = pe ? `${pe.firstName || ''} ${pe.lastName || ''}`.trim() : 'Unknown'
     const licenseInfo = license
       ? `${license.licenseType} #${license.licenseNumber} (${license.issuingState})`
@@ -55,6 +56,12 @@ export async function GET(
         ? `PE #${pe.peLicenseNumber} (${pe.peState})`
         : 'Not specified'
     const now = new Date()
+
+    // Parse insurance snapshot
+    let insuranceInfo: { provider?: string; policyNumber?: string; coverageAmount?: number; expirationDate?: string } | null = null
+    if (stamp.insuranceSnapshot) {
+      try { insuranceInfo = JSON.parse(stamp.insuranceSnapshot) } catch {}
+    }
 
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -83,6 +90,10 @@ export async function GET(
     }
     .status.valid { background: #d4edda; color: #155724; border: 2px solid #28a745; }
     .status.invalid { background: #f8d7da; color: #721c24; border: 2px solid #dc3545; }
+    .status.superseded { background: #fff3cd; color: #856404; border: 2px solid #ffc107; }
+    .alert-banner { background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 16px; margin: 20px 0; text-align: center; }
+    .alert-banner a { color: #1a3a52; font-weight: bold; }
+    .section-header { font-size: 16px; font-weight: bold; color: #1a3a52; margin-top: 30px; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 8px; }
     .status-row { text-align: center; margin-bottom: 30px; }
     .details { margin: 30px 0; }
     .detail-row { display: flex; padding: 10px 0; border-bottom: 1px solid #eee; }
@@ -112,10 +123,17 @@ export async function GET(
     <div class="title">Verification Certificate</div>
 
     <div class="status-row">
-      <span class="status ${isValid ? 'valid' : 'invalid'}">
-        ${isValid ? 'VERIFIED - STAMP ACTIVE' : 'STAMP ' + stamp.status.toUpperCase()}
+      <span class="status ${isValid ? 'valid' : (isSuperseded ? 'superseded' : 'invalid')}">
+        ${isValid ? 'VERIFIED - STAMP ACTIVE' : (isSuperseded ? 'STAMP SUPERSEDED' : 'STAMP ' + stamp.status.toUpperCase())}
       </span>
     </div>
+
+    ${isSuperseded ? `
+    <div class="alert-banner">
+      <strong>This stamp has been superseded.</strong>
+      ${stamp.supersessionReason ? `<br>Reason: ${stamp.supersessionReason}` : ''}
+      ${stamp.supersededBy ? `<br><a href="/api/verify/${stamp.supersededBy}/certificate">View current version</a>` : ''}
+    </div>` : ''}
 
     <div class="details">
       <div class="detail-row">
@@ -167,6 +185,38 @@ export async function GET(
         <span class="detail-value" style="color: #c53030;">${stamp.revokedReason || 'Not specified'}</span>
       </div>` : ''}
     </div>
+
+    ${stamp.scopeNotes ? `
+    <div class="section-header">Scope & Liability Notes</div>
+    <div class="details">
+      <div class="detail-row">
+        <span class="detail-value">${stamp.scopeNotes}</span>
+      </div>
+    </div>` : ''}
+
+    ${insuranceInfo ? `
+    <div class="section-header">Professional Liability Insurance (at time of stamp)</div>
+    <div class="details">
+      <div class="detail-row">
+        <span class="detail-label">Provider</span>
+        <span class="detail-value">${insuranceInfo.provider || 'N/A'}</span>
+      </div>
+      ${insuranceInfo.policyNumber ? `
+      <div class="detail-row">
+        <span class="detail-label">Policy Number</span>
+        <span class="detail-value">${insuranceInfo.policyNumber}</span>
+      </div>` : ''}
+      ${insuranceInfo.coverageAmount ? `
+      <div class="detail-row">
+        <span class="detail-label">Coverage Amount</span>
+        <span class="detail-value">$${Number(insuranceInfo.coverageAmount).toLocaleString()}</span>
+      </div>` : ''}
+      ${insuranceInfo.expirationDate ? `
+      <div class="detail-row">
+        <span class="detail-label">Insurance Expiration</span>
+        <span class="detail-value">${new Date(insuranceInfo.expirationDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+      </div>` : ''}
+    </div>` : ''}
 
     <div class="qr-section">
       <img src="${qrImageUrl}" alt="Verification QR Code" />

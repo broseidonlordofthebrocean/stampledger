@@ -50,6 +50,12 @@ export const professionalLicenses = sqliteTable('professional_licenses', {
   lastVerifiedAt: integer('last_verified_at', { mode: 'timestamp' }),
   verificationSource: text('verification_source'), // 'state_board_api', 'manual_review', 'user_submitted'
 
+  // Insurance fields
+  insuranceProvider: text('insurance_provider'),
+  insurancePolicyNumber: text('insurance_policy_number'),
+  insuranceCoverageAmount: integer('insurance_coverage_amount'),
+  insuranceExpirationDate: integer('insurance_expiration_date', { mode: 'timestamp' }),
+
   // Token tracking
   stampTokenCount: integer('stamp_token_count').notNull().default(0),
   onChainCredentialId: text('on_chain_credential_id'),
@@ -400,9 +406,20 @@ export const stamps = sqliteTable('stamps', {
   documentSize: integer('document_size'),
 
   // Status
-  status: text('status').notNull().default('active'), // 'active', 'revoked'
+  status: text('status').notNull().default('active'), // 'active', 'revoked', 'superseded'
   revokedAt: integer('revoked_at', { mode: 'timestamp' }),
   revokedReason: text('revoked_reason'),
+
+  // Supersession tracking
+  supersededBy: text('superseded_by'),
+  supersededAt: integer('superseded_at', { mode: 'timestamp' }),
+  supersessionReason: text('supersession_reason'),
+
+  // Scope/liability notes
+  scopeNotes: text('scope_notes'),
+
+  // Insurance snapshot at stamp time (JSON)
+  insuranceSnapshot: text('insurance_snapshot'),
 
   // QR code
   qrCodeDataUrl: text('qr_code_data_url'),
@@ -461,6 +478,58 @@ export const verificationLogs = sqliteTable('verification_logs', {
 }, (table) => ({
   idxStamp: index('idx_verification_logs_stamp').on(table.stampId),
   idxTime: index('idx_verification_logs_time').on(table.verifiedAt),
+}))
+
+// =============================================================================
+// STAMP STAKEHOLDERS & VERIFICATION SCANS
+// =============================================================================
+
+// Stamp stakeholders (recipients/notified parties)
+export const stampStakeholders = sqliteTable('stamp_stakeholders', {
+  id: text('id').primaryKey(),
+  stampId: text('stamp_id').notNull().references(() => stamps.id),
+  email: text('email').notNull(),
+  name: text('name'),
+  role: text('role'), // 'contractor', 'owner', 'reviewer', 'inspector'
+  notifiedAt: integer('notified_at', { mode: 'timestamp' }),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ({
+  idxStamp: index('idx_stakeholders_stamp').on(table.stampId),
+}))
+
+// Enhanced verification scans (analytics)
+export const verificationScans = sqliteTable('verification_scans', {
+  id: text('id').primaryKey(),
+  stampId: text('stamp_id').notNull().references(() => stamps.id),
+  scannedAt: integer('scanned_at', { mode: 'timestamp' }).notNull(),
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  referrer: text('referrer'),
+  scanSource: text('scan_source'), // 'qr', 'web', 'api', 'extension'
+}, (table) => ({
+  idxStamp: index('idx_vscans_stamp').on(table.stampId),
+  idxTime: index('idx_vscans_time').on(table.scannedAt),
+}))
+
+// =============================================================================
+// API KEYS
+// =============================================================================
+
+// API keys for external integrations (insurance companies, etc.)
+export const apiKeys = sqliteTable('api_keys', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').references(() => users.id),
+  orgId: text('org_id').references(() => organizations.id),
+  keyHash: text('key_hash').notNull().unique(),
+  keyPrefix: text('key_prefix').notNull(),
+  name: text('name').notNull(),
+  scopes: text('scopes').notNull().default('[]'), // JSON array
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  lastUsedAt: integer('last_used_at', { mode: 'timestamp' }),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }),
+  isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
+}, (table) => ({
+  idxHash: index('idx_api_keys_hash').on(table.keyHash),
 }))
 
 // =============================================================================
@@ -595,3 +664,9 @@ export type WebAuthnCredential = typeof webauthnCredentials.$inferSelect
 export type NewWebAuthnCredential = typeof webauthnCredentials.$inferInsert
 export type AuthChallenge = typeof authChallenges.$inferSelect
 export type NewAuthChallenge = typeof authChallenges.$inferInsert
+export type StampStakeholder = typeof stampStakeholders.$inferSelect
+export type NewStampStakeholder = typeof stampStakeholders.$inferInsert
+export type VerificationScan = typeof verificationScans.$inferSelect
+export type NewVerificationScan = typeof verificationScans.$inferInsert
+export type ApiKey = typeof apiKeys.$inferSelect
+export type NewApiKey = typeof apiKeys.$inferInsert

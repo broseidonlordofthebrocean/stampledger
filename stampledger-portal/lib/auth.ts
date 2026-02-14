@@ -132,3 +132,51 @@ export function extractToken(authHeader: string | null): string | null {
   }
   return authHeader.slice(7)
 }
+
+// Dual-auth: authenticate via JWT or API key
+export async function authenticateRequest(req: Request): Promise<{
+  authenticated: boolean
+  userId?: string
+  orgId?: string | null
+  authMethod: 'jwt' | 'api_key' | 'none'
+  scopes?: string[]
+  error?: string
+}> {
+  const authHeader = req.headers.get('Authorization')
+  const token = extractToken(authHeader)
+
+  if (!token) {
+    return { authenticated: false, authMethod: 'none', error: 'No authorization provided' }
+  }
+
+  // Check if it's an API key (starts with slk_)
+  if (token.startsWith('slk_')) {
+    const { verifyApiKey } = await import('@/lib/api-keys')
+    const result = await verifyApiKey(token)
+
+    if (!result.valid) {
+      return { authenticated: false, authMethod: 'api_key', error: result.error }
+    }
+
+    return {
+      authenticated: true,
+      userId: result.userId || undefined,
+      orgId: result.orgId,
+      authMethod: 'api_key',
+      scopes: result.scopes,
+    }
+  }
+
+  // Standard JWT auth
+  const payload = await verifyToken(token)
+  if (!payload) {
+    return { authenticated: false, authMethod: 'jwt', error: 'Invalid token' }
+  }
+
+  return {
+    authenticated: true,
+    userId: payload.userId,
+    authMethod: 'jwt',
+    scopes: ['*'],
+  }
+}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getDb, stamps, users, professionalLicenses, documents, verificationLogs } from '@/lib/db'
+import { getDb, stamps, users, professionalLicenses, documents, verificationLogs, verificationScans } from '@/lib/db'
 import { generateId } from '@/lib/auth'
 import { eq, and, count } from 'drizzle-orm'
 
@@ -102,7 +102,8 @@ export async function GET(
 
     // Build result
     const isValid = stamp.status === 'active'
-    const result = isValid ? 'valid' : (stamp.status === 'revoked' ? 'revoked' : 'invalid')
+    const isSuperseded = stamp.status === 'superseded'
+    const result = isValid ? 'valid' : (stamp.status === 'revoked' ? 'revoked' : (isSuperseded ? 'superseded' : 'invalid'))
 
     // Log this verification
     await db.insert(verificationLogs).values({
@@ -114,6 +115,48 @@ export async function GET(
       createdAt: now,
     }).run().catch(() => {})
 
+    // Log to verification_scans for analytics
+    const ipAddress = req.headers.get('cf-connecting-ip') || req.headers.get('x-forwarded-for') || null
+    const userAgent = req.headers.get('user-agent') || null
+    const referrer = req.headers.get('referer') || null
+    const scanSource = req.nextUrl.searchParams.get('source') || 'web'
+
+    await db.insert(verificationScans).values({
+      id: generateId(),
+      stampId: id,
+      scannedAt: now,
+      ipAddress,
+      userAgent,
+      referrer,
+      scanSource,
+    }).run().catch(() => {})
+
+    // Parse insurance snapshot
+    let insuranceInfo = null
+    if (stamp.insuranceSnapshot) {
+      try { insuranceInfo = JSON.parse(stamp.insuranceSnapshot) } catch {}
+    }
+
+    // Smart alerts for license/insurance expiration
+    const alerts: string[] = []
+    if (license?.expirationDate && new Date(license.expirationDate) < now) {
+      alerts.push('Professional license is expired')
+    }
+    if (insuranceInfo?.expirationDate && new Date(insuranceInfo.expirationDate) < now) {
+      alerts.push('Insurance coverage was expired at stamp time')
+    }
+
+    // Build supersession info
+    let supersession = null
+    if (isSuperseded) {
+      supersession = {
+        supersededBy: stamp.supersededBy,
+        supersededAt: stamp.supersededAt,
+        reason: stamp.supersessionReason,
+        newVersionUrl: stamp.supersededBy ? `/verify/${stamp.supersededBy}` : null,
+      }
+    }
+
     return NextResponse.json({
       valid: isValid,
       stamp: {
@@ -124,12 +167,14 @@ export async function GET(
         projectName: stamp.projectName,
         permitNumber: stamp.permitNumber,
         notes: stamp.notes,
+        scopeNotes: stamp.scopeNotes,
         createdAt: stamp.createdAt,
         revokedAt: stamp.revokedAt,
         revokedReason: stamp.revokedReason,
         documentFilename: stamp.documentFilename,
         documentSize: stamp.documentSize,
       },
+      supersession,
       pe: pe
         ? {
             name: `${pe.firstName || ''} ${pe.lastName || ''}`.trim(),
@@ -151,6 +196,7 @@ export async function GET(
             expirationDate: license.expirationDate,
           }
         : null,
+      insurance: insuranceInfo,
       document: documentInfo,
       blockchain: {
         id: stamp.blockchainId,
@@ -158,15 +204,18 @@ export async function GET(
         verified: !!stamp.blockchainId,
       },
       verification: {
-        totalVerifications: (verifyCount?.value || 0) + 1, // Include current
+        totalVerifications: (verifyCount?.value || 0) + 1,
         verifiedAt: now.toISOString(),
         method: 'web',
       },
+      alerts,
       message: isValid
         ? 'This stamp is valid and has not been revoked'
-        : stamp.status === 'revoked'
-          ? `This stamp was revoked on ${stamp.revokedAt ? new Date(stamp.revokedAt).toLocaleDateString() : 'unknown date'}. Reason: ${stamp.revokedReason}`
-          : 'This stamp is not valid',
+        : isSuperseded
+          ? `This stamp has been superseded${stamp.supersessionReason ? `. Reason: ${stamp.supersessionReason}` : ''}${stamp.supersededBy ? '. A newer version is available.' : ''}`
+          : stamp.status === 'revoked'
+            ? `This stamp was revoked on ${stamp.revokedAt ? new Date(stamp.revokedAt).toLocaleDateString() : 'unknown date'}. Reason: ${stamp.revokedReason}`
+            : 'This stamp is not valid',
     })
   } catch (error) {
     console.error('Verification error:', error)

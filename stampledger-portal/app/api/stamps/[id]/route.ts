@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
-import { getDb, stamps } from '@/lib/db'
+import { getDb, stamps, stampStakeholders } from '@/lib/db'
 import { eq, and } from 'drizzle-orm'
+import { sendEmail } from '@/lib/email'
 
 // GET /api/stamps/[id] - Get stamp details
 export async function GET(
@@ -101,14 +102,29 @@ export async function POST(
     }
 
     // Revoke the stamp
+    const revokedAt = new Date()
     await db
       .update(stamps)
       .set({
         status: 'revoked',
-        revokedAt: new Date(),
+        revokedAt,
         revokedReason: reason,
       })
       .where(eq(stamps.id, id))
+
+    // Notify stakeholders about revocation
+    const stakeholders = await db
+      .select()
+      .from(stampStakeholders)
+      .where(eq(stampStakeholders.stampId, id))
+
+    for (const s of stakeholders) {
+      await sendEmail({
+        to: s.email,
+        subject: `Stamp revoked: ${stamp.projectName || stamp.id}`,
+        body: `Hello${s.name ? ` ${s.name}` : ''},\n\nA stamp you are listed as a stakeholder on has been revoked.\n\nProject: ${stamp.projectName || 'N/A'}\nStamp ID: ${stamp.id}\nReason: ${reason}\nRevoked: ${revokedAt.toISOString()}\n\nBest regards,\nThe StampLedger Team`,
+      })
+    }
 
     // Fetch updated stamp
     const updatedStamp = await db

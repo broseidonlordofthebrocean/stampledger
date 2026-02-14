@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken, generateId } from '@/lib/auth'
-import { getDb, stamps, users } from '@/lib/db'
+import { getDb, stamps, users, professionalLicenses } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 import { getVerifyUrl } from '@/lib/qrcode'
 
@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
       notes,
       documentFilename,
       documentSize,
+      scopeNotes,
     } = body
 
     // Validation
@@ -98,6 +99,24 @@ export async function POST(req: NextRequest) {
     // For now, we'll store locally and add blockchain integration later
     const blockchainId = `local-${stampId}` // Placeholder
 
+    // Capture insurance snapshot from user's license at stamp time
+    let insuranceSnapshot: string | null = null
+    const userLicense = await db
+      .select()
+      .from(professionalLicenses)
+      .where(eq(professionalLicenses.userId, payload.userId))
+      .get()
+
+    if (userLicense && userLicense.insuranceProvider) {
+      insuranceSnapshot = JSON.stringify({
+        provider: userLicense.insuranceProvider,
+        policyNumber: userLicense.insurancePolicyNumber,
+        coverageAmount: userLicense.insuranceCoverageAmount,
+        expirationDate: userLicense.insuranceExpirationDate,
+        capturedAt: now.toISOString(),
+      })
+    }
+
     await db.insert(stamps).values({
       id: stampId,
       blockchainId,
@@ -109,6 +128,8 @@ export async function POST(req: NextRequest) {
       documentFilename: documentFilename || null,
       documentSize: documentSize || null,
       status: 'active',
+      scopeNotes: scopeNotes || null,
+      insuranceSnapshot,
       qrCodeDataUrl: null,
       verifyUrl,
       createdAt: now,

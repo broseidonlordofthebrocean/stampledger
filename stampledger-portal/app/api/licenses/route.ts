@@ -69,6 +69,10 @@ export async function POST(req: NextRequest) {
       disciplines,
       issuedDate,
       expirationDate,
+      insuranceProvider,
+      insurancePolicyNumber,
+      insuranceCoverageAmount,
+      insuranceExpirationDate,
     } = body
 
     // Validation
@@ -125,6 +129,10 @@ export async function POST(req: NextRequest) {
       issuedDate: issuedDate ? new Date(issuedDate) : null,
       expirationDate: expirationDate ? new Date(expirationDate) : null,
       verificationSource: 'user_submitted',
+      insuranceProvider: insuranceProvider || null,
+      insurancePolicyNumber: insurancePolicyNumber || null,
+      insuranceCoverageAmount: insuranceCoverageAmount || null,
+      insuranceExpirationDate: insuranceExpirationDate ? new Date(insuranceExpirationDate) : null,
       stampTokenCount: 0,
       createdAt: now,
       updatedAt: now,

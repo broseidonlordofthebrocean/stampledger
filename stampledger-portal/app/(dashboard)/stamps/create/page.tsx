@@ -43,6 +43,7 @@ export default function CreateStampPage() {
   const [projectName, setProjectName] = useState('')
   const [permitNumber, setPermitNumber] = useState('')
   const [notes, setNotes] = useState('')
+  const [scopeNotes, setScopeNotes] = useState('')
 
   // Result
   const [stamp, setStamp] = useState<any>(null)
@@ -97,6 +98,7 @@ export default function CreateStampPage() {
           projectName: projectName || null,
           permitNumber: permitNumber || null,
           notes: notes || null,
+          scopeNotes: scopeNotes || null,
           documentFilename: file?.name,
           documentSize: file?.size,
         }),
@@ -275,6 +277,20 @@ export default function CreateStampPage() {
             />
           </div>
 
+          <div>
+            <label className="input-label">Scope & Liability Notes</label>
+            <textarea
+              className="flex w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-base placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta focus-visible:ring-offset-2"
+              rows={3}
+              placeholder="Define scope of professional responsibility, limitations, or conditions..."
+              value={scopeNotes}
+              onChange={(e) => setScopeNotes(e.target.value)}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Visible on verification page and certificate. Use to limit liability scope.
+            </p>
+          </div>
+
           <Button
             onClick={() => setStep('review')}
             disabled={!canProceedToReview}
@@ -312,6 +328,12 @@ export default function CreateStampPage() {
                 <div className="flex justify-between">
                   <dt className="text-gray-600">Permit #</dt>
                   <dd className="font-medium text-gray-900">{permitNumber}</dd>
+                </div>
+              )}
+              {scopeNotes && (
+                <div className="flex justify-between">
+                  <dt className="text-gray-600">Scope Notes</dt>
+                  <dd className="font-medium text-gray-900 text-right max-w-[250px]">{scopeNotes}</dd>
                 </div>
               )}
               <div className="flex justify-between">
