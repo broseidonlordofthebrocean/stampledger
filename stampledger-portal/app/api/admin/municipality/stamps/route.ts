@@ -117,7 +117,9 @@ export async function GET(req: NextRequest) {
           if (ins.expirationDate && new Date(ins.expirationDate) < now) {
             insuranceExpired = true
           }
-        } catch {}
+        } catch (err) {
+          console.warn(`Failed to parse insurance snapshot for stamp ${stamp.id}:`, err)
+        }
       }
 
       // Generate alerts for active stamps with issues

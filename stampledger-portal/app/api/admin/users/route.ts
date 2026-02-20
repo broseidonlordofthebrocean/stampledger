@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
 import { isAdminEmail } from '@/lib/admin'
 import { getDb, users, orgMemberships, professionalLicenses, stamps } from '@/lib/db'
-import { eq, sql, desc, like, or } from 'drizzle-orm'
+import { eq, sql, desc, like, or, inArray } from 'drizzle-orm'
 
 // GET /api/admin/users - List all users (paginated, searchable)
 export async function GET(req: NextRequest) {
@@ -74,41 +74,48 @@ export async function GET(req: NextRequest) {
       totalCount = countResult?.count || 0
     }
 
-    // Enrich with counts
-    const enriched = await Promise.all(
-      allUsers.map(async (u) => {
-        const orgCount = await db
-          .select({ count: sql<number>`count(*)` })
-          .from(orgMemberships)
-          .where(eq(orgMemberships.userId, u.id))
-          .get()
+    // Batch fetch counts for all users on this page
+    const userIds = allUsers.map(u => u.id)
 
-        const licenseCount = await db
-          .select({ count: sql<number>`count(*)` })
-          .from(professionalLicenses)
-          .where(eq(professionalLicenses.userId, u.id))
-          .get()
+    const orgCountMap = new Map<string, number>()
+    const licenseCountMap = new Map<string, number>()
+    const stampCountMap = new Map<string, number>()
 
-        const stampCount = await db
-          .select({ count: sql<number>`count(*)` })
-          .from(stamps)
-          .where(eq(stamps.userId, u.id))
-          .get()
+    if (userIds.length > 0) {
+      const orgCounts = await db
+        .select({ userId: orgMemberships.userId, count: sql<number>`count(*)` })
+        .from(orgMemberships)
+        .where(inArray(orgMemberships.userId, userIds))
+        .groupBy(orgMemberships.userId)
+      for (const row of orgCounts) orgCountMap.set(row.userId, row.count)
 
-        return {
-          id: u.id,
-          email: u.email,
-          firstName: u.firstName,
-          lastName: u.lastName,
-          isLicensedProfessional: u.isLicensedProfessional,
-          createdAt: u.createdAt,
-          lastLoginAt: u.lastLoginAt,
-          orgCount: orgCount?.count || 0,
-          licenseCount: licenseCount?.count || 0,
-          stampCount: stampCount?.count || 0,
-        }
-      })
-    )
+      const licenseCounts = await db
+        .select({ userId: professionalLicenses.userId, count: sql<number>`count(*)` })
+        .from(professionalLicenses)
+        .where(inArray(professionalLicenses.userId, userIds))
+        .groupBy(professionalLicenses.userId)
+      for (const row of licenseCounts) licenseCountMap.set(row.userId, row.count)
+
+      const stampCounts = await db
+        .select({ userId: stamps.userId, count: sql<number>`count(*)` })
+        .from(stamps)
+        .where(inArray(stamps.userId, userIds))
+        .groupBy(stamps.userId)
+      for (const row of stampCounts) stampCountMap.set(row.userId, row.count)
+    }
+
+    const enriched = allUsers.map((u) => ({
+      id: u.id,
+      email: u.email,
+      firstName: u.firstName,
+      lastName: u.lastName,
+      isLicensedProfessional: u.isLicensedProfessional,
+      createdAt: u.createdAt,
+      lastLoginAt: u.lastLoginAt,
+      orgCount: orgCountMap.get(u.id) || 0,
+      licenseCount: licenseCountMap.get(u.id) || 0,
+      stampCount: stampCountMap.get(u.id) || 0,
+    }))
 
     return NextResponse.json({
       users: enriched,

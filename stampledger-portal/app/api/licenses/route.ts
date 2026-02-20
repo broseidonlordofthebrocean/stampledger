@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const validTypes = ['PE', 'PLS', 'RA', 'CPA', 'ESQ']
+    const validTypes = ['PE', 'SE', 'LS', 'PLS', 'RA', 'GE']
     if (!validTypes.includes(licenseType)) {
       return NextResponse.json(
         { error: `Invalid license type. Must be one of: ${validTypes.join(', ')}` },

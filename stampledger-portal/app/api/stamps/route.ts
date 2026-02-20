@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     } = body
 
     // Validation
-    if (!documentHash || documentHash.length !== 64) {
+    if (!documentHash || !/^[a-f0-9]{64}$/i.test(documentHash)) {
       return NextResponse.json(
         { error: 'Invalid document hash (must be 64 hex characters)' },
         { status: 400 }

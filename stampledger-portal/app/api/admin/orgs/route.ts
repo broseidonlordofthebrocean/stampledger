@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, extractToken } from '@/lib/auth'
 import { isAdminEmail } from '@/lib/admin'
 import { getDb, users, organizations, orgMemberships, stamps } from '@/lib/db'
-import { eq, sql, desc, like, or } from 'drizzle-orm'
+import { eq, sql, desc, like, or, inArray } from 'drizzle-orm'
 
 // GET /api/admin/orgs - List all organizations (paginated, searchable)
 export async function GET(req: NextRequest) {
@@ -71,34 +71,40 @@ export async function GET(req: NextRequest) {
       totalCount = countResult?.count || 0
     }
 
-    const enriched = await Promise.all(
-      allOrgs.map(async (org) => {
-        const memberCount = await db
-          .select({ count: sql<number>`count(*)` })
-          .from(orgMemberships)
-          .where(eq(orgMemberships.orgId, org.id))
-          .get()
+    // Batch fetch counts for all orgs on this page
+    const orgIds = allOrgs.map(o => o.id)
 
-        const stampCount = await db
-          .select({ count: sql<number>`count(*)` })
-          .from(stamps)
-          .where(eq(stamps.orgId, org.id))
-          .get()
+    const memberCountMap = new Map<string, number>()
+    const stampCountMap = new Map<string, number>()
 
-        return {
-          id: org.id,
-          name: org.name,
-          slug: org.slug,
-          orgType: org.orgType,
-          plan: org.plan,
-          city: org.city,
-          state: org.state,
-          createdAt: org.createdAt,
-          memberCount: memberCount?.count || 0,
-          stampCount: stampCount?.count || 0,
-        }
-      })
-    )
+    if (orgIds.length > 0) {
+      const memberCounts = await db
+        .select({ orgId: orgMemberships.orgId, count: sql<number>`count(*)` })
+        .from(orgMemberships)
+        .where(inArray(orgMemberships.orgId, orgIds))
+        .groupBy(orgMemberships.orgId)
+      for (const row of memberCounts) memberCountMap.set(row.orgId, row.count)
+
+      const stampCounts = await db
+        .select({ orgId: stamps.orgId, count: sql<number>`count(*)` })
+        .from(stamps)
+        .where(inArray(stamps.orgId, orgIds))
+        .groupBy(stamps.orgId)
+      for (const row of stampCounts) stampCountMap.set(row.orgId!, row.count)
+    }
+
+    const enriched = allOrgs.map((org) => ({
+      id: org.id,
+      name: org.name,
+      slug: org.slug,
+      orgType: org.orgType,
+      plan: org.plan,
+      city: org.city,
+      state: org.state,
+      createdAt: org.createdAt,
+      memberCount: memberCountMap.get(org.id) || 0,
+      stampCount: stampCountMap.get(org.id) || 0,
+    }))
 
     return NextResponse.json({
       organizations: enriched,

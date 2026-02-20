@@ -94,9 +94,9 @@ export async function POST(
       return NextResponse.json({ error: 'Stamp not found' }, { status: 404 })
     }
 
-    if (stamp.status === 'revoked') {
+    if (stamp.status !== 'active') {
       return NextResponse.json(
-        { error: 'Stamp is already revoked' },
+        { error: `Only active stamps can be revoked (current status: ${stamp.status})` },
         { status: 400 }
       )
     }

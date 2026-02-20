@@ -74,11 +74,12 @@ export default function MunicipalityPage() {
       const stampsData = stampsRes.ok ? await stampsRes.json() : { stamps: [], alerts: [] }
 
       if (statsData) {
+        const supersededCount = (stampsData.stamps || []).filter((s: any) => s.status === 'superseded').length
         setStats({
           totalStamps: statsData.stamps?.total || 0,
           activeStamps: statsData.stamps?.active || 0,
           revokedStamps: statsData.stamps?.revoked || 0,
-          supersededStamps: 0,
+          supersededStamps: supersededCount,
           totalVerifications: statsData.verifications?.total || 0,
           recentVerifications: 0,
           expiredLicenses: stampsData.alerts?.filter((a: any) => a.type === 'license_expired').length || 0,

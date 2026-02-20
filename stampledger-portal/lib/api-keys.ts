@@ -93,9 +93,10 @@ export async function verifyApiKey(key: string): Promise<{
     .set({ lastUsedAt: new Date() })
     .where(eq(apiKeys.id, apiKey.id))
     .run()
-    .catch(() => {})
+    .catch(err => console.warn('API key lastUsedAt update failed:', err))
 
-  const scopes = apiKey.scopes ? JSON.parse(apiKey.scopes) : []
+  const parsed = apiKey.scopes ? JSON.parse(apiKey.scopes) : []
+  const scopes = Array.isArray(parsed) ? parsed : []
 
   return {
     valid: true,

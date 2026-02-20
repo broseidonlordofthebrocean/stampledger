@@ -34,6 +34,13 @@ export async function POST(
       )
     }
 
+    if (newDocumentHash && !/^[a-f0-9]{64}$/i.test(newDocumentHash)) {
+      return NextResponse.json(
+        { error: 'Invalid document hash (must be 64 hex characters)' },
+        { status: 400 }
+      )
+    }
+
     const db = getDb()
 
     // Check stamp exists and belongs to user

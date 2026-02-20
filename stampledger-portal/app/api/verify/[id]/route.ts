@@ -29,7 +29,7 @@ export async function GET(
         verificationMethod: 'web',
         result: 'not_found',
         createdAt: now,
-      }).run().catch(() => {}) // Don't fail on log errors
+      }).run().catch(err => console.warn('Log insert failed:', err)) // Don't fail on log errors
 
       return NextResponse.json(
         {
@@ -113,7 +113,7 @@ export async function GET(
       verificationMethod: 'web',
       result,
       createdAt: now,
-    }).run().catch(() => {})
+    }).run().catch(err => console.warn('Log insert failed:', err))
 
     // Log to verification_scans for analytics
     const ipAddress = req.headers.get('cf-connecting-ip') || req.headers.get('x-forwarded-for') || null
@@ -129,12 +129,14 @@ export async function GET(
       userAgent,
       referrer,
       scanSource,
-    }).run().catch(() => {})
+    }).run().catch(err => console.warn('Log insert failed:', err))
 
     // Parse insurance snapshot
     let insuranceInfo = null
     if (stamp.insuranceSnapshot) {
-      try { insuranceInfo = JSON.parse(stamp.insuranceSnapshot) } catch {}
+      try { insuranceInfo = JSON.parse(stamp.insuranceSnapshot) } catch (err) {
+        console.warn(`Failed to parse insurance snapshot for stamp ${stamp.id}:`, err)
+      }
     }
 
     // Smart alerts for license/insurance expiration

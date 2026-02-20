@@ -70,7 +70,9 @@ export async function GET(req: NextRequest) {
     // Parse insurance snapshot (captured at stamp time)
     let insuranceAtStampTime = null
     if (stamp.insuranceSnapshot) {
-      try { insuranceAtStampTime = JSON.parse(stamp.insuranceSnapshot) } catch {}
+      try { insuranceAtStampTime = JSON.parse(stamp.insuranceSnapshot) } catch (err) {
+        console.warn(`Failed to parse insurance snapshot for stamp ${stamp.id}:`, err)
+      }
     }
 
     // Current insurance from license

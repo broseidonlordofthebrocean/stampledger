@@ -69,7 +69,9 @@ export async function GET(
     // Parse insurance snapshot
     let insuranceInfo: { provider?: string; policyNumber?: string; coverageAmount?: number; expirationDate?: string } | null = null
     if (stamp.insuranceSnapshot) {
-      try { insuranceInfo = JSON.parse(stamp.insuranceSnapshot) } catch {}
+      try { insuranceInfo = JSON.parse(stamp.insuranceSnapshot) } catch (err) {
+        console.warn(`Failed to parse insurance snapshot for stamp ${stamp.id}:`, err)
+      }
     }
 
     const html = `<!DOCTYPE html>

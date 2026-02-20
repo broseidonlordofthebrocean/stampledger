@@ -79,6 +79,11 @@ export async function POST(
       return NextResponse.json({ error: 'Email is required' }, { status: 400 })
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
+    }
+
     const db = getDb()
 
     // Verify ownership
