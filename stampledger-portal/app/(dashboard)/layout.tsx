@@ -1,10 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
-import { DashboardNav } from '@/components/DashboardNav'
+import { AppSidebar } from '@/components/app-sidebar'
+import { TopNavbar } from '@/components/top-navbar'
+import { MobileSidebar } from '@/components/mobile-sidebar'
 import { Loader2 } from 'lucide-react'
+import { Toaster } from '@/components/ui/sonner'
 
 export default function DashboardLayout({
   children,
@@ -13,6 +16,7 @@ export default function DashboardLayout({
 }) {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -22,24 +26,27 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
   if (!user) {
-    return null // Will redirect
+    return null
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <DashboardNav />
-      <main className="md:pl-64 pt-16 md:pt-0">
-        <div className="p-4 md:p-8">
+    <div className="min-h-screen bg-background">
+      <AppSidebar />
+      <MobileSidebar open={mobileOpen} onOpenChange={setMobileOpen} />
+      <div className="md:pl-64">
+        <TopNavbar onMobileMenuToggle={() => setMobileOpen(!mobileOpen)} />
+        <main className="p-4 md:p-6">
           {children}
-        </div>
-      </main>
+        </main>
+      </div>
+      <Toaster />
     </div>
   )
 }

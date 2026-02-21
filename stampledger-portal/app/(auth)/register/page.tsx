@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
+// Native select used until full page rewrite to shadcn Select
 import { Loader2, User, Mail, Lock, Phone, ArrowRight, Info } from 'lucide-react'
 
 const US_STATES = [
@@ -94,10 +94,10 @@ export default function RegisterPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+        <h1 className="text-3xl font-bold text-foreground tracking-tight">
           Create your account
         </h1>
-        <p className="text-gray-500 mt-2">
+        <p className="text-muted-foreground mt-2">
           Start managing your professional stamps today
         </p>
       </div>
@@ -114,7 +114,7 @@ export default function RegisterPage() {
             }
           }}
           disabled={loading || !!oauthLoading}
-          className="w-full flex items-center justify-center gap-3 h-11 px-4 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm font-medium text-gray-700"
+          className="w-full flex items-center justify-center gap-3 h-11 px-4 rounded-xl border border-input bg-card hover:bg-accent transition-colors disabled:opacity-50 text-sm font-medium text-foreground"
         >
           {oauthLoading === 'google' ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -133,7 +133,7 @@ export default function RegisterPage() {
             }
           }}
           disabled={loading || !!oauthLoading}
-          className="w-full flex items-center justify-center gap-3 h-11 px-4 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm font-medium text-gray-700"
+          className="w-full flex items-center justify-center gap-3 h-11 px-4 rounded-xl border border-input bg-card hover:bg-accent transition-colors disabled:opacity-50 text-sm font-medium text-foreground"
         >
           {oauthLoading === 'microsoft' ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -146,17 +146,17 @@ export default function RegisterPage() {
 
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
+          <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-3 bg-gray-50 text-gray-400">or create an account with email</span>
+          <span className="px-3 bg-muted text-muted-foreground">or create an account with email</span>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
-          <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm border border-red-100 flex items-center">
-            <div className="w-2 h-2 rounded-full bg-red-500 mr-3 flex-shrink-0" />
+          <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-xl text-sm border border-destructive/20 flex items-center">
+            <div className="w-2 h-2 rounded-full bg-destructive mr-3 flex-shrink-0" />
             {error}
           </div>
         )}
@@ -164,11 +164,11 @@ export default function RegisterPage() {
         {/* Name fields */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="firstName" className="input-label">
+            <label htmlFor="firstName" className="text-sm font-medium text-foreground">
               First name
             </label>
             <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 id="firstName"
                 name="firstName"
@@ -183,7 +183,7 @@ export default function RegisterPage() {
             </div>
           </div>
           <div>
-            <label htmlFor="lastName" className="input-label">
+            <label htmlFor="lastName" className="text-sm font-medium text-foreground">
               Last name
             </label>
             <Input
@@ -201,11 +201,11 @@ export default function RegisterPage() {
 
         {/* Email */}
         <div>
-          <label htmlFor="email" className="input-label">
+          <label htmlFor="email" className="text-sm font-medium text-foreground">
             Work email
           </label>
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               id="email"
               name="email"
@@ -222,11 +222,11 @@ export default function RegisterPage() {
 
         {/* Phone */}
         <div>
-          <label htmlFor="phone" className="input-label">
-            Phone <span className="text-gray-400 font-normal">(optional)</span>
+          <label htmlFor="phone" className="text-sm font-medium text-foreground">
+            Phone <span className="text-muted-foreground font-normal">(optional)</span>
           </label>
           <div className="relative">
-            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               id="phone"
               name="phone"
@@ -241,28 +241,28 @@ export default function RegisterPage() {
         </div>
 
         {/* PE License - collapsible info */}
-        <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+        <div className="bg-muted rounded-xl p-4 border border-border">
           <div className="flex items-start gap-3">
             <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">PE License (optional)</p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-sm font-medium text-foreground">PE License (optional)</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
                 You can add your PE license later from your profile settings.
               </p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-4">
             <div>
-              <label htmlFor="peState" className="text-xs font-medium text-gray-600 mb-1 block">
+              <label htmlFor="peState" className="text-xs font-medium text-muted-foreground mb-1 block">
                 State
               </label>
-              <Select
+              <select
                 id="peState"
                 name="peState"
                 value={formData.peState}
                 onChange={handleChange}
                 disabled={loading}
-                className="h-10 text-sm"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <option value="">Select</option>
                 {US_STATES.map((state) => (
@@ -270,10 +270,10 @@ export default function RegisterPage() {
                     {state}
                   </option>
                 ))}
-              </Select>
+              </select>
             </div>
             <div>
-              <label htmlFor="peLicenseNumber" className="text-xs font-medium text-gray-600 mb-1 block">
+              <label htmlFor="peLicenseNumber" className="text-xs font-medium text-muted-foreground mb-1 block">
                 License #
               </label>
               <Input
@@ -284,7 +284,7 @@ export default function RegisterPage() {
                 value={formData.peLicenseNumber}
                 onChange={handleChange}
                 disabled={loading}
-                className="h-10 text-sm"
+                className="text-sm"
               />
             </div>
           </div>
@@ -292,11 +292,11 @@ export default function RegisterPage() {
 
         {/* Password */}
         <div>
-          <label htmlFor="password" className="input-label">
+          <label htmlFor="password" className="text-sm font-medium text-foreground">
             Password
           </label>
           <div className="relative">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               id="password"
               name="password"
@@ -313,11 +313,11 @@ export default function RegisterPage() {
 
         {/* Confirm Password */}
         <div>
-          <label htmlFor="confirmPassword" className="input-label">
+          <label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
             Confirm password
           </label>
           <div className="relative">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               id="confirmPassword"
               name="confirmPassword"
@@ -346,7 +346,7 @@ export default function RegisterPage() {
           )}
         </Button>
 
-        <p className="text-xs text-gray-500 text-center">
+        <p className="text-xs text-muted-foreground text-center">
           By creating an account, you agree to our{' '}
           <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link>
           {' '}and{' '}
@@ -354,8 +354,8 @@ export default function RegisterPage() {
         </p>
       </form>
 
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <p className="text-center text-gray-600">
+      <div className="mt-8 pt-6 border-t border-border">
+        <p className="text-center text-muted-foreground">
           Already have an account?{' '}
           <Link
             href="/login"

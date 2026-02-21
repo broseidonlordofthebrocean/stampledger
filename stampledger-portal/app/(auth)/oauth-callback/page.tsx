@@ -32,10 +32,10 @@ export default function OAuthCallbackPage() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <div className="bg-red-50 text-red-600 px-6 py-4 rounded-xl text-sm border border-red-100">
+        <div className="bg-destructive/10 text-destructive px-6 py-4 rounded-md text-sm border border-destructive/20">
           {error}
         </div>
-        <p className="text-gray-400 text-sm mt-4">Redirecting to login...</p>
+        <p className="text-muted-foreground text-sm mt-4">Redirecting to login...</p>
       </div>
     )
   }
@@ -43,7 +43,7 @@ export default function OAuthCallbackPage() {
   return (
     <div className="flex flex-col items-center justify-center py-12">
       <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-      <p className="text-gray-600">Completing sign in...</p>
+      <p className="text-muted-foreground">Completing sign in...</p>
     </div>
   )
 }

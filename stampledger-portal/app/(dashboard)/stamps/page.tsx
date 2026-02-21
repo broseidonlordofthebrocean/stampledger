@@ -65,8 +65,8 @@ export default function StampsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="page-header mb-0">Stamps</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1 mb-0">Stamps</h1>
+          <p className="text-muted-foreground">
             Manage your blockchain-verified engineering stamps
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function StampsPage() {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
           placeholder="Search stamps..."
           className="pl-10"
@@ -95,10 +95,10 @@ export default function StampsPage() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : filteredStamps.length === 0 ? (
-        <div className="card text-center py-12">
-          <Stamp className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900">No stamps yet</h3>
-          <p className="text-gray-600 mt-1">
+        <div className="bg-card rounded-lg border border-border p-6text-center py-12">
+          <Stamp className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-foreground">No stamps yet</h3>
+          <p className="text-muted-foreground mt-1">
             Create your first blockchain-verified stamp
           </p>
           <Link href="/stamps/create">
@@ -119,7 +119,7 @@ export default function StampsPage() {
                       className={`p-3 rounded-lg ${
                         stamp.status === 'active'
                           ? 'bg-accent/10'
-                          : 'bg-red-100'
+                          : 'bg-destructive/10'
                       }`}
                     >
                       <Stamp
@@ -131,14 +131,14 @@ export default function StampsPage() {
                       />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">
+                      <h3 className="font-semibold text-foreground">
                         {stamp.projectName || 'Untitled Project'}
                       </h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-muted-foreground">
                         {stamp.jurisdictionId} •{' '}
                         {new Date(stamp.createdAt).toLocaleDateString()}
                       </p>
-                      <p className="text-xs text-gray-400 font-mono mt-1">
+                      <p className="text-xs text-muted-foreground font-mono mt-1">
                         {stamp.documentHash.slice(0, 16)}...
                         {stamp.documentHash.slice(-16)}
                       </p>
@@ -156,7 +156,7 @@ export default function StampsPage() {
                         Revoked
                       </span>
                     )}
-                    <ExternalLink className="h-4 w-4 text-gray-400" />
+                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
                   </div>
                 </div>
               </div>

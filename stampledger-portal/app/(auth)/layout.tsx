@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
-import { Loader2, Shield, CheckCircle2, FileCheck, GitBranch, Lock } from 'lucide-react'
+import { Loader2, Shield, FileCheck, GitBranch, Lock } from 'lucide-react'
 
 const features = [
   {
@@ -39,7 +39,7 @@ export default function AuthLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
@@ -52,7 +52,7 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen flex">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] gradient-hero relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] bg-primary relative overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-72 h-72 rounded-full bg-white/20 blur-3xl" />
@@ -106,7 +106,7 @@ export default function AuthLayout({
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex flex-1 flex-col justify-center py-12 px-6 sm:px-12 lg:px-16 xl:px-24 bg-gray-50">
+      <div className="flex flex-1 flex-col justify-center py-12 px-6 sm:px-12 lg:px-16 xl:px-24 bg-background">
         <div className="w-full max-w-md mx-auto">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center justify-center mb-8">

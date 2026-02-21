@@ -108,8 +108,8 @@ export default function IntegrationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="page-header mb-0">Integrations</h1>
-        <p className="text-gray-600">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1 mb-0">Integrations</h1>
+        <p className="text-muted-foreground">
           Extend StampLedger into your existing tools and workflows
         </p>
       </div>
@@ -122,7 +122,7 @@ export default function IntegrationsPage() {
           return (
             <div
               key={integration.id}
-              className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-shadow hover:shadow-sm"
+              className="bg-card rounded-xl border border-border overflow-hidden transition-shadow hover:shadow-sm"
             >
               {/* Header */}
               <button
@@ -132,17 +132,17 @@ export default function IntegrationsPage() {
                 <div className={`p-3 rounded-xl ${
                   integration.status === 'available'
                     ? 'bg-primary/10'
-                    : 'bg-gray-100'
+                    : 'bg-muted'
                 }`}>
                   <Icon className={`h-8 w-8 ${
                     integration.status === 'available'
                       ? 'text-primary'
-                      : 'text-gray-400'
+                      : 'text-muted-foreground'
                   }`} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3">
-                    <h2 className="text-lg font-semibold text-gray-900">
+                    <h2 className="text-lg font-semibold text-foreground">
                       {integration.name}
                     </h2>
                     {integration.status === 'available' ? (
@@ -150,31 +150,31 @@ export default function IntegrationsPage() {
                         Available
                       </span>
                     ) : (
-                      <span className="px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-500 rounded-full">
+                      <span className="px-2.5 py-0.5 text-xs font-medium bg-muted text-muted-foreground rounded-full">
                         Coming Soon
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                     {integration.description}
                   </p>
                 </div>
                 {isExpanded ? (
-                  <ChevronUp className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                  <ChevronUp className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                  <ChevronDown className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 )}
               </button>
 
               {/* Expanded Content */}
               {isExpanded && (
-                <div className="border-t border-gray-100 p-6 pt-4 space-y-6">
+                <div className="border-t border-border p-6 pt-4 space-y-6">
                   {/* Features */}
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Features</h3>
+                    <h3 className="text-sm font-semibold text-foreground mb-3">Features</h3>
                     <ul className="space-y-2">
                       {integration.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                        <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                           <CheckCircle className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                           {feature}
                         </li>
@@ -185,14 +185,14 @@ export default function IntegrationsPage() {
                   {/* Setup Steps */}
                   {integration.setupSteps && (
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-700 mb-3">Setup Instructions</h3>
+                      <h3 className="text-sm font-semibold text-foreground mb-3">Setup Instructions</h3>
                       <ol className="space-y-3">
                         {integration.setupSteps.map((step, i) => (
                           <li key={i} className="flex gap-3 text-sm">
                             <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
                               {i + 1}
                             </span>
-                            <span className="text-gray-700 pt-0.5">{step}</span>
+                            <span className="text-foreground pt-0.5">{step}</span>
                           </li>
                         ))}
                       </ol>
@@ -223,8 +223,8 @@ export default function IntegrationsPage() {
                   )}
 
                   {integration.status === 'coming_soon' && (
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                      <p className="text-sm text-gray-600">
+                    <div className="bg-muted border border-border rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground">
                         This integration is currently in development. It requires Bluebeam Studio API access
                         and OAuth 2.0 partnership configuration. Stay tuned for updates.
                       </p>
@@ -238,31 +238,31 @@ export default function IntegrationsPage() {
       </div>
 
       {/* API Section */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-card rounded-xl border border-border p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="bg-secondary/10 p-3 rounded-xl">
             <Puzzle className="h-6 w-6 text-secondary" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Build Your Own</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-lg font-semibold text-foreground">Build Your Own</h2>
+            <p className="text-sm text-muted-foreground">
               Use the StampLedger API to build custom integrations
             </p>
           </div>
         </div>
-        <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-          <p className="text-sm text-gray-700">
+        <div className="bg-muted rounded-lg p-4 space-y-2">
+          <p className="text-sm text-foreground">
             <strong>Public Endpoints</strong> (no authentication required):
           </p>
-          <div className="space-y-1 text-sm font-mono text-gray-600">
+          <div className="space-y-1 text-sm font-mono text-muted-foreground">
             <p>GET /api/verify/{'{'}<span className="text-primary">stampId</span>{'}'} — Verify a stamp</p>
             <p>POST /api/verify/integrity — Check document hash</p>
             <p>GET /api/verify/{'{'}<span className="text-primary">stampId</span>{'}'}/certificate — Get verification certificate</p>
           </div>
-          <p className="text-sm text-gray-700 mt-3">
+          <p className="text-sm text-foreground mt-3">
             <strong>Authenticated Endpoints:</strong>
           </p>
-          <div className="space-y-1 text-sm font-mono text-gray-600">
+          <div className="space-y-1 text-sm font-mono text-muted-foreground">
             <p>POST /api/auth/extension-token — Get extension auth token</p>
             <p>GET /api/stamps — List your stamps</p>
             <p>GET /api/documents — List your documents</p>

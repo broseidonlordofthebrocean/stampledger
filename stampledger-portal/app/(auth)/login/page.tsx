@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Loader2, Mail, Lock, ArrowRight, Play, KeyRound } from 'lucide-react'
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -93,10 +94,10 @@ export default function LoginPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+        <h1 className="text-3xl font-bold text-foreground tracking-tight">
           Welcome back
         </h1>
-        <p className="text-gray-500 mt-2">
+        <p className="text-muted-foreground mt-2">
           Sign in to continue to your dashboard
         </p>
       </div>
@@ -105,7 +106,7 @@ export default function LoginPage() {
       <button
         onClick={handleDemo}
         disabled={anyLoading}
-        className="w-full mb-6 p-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all group disabled:opacity-50"
+        className="w-full mb-6 p-4 rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all group disabled:opacity-50"
       >
         <div className="flex items-center justify-center gap-3">
           {demoLoading ? (
@@ -119,7 +120,7 @@ export default function LoginPage() {
             <p className="font-semibold text-primary text-sm">
               {demoLoading ? 'Setting up demo...' : 'Try the Demo'}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               Explore with sample data - no account needed
             </p>
           </div>
@@ -131,7 +132,7 @@ export default function LoginPage() {
         <button
           onClick={() => handleOAuth('google')}
           disabled={anyLoading}
-          className="w-full flex items-center justify-center gap-3 h-11 px-4 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm font-medium text-gray-700"
+          className="w-full flex items-center justify-center gap-3 h-11 px-4 rounded-md border border-input bg-card hover:bg-accent transition-colors disabled:opacity-50 text-sm font-medium text-foreground"
         >
           {oauthLoading === 'google' ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -143,7 +144,7 @@ export default function LoginPage() {
         <button
           onClick={() => handleOAuth('microsoft')}
           disabled={anyLoading}
-          className="w-full flex items-center justify-center gap-3 h-11 px-4 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm font-medium text-gray-700"
+          className="w-full flex items-center justify-center gap-3 h-11 px-4 rounded-md border border-input bg-card hover:bg-accent transition-colors disabled:opacity-50 text-sm font-medium text-foreground"
         >
           {oauthLoading === 'microsoft' ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -155,12 +156,12 @@ export default function LoginPage() {
         <button
           onClick={handleWebAuthn}
           disabled={anyLoading}
-          className="w-full flex items-center justify-center gap-3 h-11 px-4 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm font-medium text-gray-700"
+          className="w-full flex items-center justify-center gap-3 h-11 px-4 rounded-md border border-input bg-card hover:bg-accent transition-colors disabled:opacity-50 text-sm font-medium text-foreground"
         >
           {webauthnLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
           ) : (
-            <KeyRound className="h-5 w-5 text-gray-600" />
+            <KeyRound className="h-5 w-5 text-muted-foreground" />
           )}
           Sign in with Security Key
         </button>
@@ -168,27 +169,25 @@ export default function LoginPage() {
 
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
+          <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-3 bg-gray-50 text-gray-400">or sign in with email</span>
+          <span className="px-3 bg-background text-muted-foreground">or sign in with email</span>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
-          <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm border border-red-100 flex items-center">
-            <div className="w-2 h-2 rounded-full bg-red-500 mr-3 flex-shrink-0" />
+          <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md text-sm border border-destructive/20 flex items-center">
+            <div className="w-2 h-2 rounded-full bg-destructive mr-3 flex-shrink-0" />
             {error}
           </div>
         )}
 
-        <div>
-          <label htmlFor="email" className="input-label">
-            Email address
-          </label>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email address</Label>
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="email"
               type="email"
@@ -197,25 +196,23 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={loading}
-              className="pl-12"
+              className="pl-10"
             />
           </div>
         </div>
 
-        <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">
-              Password
-            </label>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Password</Label>
             <Link
               href="/forgot-password"
-              className="text-sm text-primary hover:text-primary-light transition-colors"
+              className="text-sm text-primary hover:underline"
             >
               Forgot password?
             </Link>
           </div>
           <div className="relative">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="password"
               type="password"
@@ -224,32 +221,32 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={loading}
-              className="pl-12"
+              className="pl-10"
             />
           </div>
         </div>
 
-        <Button type="submit" className="w-full h-12 text-base" disabled={anyLoading}>
+        <Button type="submit" className="w-full" size="lg" disabled={anyLoading}>
           {loading ? (
             <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Signing in...
             </>
           ) : (
             <>
               Sign In
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}
         </Button>
       </form>
 
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <p className="text-center text-gray-600">
+      <div className="mt-8 pt-6 border-t border-border">
+        <p className="text-center text-muted-foreground">
           New to StampLedger?{' '}
           <Link
             href="/register"
-            className="text-primary font-semibold hover:text-primary-light transition-colors"
+            className="text-primary font-semibold hover:underline"
           >
             Create an account
           </Link>

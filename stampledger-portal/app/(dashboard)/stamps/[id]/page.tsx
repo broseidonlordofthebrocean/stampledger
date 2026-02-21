@@ -324,7 +324,7 @@ export default function StampDetailPage({
       <div className="flex items-center gap-4">
         <button
           onClick={() => router.back()}
-          className="p-2 hover:bg-gray-100 rounded-lg"
+          className="p-2 hover:bg-accent rounded-lg"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
@@ -332,7 +332,7 @@ export default function StampDetailPage({
           <h1 className="text-2xl font-bold text-primary">
             {stamp.projectName || 'Stamp Details'}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Created {new Date(stamp.createdAt).toLocaleString()}
           </p>
         </div>
@@ -347,7 +347,7 @@ export default function StampDetailPage({
             Superseded
           </span>
         ) : (
-          <span className="flex items-center px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-medium">
+          <span className="flex items-center px-3 py-1 bg-destructive/10 text-destructive rounded-full text-sm font-medium">
             <XCircle className="h-4 w-4 mr-1" />
             Revoked
           </span>
@@ -381,15 +381,15 @@ export default function StampDetailPage({
 
       {/* Revoked Warning */}
       {stamp.status === 'revoked' && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5" />
             <div>
-              <p className="font-medium text-red-800">This stamp has been revoked</p>
-              <p className="text-sm text-red-600 mt-1">
+              <p className="font-medium text-destructive">This stamp has been revoked</p>
+              <p className="text-sm text-destructive mt-1">
                 Reason: {stamp.revokedReason}
               </p>
-              <p className="text-sm text-red-600">
+              <p className="text-sm text-destructive">
                 Revoked on: {new Date(stamp.revokedAt!).toLocaleString()}
               </p>
             </div>
@@ -400,34 +400,34 @@ export default function StampDetailPage({
       <div className="grid md:grid-cols-3 gap-6">
         {/* Main Info */}
         <div className="md:col-span-2 space-y-6">
-          <div className="card">
-            <h3 className="font-semibold text-gray-900 mb-4">Stamp Information</h3>
+          <div className="bg-card rounded-lg border border-border p-6">
+            <h3 className="font-semibold text-foreground mb-4">Stamp Information</h3>
             <dl className="space-y-4">
               <div>
-                <dt className="text-sm text-gray-600">Jurisdiction</dt>
-                <dd className="font-medium text-gray-900 capitalize">
+                <dt className="text-sm text-muted-foreground">Jurisdiction</dt>
+                <dd className="font-medium text-foreground capitalize">
                   {stamp.jurisdictionId.replace('-', ' ')}
                 </dd>
               </div>
               {stamp.projectName && (
                 <div>
-                  <dt className="text-sm text-gray-600">Project Name</dt>
-                  <dd className="font-medium text-gray-900">{stamp.projectName}</dd>
+                  <dt className="text-sm text-muted-foreground">Project Name</dt>
+                  <dd className="font-medium text-foreground">{stamp.projectName}</dd>
                 </div>
               )}
               {stamp.permitNumber && (
                 <div>
-                  <dt className="text-sm text-gray-600">Permit Number</dt>
-                  <dd className="font-medium text-gray-900">{stamp.permitNumber}</dd>
+                  <dt className="text-sm text-muted-foreground">Permit Number</dt>
+                  <dd className="font-medium text-foreground">{stamp.permitNumber}</dd>
                 </div>
               )}
               {stamp.documentFilename && (
                 <div>
-                  <dt className="text-sm text-gray-600">Document</dt>
-                  <dd className="font-medium text-gray-900">
+                  <dt className="text-sm text-muted-foreground">Document</dt>
+                  <dd className="font-medium text-foreground">
                     {stamp.documentFilename}
                     {stamp.documentSize && (
-                      <span className="text-gray-500 ml-2">
+                      <span className="text-muted-foreground ml-2">
                         ({(stamp.documentSize / 1024 / 1024).toFixed(2)} MB)
                       </span>
                     )}
@@ -436,8 +436,8 @@ export default function StampDetailPage({
               )}
               {stamp.notes && (
                 <div>
-                  <dt className="text-sm text-gray-600">Notes</dt>
-                  <dd className="text-gray-900">{stamp.notes}</dd>
+                  <dt className="text-sm text-muted-foreground">Notes</dt>
+                  <dd className="text-foreground">{stamp.notes}</dd>
                 </div>
               )}
             </dl>
@@ -445,45 +445,45 @@ export default function StampDetailPage({
 
           {/* Scope Notes */}
           {stamp.scopeNotes && (
-            <div className="card">
+            <div className="bg-card rounded-lg border border-border p-6">
               <div className="flex items-center gap-2 mb-3">
                 <Info className="h-4 w-4 text-cta" />
-                <h3 className="font-semibold text-gray-900">Scope & Liability Notes</h3>
+                <h3 className="font-semibold text-foreground">Scope & Liability Notes</h3>
               </div>
-              <p className="text-gray-700 bg-gray-50 p-3 rounded-lg text-sm">
+              <p className="text-foreground bg-muted p-3 rounded-lg text-sm">
                 {stamp.scopeNotes}
               </p>
             </div>
           )}
 
-          <div className="card">
-            <h3 className="font-semibold text-gray-900 mb-4">Blockchain Record</h3>
+          <div className="bg-card rounded-lg border border-border p-6">
+            <h3 className="font-semibold text-foreground mb-4">Blockchain Record</h3>
             <dl className="space-y-4">
               <div>
-                <dt className="text-sm text-gray-600">Stamp ID</dt>
-                <dd className="font-mono text-sm text-gray-900">{stamp.id}</dd>
+                <dt className="text-sm text-muted-foreground">Stamp ID</dt>
+                <dd className="font-mono text-sm text-foreground">{stamp.id}</dd>
               </div>
               <div>
-                <dt className="text-sm text-gray-600">Blockchain ID</dt>
-                <dd className="font-mono text-sm text-gray-900">
+                <dt className="text-sm text-muted-foreground">Blockchain ID</dt>
+                <dd className="font-mono text-sm text-foreground">
                   {stamp.blockchainId}
                 </dd>
               </div>
               <div>
-                <dt className="text-sm text-gray-600 mb-1">Document Hash (SHA-256)</dt>
+                <dt className="text-sm text-muted-foreground mb-1">Document Hash (SHA-256)</dt>
                 <dd className="flex items-center gap-2">
-                  <code className="flex-1 text-xs font-mono bg-gray-100 p-2 rounded break-all">
+                  <code className="flex-1 text-xs font-mono bg-muted p-2 rounded break-all">
                     {stamp.documentHash}
                   </code>
                   <button
                     onClick={copyHash}
-                    className="p-2 hover:bg-gray-100 rounded-lg"
+                    className="p-2 hover:bg-accent rounded-lg"
                     title="Copy hash"
                   >
                     {copied ? (
                       <CheckCircle className="h-4 w-4 text-accent" />
                     ) : (
-                      <Copy className="h-4 w-4 text-gray-500" />
+                      <Copy className="h-4 w-4 text-muted-foreground" />
                     )}
                   </button>
                 </dd>
@@ -492,37 +492,37 @@ export default function StampDetailPage({
           </div>
 
           {/* Verification Analytics */}
-          <div className="card">
+          <div className="bg-card rounded-lg border border-border p-6">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="h-4 w-4 text-cta" />
-              <h3 className="font-semibold text-gray-900">Verification Analytics</h3>
+              <h3 className="font-semibold text-foreground">Verification Analytics</h3>
             </div>
             {analytics ? (
               <>
                 <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <div className="bg-muted rounded-lg p-3 text-center">
                     <p className="text-2xl font-bold text-primary">{analytics.total}</p>
-                    <p className="text-xs text-gray-500">Total Scans</p>
+                    <p className="text-xs text-muted-foreground">Total Scans</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <div className="bg-muted rounded-lg p-3 text-center">
                     <p className="text-2xl font-bold text-primary">{analytics.last7d}</p>
-                    <p className="text-xs text-gray-500">Last 7 Days</p>
+                    <p className="text-xs text-muted-foreground">Last 7 Days</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <div className="bg-muted rounded-lg p-3 text-center">
                     <p className="text-2xl font-bold text-primary">{analytics.last30d}</p>
-                    <p className="text-xs text-gray-500">Last 30 Days</p>
+                    <p className="text-xs text-muted-foreground">Last 30 Days</p>
                   </div>
                 </div>
                 {analytics.recentScans.length > 0 && (
                   <div>
-                    <p className="text-sm text-gray-600 mb-2">Recent Scans</p>
+                    <p className="text-sm text-muted-foreground mb-2">Recent Scans</p>
                     <div className="space-y-1 max-h-40 overflow-y-auto">
                       {analytics.recentScans.slice(0, 5).map((scan) => (
-                        <div key={scan.id} className="flex justify-between text-xs bg-gray-50 px-3 py-2 rounded">
-                          <span className="text-gray-600">
+                        <div key={scan.id} className="flex justify-between text-xs bg-muted px-3 py-2 rounded">
+                          <span className="text-muted-foreground">
                             {new Date(scan.scannedAt).toLocaleString()}
                           </span>
-                          <span className="text-gray-500">
+                          <span className="text-muted-foreground">
                             {scan.scanSource || 'web'}
                           </span>
                         </div>
@@ -532,16 +532,16 @@ export default function StampDetailPage({
                 )}
               </>
             ) : (
-              <p className="text-sm text-gray-500">Loading analytics...</p>
+              <p className="text-sm text-muted-foreground">Loading analytics...</p>
             )}
           </div>
 
           {/* Stakeholders */}
-          <div className="card">
+          <div className="bg-card rounded-lg border border-border p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-cta" />
-                <h3 className="font-semibold text-gray-900">Stakeholders</h3>
+                <h3 className="font-semibold text-foreground">Stakeholders</h3>
               </div>
               <Button
                 variant="outline"
@@ -554,7 +554,7 @@ export default function StampDetailPage({
             </div>
 
             {showAddStakeholder && (
-              <div className="bg-gray-50 rounded-lg p-4 mb-4 space-y-3">
+              <div className="bg-muted rounded-lg p-4 mb-4 space-y-3">
                 <Input
                   placeholder="Email *"
                   value={newStakeholderEmail}
@@ -588,18 +588,18 @@ export default function StampDetailPage({
             {stakeholders.length > 0 ? (
               <div className="space-y-2">
                 {stakeholders.map((s) => (
-                  <div key={s.id} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
+                  <div key={s.id} className="flex items-center justify-between bg-muted px-3 py-2 rounded-lg">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-foreground">
                         {s.name || s.email}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {s.email}{s.role ? ` - ${s.role}` : ''}
                       </p>
                     </div>
                     <button
                       onClick={() => handleRemoveStakeholder(s.id)}
-                      className="p-1 hover:bg-red-50 rounded text-gray-400 hover:text-red-500"
+                      className="p-1 hover:bg-destructive/10 rounded text-muted-foreground hover:text-red-500"
                     >
                       <Trash2 className="h-3 w-3" />
                     </button>
@@ -607,14 +607,14 @@ export default function StampDetailPage({
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-500">No stakeholders added yet.</p>
+              <p className="text-sm text-muted-foreground">No stakeholders added yet.</p>
             )}
           </div>
 
           {/* Actions */}
           {stamp.status === 'active' && (
-            <div className="card">
-              <h3 className="font-semibold text-gray-900 mb-4">Actions</h3>
+            <div className="bg-card rounded-lg border border-border p-6">
+              <h3 className="font-semibold text-foreground mb-4">Actions</h3>
               <div className="flex gap-3">
                 <Button
                   variant="secondary"
@@ -624,14 +624,14 @@ export default function StampDetailPage({
                   Supersede
                 </Button>
                 <Button
-                  variant="danger"
+                  variant="destructive"
                   onClick={() => setShowRevokeModal(true)}
                 >
                   <XCircle className="h-4 w-4 mr-2" />
                   Revoke
                 </Button>
               </div>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Supersede replaces this stamp with a new version. Revoke marks it as invalid permanently.
               </p>
             </div>
@@ -641,14 +641,14 @@ export default function StampDetailPage({
         {/* QR Code & Verification */}
         <div className="space-y-6">
           {stamp.verifyUrl && (
-            <div className="card text-center">
-              <h3 className="font-semibold text-gray-900 mb-4">Verification QR</h3>
+            <div className="bg-card rounded-lg border border-border p-6text-center">
+              <h3 className="font-semibold text-foreground mb-4">Verification QR</h3>
               <QRCodeImage
                 value={stamp.verifyUrl}
                 size={200}
                 className="w-full max-w-[200px] mx-auto rounded-lg"
               />
-              <p className="text-sm text-gray-600 mt-4">
+              <p className="text-sm text-muted-foreground mt-4">
                 Scan to verify this stamp
               </p>
               <div className="mt-3 space-y-2">
@@ -697,8 +697,8 @@ export default function StampDetailPage({
           )}
 
           {/* Verification Certificate */}
-          <div className="card text-center">
-            <h3 className="font-semibold text-gray-900 mb-3">Certificate</h3>
+          <div className="bg-card rounded-lg border border-border p-6text-center">
+            <h3 className="font-semibold text-foreground mb-3">Certificate</h3>
             <a
               href={`/api/verify/${stamp.id}/certificate`}
               target="_blank"
@@ -716,27 +716,27 @@ export default function StampDetailPage({
       {/* Supersede Modal */}
       {showSupersedeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <div className="bg-card rounded-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Supersede Stamp
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               Upload a revised document to create a replacement stamp, or leave blank to just mark this stamp as superseded.
             </p>
 
             {/* New document upload */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Revised Document (optional)
               </label>
-              <div className={`border-2 border-dashed rounded-lg p-4 text-center ${supersedeFile ? 'border-green-300 bg-green-50' : 'border-gray-300'}`}>
+              <div className={`border-2 border-dashed rounded-lg p-4 text-center ${supersedeFile ? 'border-green-300 bg-green-50' : 'border-input'}`}>
                 {supersedeFile ? (
                   <div>
                     <CheckCircle className="h-5 w-5 text-green-500 mx-auto mb-1" />
-                    <p className="text-sm font-medium text-gray-900">{supersedeFile.name}</p>
-                    <p className="text-xs text-gray-500">{(supersedeFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                    <p className="text-sm font-medium text-foreground">{supersedeFile.name}</p>
+                    <p className="text-xs text-muted-foreground">{(supersedeFile.size / 1024 / 1024).toFixed(2)} MB</p>
                     {supersedeHash && (
-                      <p className="text-xs font-mono text-gray-400 mt-1 break-all">{supersedeHash.slice(0, 16)}...</p>
+                      <p className="text-xs font-mono text-muted-foreground mt-1 break-all">{supersedeHash.slice(0, 16)}...</p>
                     )}
                     <button
                       onClick={() => { setSupersedeFile(null); setSupersedeHash('') }}
@@ -747,8 +747,8 @@ export default function StampDetailPage({
                   </div>
                 ) : (
                   <label className="cursor-pointer">
-                    <Upload className="h-5 w-5 text-gray-400 mx-auto mb-1" />
-                    <p className="text-sm text-gray-600">Click to upload revised document</p>
+                    <Upload className="h-5 w-5 text-muted-foreground mx-auto mb-1" />
+                    <p className="text-sm text-muted-foreground">Click to upload revised document</p>
                     <input
                       type="file"
                       accept=".pdf,.dwg"
@@ -761,7 +761,7 @@ export default function StampDetailPage({
             </div>
 
             <textarea
-              className="w-full rounded-lg border border-gray-300 p-3 mb-4"
+              className="w-full rounded-lg border border-input p-3 mb-4"
               rows={3}
               placeholder="Reason for supersession (e.g., design revision, updated calculations)..."
               value={supersedeReason}
@@ -803,16 +803,16 @@ export default function StampDetailPage({
       {/* Revoke Modal */}
       {showRevokeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <div className="bg-card rounded-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Revoke Stamp
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               Please provide a reason for revoking this stamp. This action cannot
               be undone.
             </p>
             <textarea
-              className="w-full rounded-lg border border-gray-300 p-3 mb-4"
+              className="w-full rounded-lg border border-input p-3 mb-4"
               rows={3}
               placeholder="Reason for revocation..."
               value={revokeReason}
@@ -826,7 +826,7 @@ export default function StampDetailPage({
                 Cancel
               </Button>
               <Button
-                variant="danger"
+                variant="destructive"
                 onClick={handleRevoke}
                 disabled={!revokeReason || revoking}
               >

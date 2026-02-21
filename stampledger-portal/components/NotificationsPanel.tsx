@@ -5,15 +5,22 @@ import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
 import {
   Bell,
-  X,
   AlertCircle,
   GitBranch,
   CheckCircle2,
-  Clock,
   Loader2,
   RefreshCw,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 
 interface Notification {
   id: string
@@ -97,15 +104,15 @@ export function NotificationsPanel({ isOpen, onClose }: NotificationsPanelProps)
   const getIcon = (type: string) => {
     switch (type) {
       case 'spec_change':
-        return <GitBranch className="h-5 w-5 text-blue-500" />
+        return <GitBranch className="h-4 w-4 text-blue-500" />
       case 'compliance_alert':
-        return <AlertCircle className="h-5 w-5 text-amber-500" />
+        return <AlertCircle className="h-4 w-4 text-amber-500" />
       case 'stamp_complete':
-        return <CheckCircle2 className="h-5 w-5 text-green-500" />
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />
       case 'milestone_reached':
-        return <CheckCircle2 className="h-5 w-5 text-yellow-500" />
+        return <CheckCircle2 className="h-4 w-4 text-yellow-500" />
       default:
-        return <Bell className="h-5 w-5 text-gray-400" />
+        return <Bell className="h-4 w-4 text-muted-foreground" />
     }
   }
 
@@ -124,75 +131,54 @@ export function NotificationsPanel({ isOpen, onClose }: NotificationsPanelProps)
     return date.toLocaleDateString()
   }
 
-  if (!isOpen) return null
-
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40 bg-black/20"
-        onClick={onClose}
-      />
-
-      {/* Panel */}
-      <div className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-white shadow-xl">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center">
-            <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
-            {unreadCount > 0 && (
-              <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-primary text-white rounded-full">
-                {unreadCount}
-              </span>
-            )}
+    <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent className="w-full max-w-md p-0">
+        <SheetHeader className="px-6 py-4 border-b border-border">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <SheetTitle>Notifications</SheetTitle>
+              {unreadCount > 0 && (
+                <Badge variant="default" className="text-xs">
+                  {unreadCount}
+                </Badge>
+              )}
+            </div>
+            <div className="flex items-center gap-1">
+              {unreadCount > 0 && (
+                <Button variant="ghost" size="sm" onClick={markAllAsRead}>
+                  Mark all read
+                </Button>
+              )}
+              <Button variant="ghost" size="icon" onClick={fetchNotifications}>
+                <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            {unreadCount > 0 && (
-              <button
-                onClick={markAllAsRead}
-                className="text-sm text-primary hover:underline"
-              >
-                Mark all read
-              </button>
-            )}
-            <button
-              onClick={fetchNotifications}
-              className="p-2 text-gray-400 hover:text-gray-600"
-            >
-              <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
-            </button>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
+        </SheetHeader>
 
-        {/* Content */}
-        <div className="overflow-y-auto h-[calc(100vh-73px)]">
+        <ScrollArea className="h-[calc(100vh-80px)]">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           ) : notifications.length === 0 ? (
             <div className="text-center py-12 px-6">
-              <Bell className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-gray-500">No notifications yet</p>
-              <p className="text-sm text-gray-400 mt-1">
-                You'll be notified about spec changes and compliance updates
+              <Bell className="h-12 w-12 mx-auto mb-4 text-muted-foreground/30" />
+              <p className="text-muted-foreground">No notifications yet</p>
+              <p className="text-sm text-muted-foreground/60 mt-1">
+                You&apos;ll be notified about spec changes and compliance updates
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-border">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
                   onClick={() => !notification.isRead && markAsRead(notification.id)}
                   className={cn(
-                    'px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer',
-                    !notification.isRead && 'bg-blue-50/50'
+                    'px-6 py-4 hover:bg-accent transition-colors cursor-pointer',
+                    !notification.isRead && 'bg-primary/5'
                   )}
                 >
                   <div className="flex items-start gap-3">
@@ -201,19 +187,17 @@ export function NotificationsPanel({ isOpen, onClose }: NotificationsPanelProps)
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
-                        <p
-                          className={cn(
-                            'text-sm font-medium text-gray-900',
-                            !notification.isRead && 'font-semibold'
-                          )}
-                        >
+                        <p className={cn(
+                          'text-sm text-foreground',
+                          !notification.isRead ? 'font-semibold' : 'font-medium'
+                        )}>
                           {notification.title}
                         </p>
-                        <span className="text-xs text-gray-400 ml-2 flex-shrink-0">
+                        <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
                           {getTimeAgo(notification.createdAt)}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm text-muted-foreground mt-1">
                         {notification.message}
                       </p>
                       {(notification.projectId || notification.specId) && (
@@ -247,25 +231,8 @@ export function NotificationsPanel({ isOpen, onClose }: NotificationsPanelProps)
               ))}
             </div>
           )}
-        </div>
-      </div>
-    </>
-  )
-}
-
-// Bell icon button with badge for header
-export function NotificationsBell({ onClick, unreadCount }: { onClick: () => void; unreadCount?: number }) {
-  return (
-    <button
-      onClick={onClick}
-      className="relative p-2 text-white/70 hover:text-white transition-colors"
-    >
-      <Bell className="h-5 w-5" />
-      {unreadCount && unreadCount > 0 && (
-        <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-medium rounded-full flex items-center justify-center">
-          {unreadCount > 99 ? '99+' : unreadCount}
-        </span>
-      )}
-    </button>
+        </ScrollArea>
+      </SheetContent>
+    </Sheet>
   )
 }

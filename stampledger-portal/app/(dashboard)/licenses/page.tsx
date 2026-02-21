@@ -236,7 +236,7 @@ export default function LicensesPage() {
     }
     if (status === 'expired') {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive">
           <AlertCircle className="h-3 w-3 mr-1" />
           Expired
         </span>
@@ -244,7 +244,7 @@ export default function LicensesPage() {
     }
     if (status === 'suspended' || status === 'revoked') {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive">
           <AlertCircle className="h-3 w-3 mr-1" />
           {status === 'suspended' ? 'Suspended' : 'Revoked'}
         </span>
@@ -284,8 +284,8 @@ export default function LicensesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Professional Licenses</h1>
-          <p className="text-gray-600 mt-1">Manage your professional licenses and certifications</p>
+          <h1 className="text-2xl font-bold text-foreground">Professional Licenses</h1>
+          <p className="text-muted-foreground mt-1">Manage your professional licenses and certifications</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>
           <Plus className="h-4 w-4 mr-2" />
@@ -295,7 +295,7 @@ export default function LicensesPage() {
 
       {/* Alerts */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
@@ -326,10 +326,10 @@ export default function LicensesPage() {
 
       {/* Licenses List */}
       {licenses.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <Award className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Licenses Added</h2>
-          <p className="text-gray-500 mb-4">
+        <div className="text-center py-12 bg-card rounded-lg border border-border">
+          <Award className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+          <h2 className="text-lg font-semibold text-foreground mb-2">No Licenses Added</h2>
+          <p className="text-muted-foreground mb-4">
             Add your professional licenses to start stamping documents
           </p>
           <Button onClick={() => setShowAddModal(true)}>
@@ -342,7 +342,7 @@ export default function LicensesPage() {
           {licenses.map((license) => (
             <div
               key={license.id}
-              className="bg-white rounded-lg border border-gray-200 p-6"
+              className="bg-card rounded-lg border border-border p-6"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start">
@@ -351,13 +351,13 @@ export default function LicensesPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-3">
-                      <h3 className="font-semibold text-gray-900">
+                      <h3 className="font-semibold text-foreground">
                         {LICENSE_TYPES.find((t) => t.value === license.licenseType)?.label ||
                           license.licenseType}
                       </h3>
                       {getStatusBadge(license.status, license.expirationDate || null)}
                     </div>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                    <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                       <span className="flex items-center">
                         <Hash className="h-4 w-4 mr-1" />
                         {license.licenseNumber}
@@ -378,7 +378,7 @@ export default function LicensesPage() {
                         {license.disciplines.map((d) => (
                           <span
                             key={d}
-                            className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded"
+                            className="px-2 py-0.5 bg-muted text-muted-foreground text-xs rounded"
                           >
                             {d}
                           </span>
@@ -386,7 +386,7 @@ export default function LicensesPage() {
                       </div>
                     )}
                     {license.insuranceProvider && (
-                      <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                      <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
                         <Shield className="h-3 w-3" />
                         <span>
                           {license.insuranceProvider}
@@ -403,7 +403,7 @@ export default function LicensesPage() {
                     {license.stampTokenCount.toLocaleString()} tokens
                   </div>
                   {license.status === 'active' && license.lastVerifiedAt && (
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                       Verified {new Date(license.lastVerifiedAt).toLocaleDateString()}
                     </p>
                   )}
@@ -465,19 +465,19 @@ export default function LicensesPage() {
       {/* Add License Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-card rounded-lg w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Add Professional License</h3>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-muted-foreground hover:text-muted-foreground"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <form onSubmit={handleAddLicense} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   License Type *
                 </label>
                 <select
@@ -485,7 +485,7 @@ export default function LicensesPage() {
                   onChange={(e) =>
                     setCreateForm({ ...createForm, licenseType: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   required
                 >
                   {LICENSE_TYPES.map((type) => (
@@ -497,7 +497,7 @@ export default function LicensesPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     License Number *
                   </label>
                   <Input
@@ -510,7 +510,7 @@ export default function LicensesPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     State/Jurisdiction *
                   </label>
                   <select
@@ -518,7 +518,7 @@ export default function LicensesPage() {
                     onChange={(e) =>
                       setCreateForm({ ...createForm, issuingState: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     required
                   >
                     <option value="">Select State</option>
@@ -531,7 +531,7 @@ export default function LicensesPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Expiration Date
                 </label>
                 <Input
@@ -543,7 +543,7 @@ export default function LicensesPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Verification URL
                 </label>
                 <Input
@@ -554,19 +554,19 @@ export default function LicensesPage() {
                   }
                   placeholder="https://pels.texas.gov/verify/..."
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Link to state board verification page (optional)
                 </p>
               </div>
 
               {/* Insurance Section */}
-              <div className="border-t border-gray-200 pt-4">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">
+              <div className="border-t border-border pt-4">
+                <h4 className="text-sm font-semibold text-foreground mb-3">
                   Professional Liability Insurance (Optional)
                 </h4>
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-foreground mb-1">
                       Insurance Provider
                     </label>
                     <Input
@@ -579,7 +579,7 @@ export default function LicensesPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-foreground mb-1">
                         Policy Number
                       </label>
                       <Input
@@ -591,7 +591,7 @@ export default function LicensesPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-foreground mb-1">
                         Coverage Amount ($)
                       </label>
                       <Input
@@ -605,7 +605,7 @@ export default function LicensesPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-foreground mb-1">
                       Insurance Expiration Date
                     </label>
                     <Input

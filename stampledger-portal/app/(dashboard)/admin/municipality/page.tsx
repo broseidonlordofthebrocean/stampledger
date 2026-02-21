@@ -109,9 +109,9 @@ export default function MunicipalityPage() {
   if (!isAdmin) {
     return (
       <div className="text-center py-12">
-        <Shield className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-        <h2 className="text-lg font-semibold text-gray-900">Admin Access Required</h2>
-        <p className="text-gray-500">You need admin access to view this page.</p>
+        <Shield className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+        <h2 className="text-lg font-semibold text-foreground">Admin Access Required</h2>
+        <p className="text-muted-foreground">You need admin access to view this page.</p>
       </div>
     )
   }
@@ -129,11 +129,11 @@ export default function MunicipalityPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Landmark className="h-6 w-6" />
             Municipality Dashboard
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-muted-foreground mt-1">
             Stamp verification oversight & compliance monitoring
           </p>
         </div>
@@ -168,41 +168,41 @@ export default function MunicipalityPage() {
       {/* Stats Grid */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg border p-4">
+          <div className="bg-card rounded-lg border p-4">
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle className="h-4 w-4 text-green-500" />
-              <span className="text-sm text-gray-600">Active Stamps</span>
+              <span className="text-sm text-muted-foreground">Active Stamps</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.activeStamps}</p>
+            <p className="text-2xl font-bold text-foreground">{stats.activeStamps}</p>
           </div>
-          <div className="bg-white rounded-lg border p-4">
+          <div className="bg-card rounded-lg border p-4">
             <div className="flex items-center gap-2 mb-2">
               <BarChart3 className="h-4 w-4 text-blue-500" />
-              <span className="text-sm text-gray-600">Verifications</span>
+              <span className="text-sm text-muted-foreground">Verifications</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.totalVerifications}</p>
+            <p className="text-2xl font-bold text-foreground">{stats.totalVerifications}</p>
           </div>
-          <div className="bg-white rounded-lg border p-4">
+          <div className="bg-card rounded-lg border p-4">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4 text-red-500" />
-              <span className="text-sm text-gray-600">Expired Licenses</span>
+              <span className="text-sm text-muted-foreground">Expired Licenses</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.expiredLicenses}</p>
+            <p className="text-2xl font-bold text-foreground">{stats.expiredLicenses}</p>
           </div>
-          <div className="bg-white rounded-lg border p-4">
+          <div className="bg-card rounded-lg border p-4">
             <div className="flex items-center gap-2 mb-2">
               <Shield className="h-4 w-4 text-yellow-500" />
-              <span className="text-sm text-gray-600">Expired Insurance</span>
+              <span className="text-sm text-muted-foreground">Expired Insurance</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.expiredInsurance}</p>
+            <p className="text-2xl font-bold text-foreground">{stats.expiredInsurance}</p>
           </div>
         </div>
       )}
 
       {/* Smart Alerts */}
       {alerts.length > 0 && (
-        <div className="bg-white rounded-lg border p-4">
-          <h2 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+        <div className="bg-card rounded-lg border p-4">
+          <h2 className="font-semibold text-foreground mb-3 flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-amber-500" />
             Smart Alerts ({alerts.length})
           </h2>
@@ -212,7 +212,7 @@ export default function MunicipalityPage() {
                 key={i}
                 className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm ${
                   alert.type === 'license_expired'
-                    ? 'bg-red-50 text-red-700'
+                    ? 'bg-destructive/10 text-destructive'
                     : alert.type === 'insurance_expired'
                       ? 'bg-yellow-50 text-yellow-700'
                       : 'bg-blue-50 text-blue-700'
@@ -232,11 +232,11 @@ export default function MunicipalityPage() {
       )}
 
       {/* Stamp List with Filters */}
-      <div className="bg-white rounded-lg border">
+      <div className="bg-card rounded-lg border">
         <div className="p-4 border-b">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by project, stamp ID, or engineer..."
                 value={search}
@@ -252,7 +252,7 @@ export default function MunicipalityPage() {
                   className={`px-3 py-1.5 text-sm rounded-lg capitalize ${
                     statusFilter === status
                       ? 'bg-primary text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      : 'bg-muted text-muted-foreground hover:bg-accent'
                   }`}
                 >
                   {status}
@@ -264,23 +264,23 @@ export default function MunicipalityPage() {
 
         <div className="divide-y">
           {filteredStamps.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-muted-foreground">
               No stamps found matching your criteria.
             </div>
           ) : (
             filteredStamps.map((stamp) => (
-              <div key={stamp.id} className="p-4 hover:bg-gray-50">
+              <div key={stamp.id} className="p-4 hover:bg-accent">
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-foreground">
                         {stamp.projectName || 'Unnamed Project'}
                       </p>
                       {stamp.status === 'active' && (
                         <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Active</span>
                       )}
                       {stamp.status === 'revoked' && (
-                        <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Revoked</span>
+                        <span className="text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-full">Revoked</span>
                       )}
                       {stamp.status === 'superseded' && (
                         <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -289,17 +289,17 @@ export default function MunicipalityPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       {stamp.peName} {stamp.licenseNumber ? `(#${stamp.licenseNumber})` : ''}
                       {' '} &middot; {stamp.jurisdictionId.replace(/-/g, ' ')}
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       ID: {stamp.id} &middot; {new Date(stamp.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     {stamp.licenseExpired && (
-                      <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded flex items-center gap-1" title="License expired">
+                      <span className="text-xs bg-destructive/10 text-destructive px-2 py-1 rounded flex items-center gap-1" title="License expired">
                         <AlertTriangle className="h-3 w-3" />
                         License
                       </span>
@@ -321,7 +321,7 @@ export default function MunicipalityPage() {
                   </div>
                 </div>
                 {stamp.scopeNotes && (
-                  <p className="text-xs text-gray-500 mt-2 bg-gray-50 p-2 rounded">
+                  <p className="text-xs text-muted-foreground mt-2 bg-muted p-2 rounded">
                     Scope: {stamp.scopeNotes}
                   </p>
                 )}

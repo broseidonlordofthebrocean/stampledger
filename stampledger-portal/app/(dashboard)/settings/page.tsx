@@ -158,15 +158,15 @@ export default function SettingsPage() {
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Account & Security</h1>
-        <p className="text-gray-500 mt-1">Manage your sign-in methods and security settings</p>
+        <h1 className="text-2xl font-bold text-foreground">Account & Security</h1>
+        <p className="text-muted-foreground mt-1">Manage your sign-in methods and security settings</p>
       </div>
 
       {message && (
         <div className={`mb-6 px-4 py-3 rounded-xl text-sm border flex items-center gap-2 ${
           message.type === 'success'
             ? 'bg-green-50 text-green-700 border-green-200'
-            : 'bg-red-50 text-red-600 border-red-100'
+            : 'bg-destructive/10 text-destructive border-destructive/20'
         }`}>
           {message.type === 'success' ? <Check className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
           {message.text}
@@ -174,45 +174,45 @@ export default function SettingsPage() {
       )}
 
       {/* Account Info */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Account</h2>
+      <div className="bg-card rounded-xl border border-border p-6 mb-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4">Account</h2>
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-500">Name</span>
+            <span className="text-muted-foreground">Name</span>
             <span className="font-medium">{user?.firstName} {user?.lastName}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-500">Email</span>
+            <span className="text-muted-foreground">Email</span>
             <span className="font-medium">{user?.email}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-500">Password</span>
+            <span className="text-muted-foreground">Password</span>
             <span className="font-medium">{hasPassword ? 'Set' : 'Not set (OAuth only)'}</span>
           </div>
         </div>
       </div>
 
       {/* Linked Accounts */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-card rounded-xl border border-border p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
-          <Shield className="h-5 w-5 text-gray-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Linked Accounts</h2>
+          <Shield className="h-5 w-5 text-muted-foreground" />
+          <h2 className="text-lg font-semibold text-foreground">Linked Accounts</h2>
         </div>
 
         <div className="space-y-3">
           {linkedAccounts.map((account) => (
-            <div key={account.id} className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
+            <div key={account.id} className="flex items-center justify-between py-3 px-4 bg-muted rounded-lg">
               <div className="flex items-center gap-3">
                 {account.provider === 'google' && <GoogleIcon className="h-5 w-5" />}
                 {account.provider === 'microsoft' && <MicrosoftIcon className="h-5 w-5" />}
                 <div>
                   <p className="text-sm font-medium">{PROVIDER_LABELS[account.provider] || account.provider}</p>
-                  <p className="text-xs text-gray-500">{account.providerEmail}</p>
+                  <p className="text-xs text-muted-foreground">{account.providerEmail}</p>
                 </div>
               </div>
               <button
                 onClick={() => handleUnlink(account.id)}
-                className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                className="text-muted-foreground hover:text-red-500 transition-colors p-1"
                 title="Unlink account"
               >
                 <Trash2 className="h-4 w-4" />
@@ -251,23 +251,23 @@ export default function SettingsPage() {
       </div>
 
       {/* Security Keys */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-card rounded-xl border border-border p-6">
         <div className="flex items-center gap-2 mb-4">
-          <KeyRound className="h-5 w-5 text-gray-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Security Keys</h2>
+          <KeyRound className="h-5 w-5 text-muted-foreground" />
+          <h2 className="text-lg font-semibold text-foreground">Security Keys</h2>
         </div>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-muted-foreground mb-4">
           Use hardware security keys (YubiKey), smart cards (CAC/PIV), or platform authenticators (Windows Hello, Touch ID) to sign in.
         </p>
 
         <div className="space-y-3">
           {webauthnCredentials.map((cred) => (
-            <div key={cred.id} className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
+            <div key={cred.id} className="flex items-center justify-between py-3 px-4 bg-muted rounded-lg">
               <div className="flex items-center gap-3">
-                <KeyRound className="h-5 w-5 text-gray-400" />
+                <KeyRound className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">{cred.deviceName || 'Security Key'}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     {cred.credentialDeviceType === 'multiDevice' ? 'Multi-device' : 'Single-device'}
                     {cred.lastUsedAt ? ` · Last used ${new Date(cred.lastUsedAt).toLocaleDateString()}` : ''}
                   </p>
@@ -275,7 +275,7 @@ export default function SettingsPage() {
               </div>
               <button
                 onClick={() => handleUnlink(cred.id)}
-                className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                className="text-muted-foreground hover:text-red-500 transition-colors p-1"
                 title="Remove key"
               >
                 <Trash2 className="h-4 w-4" />
@@ -290,7 +290,7 @@ export default function SettingsPage() {
               placeholder="Key name (optional)"
               value={deviceName}
               onChange={(e) => setDeviceName(e.target.value)}
-              className="h-9 px-3 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="h-9 px-3 text-sm rounded-lg border border-input focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
             <Button
               variant="outline"

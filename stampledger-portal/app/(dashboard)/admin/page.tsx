@@ -114,7 +114,7 @@ export default function AdminPage() {
       label: 'Pending Licenses',
       value: stats?.licenses.pending || 0,
       icon: Clock,
-      color: stats?.licenses.pending ? 'bg-amber-50 text-amber-500' : 'bg-gray-50 text-gray-400',
+      color: stats?.licenses.pending ? 'bg-amber-50 text-amber-500' : 'bg-muted text-muted-foreground',
       href: '/admin/licenses?status=pending_verification',
     },
   ]
@@ -141,10 +141,10 @@ export default function AdminPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="card">
+            <div key={i} className="bg-card rounded-lg border border-border p-6">
               <div className="animate-pulse space-y-3">
-                <div className="h-4 bg-gray-200 rounded w-24" />
-                <div className="h-8 bg-gray-200 rounded w-16" />
+                <div className="h-4 bg-muted rounded w-24" />
+                <div className="h-8 bg-muted rounded w-16" />
               </div>
             </div>
           ))}
@@ -153,11 +153,11 @@ export default function AdminPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {statCards.map((card) => {
             const content = (
-              <div className="card hover:shadow-md hover:border-gray-200 transition-all group">
+              <div className="bg-card rounded-lg border border-border p-6hover:shadow-md hover:border-border transition-all group">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-500">{card.label}</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                    <p className="text-sm font-medium text-muted-foreground">{card.label}</p>
+                    <p className="text-3xl font-bold text-foreground mt-2">
                       {card.value.toLocaleString()}
                     </p>
                   </div>
@@ -166,8 +166,8 @@ export default function AdminPage() {
                   </div>
                 </div>
                 {card.href && (
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <span className="text-sm text-gray-500 group-hover:text-primary transition-colors flex items-center gap-1">
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
                       View details
                       <ChevronRight className="h-3 w-3" />
                     </span>
@@ -188,27 +188,27 @@ export default function AdminPage() {
       {/* Stamp Breakdown */}
       {stats && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="card">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-card rounded-lg border border-border p-6">
+            <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
               <Stamp className="h-5 w-5 text-orange-500" />
               Stamp Breakdown
             </h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Active</span>
+                <span className="text-sm text-muted-foreground">Active</span>
                 <span className="text-sm font-semibold text-green-600">{stats.stamps.active}</span>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div
                   className="bg-green-500 h-2 rounded-full transition-all"
                   style={{ width: stats.stamps.total ? `${(stats.stamps.active / stats.stamps.total) * 100}%` : '0%' }}
                 />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Revoked</span>
-                <span className="text-sm font-semibold text-red-600">{stats.stamps.revoked}</span>
+                <span className="text-sm text-muted-foreground">Revoked</span>
+                <span className="text-sm font-semibold text-destructive">{stats.stamps.revoked}</span>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div
                   className="bg-red-500 h-2 rounded-full transition-all"
                   style={{ width: stats.stamps.total ? `${(stats.stamps.revoked / stats.stamps.total) * 100}%` : '0%' }}
@@ -217,8 +217,8 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="card">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-card rounded-lg border border-border p-6">
+            <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
               <Award className="h-5 w-5 text-purple-500" />
               License Status
             </h3>
@@ -230,10 +230,10 @@ export default function AdminPage() {
               ].map((item) => (
                 <div key={item.label}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-gray-600">{item.label}</span>
+                    <span className="text-sm text-muted-foreground">{item.label}</span>
                     <span className="text-sm font-semibold">{item.count}</span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="w-full bg-muted rounded-full h-2">
                     <div
                       className={`${item.color} h-2 rounded-full transition-all`}
                       style={{ width: stats.licenses.total ? `${(item.count / stats.licenses.total) * 100}%` : '0%' }}
@@ -250,8 +250,8 @@ export default function AdminPage() {
       {stats?.recentSignups && stats.recentSignups.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-gray-400" />
+            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-muted-foreground" />
               Recent Signups
             </h2>
             <Link
@@ -262,24 +262,24 @@ export default function AdminPage() {
               <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="card overflow-hidden">
+          <div className="bg-card rounded-lg border border-border p-6 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-100">
-                    <th className="text-left font-medium text-gray-500 pb-3">Name</th>
-                    <th className="text-left font-medium text-gray-500 pb-3">Email</th>
-                    <th className="text-left font-medium text-gray-500 pb-3">Joined</th>
+                  <tr className="border-b border-border">
+                    <th className="text-left font-medium text-muted-foreground pb-3">Name</th>
+                    <th className="text-left font-medium text-muted-foreground pb-3">Email</th>
+                    <th className="text-left font-medium text-muted-foreground pb-3">Joined</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-border">
                   {stats.recentSignups.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
-                      <td className="py-3 font-medium text-gray-900">
+                    <tr key={user.id} className="hover:bg-accent">
+                      <td className="py-3 font-medium text-foreground">
                         {user.firstName} {user.lastName}
                       </td>
-                      <td className="py-3 text-gray-600">{user.email}</td>
-                      <td className="py-3 text-gray-400">
+                      <td className="py-3 text-muted-foreground">{user.email}</td>
+                      <td className="py-3 text-muted-foreground">
                         {new Date(user.createdAt).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',

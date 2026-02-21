@@ -109,8 +109,8 @@ export default function DocumentsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="page-header mb-0">Documents</h1>
-        <p className="text-gray-600">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1 mb-0">Documents</h1>
+        <p className="text-muted-foreground">
           Store and manage your engineering documents securely
         </p>
       </div>
@@ -123,24 +123,24 @@ export default function DocumentsPage() {
         className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
           dragOver
             ? 'border-cta bg-cta/5'
-            : 'border-gray-300 hover:border-cta/50'
+            : 'border-input hover:border-cta/50'
         }`}
       >
         {uploading ? (
           <div className="space-y-4">
             <Loader2 className="h-12 w-12 animate-spin text-cta mx-auto" />
-            <p className="text-gray-600">Uploading and hashing document...</p>
+            <p className="text-muted-foreground">Uploading and hashing document...</p>
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-              <Upload className="h-8 w-8 text-gray-400" />
+            <div className="bg-muted w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+              <Upload className="h-8 w-8 text-muted-foreground" />
             </div>
             <div>
-              <p className="font-semibold text-gray-900">
+              <p className="font-semibold text-foreground">
                 Drop your document here
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 or click to browse (PDF, DWG, images)
               </p>
             </div>
@@ -160,16 +160,16 @@ export default function DocumentsPage() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : documents.length === 0 ? (
-        <div className="card text-center py-12">
-          <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900">No documents yet</h3>
-          <p className="text-gray-600 mt-1">
+        <div className="bg-card rounded-lg border border-border p-6text-center py-12">
+          <FileText className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-foreground">No documents yet</h3>
+          <p className="text-muted-foreground mt-1">
             Upload your first document to get started
           </p>
         </div>
       ) : (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-foreground">
             Your Documents ({documents.length})
           </h2>
           <div className="grid gap-4">
@@ -180,10 +180,10 @@ export default function DocumentsPage() {
                     <FileText className="h-6 w-6 text-secondary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 truncate">
+                    <h3 className="font-semibold text-foreground truncate">
                       {doc.title || doc.filename || 'Untitled'}
                     </h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
                       {doc.size != null && <span>{formatFileSize(doc.size)}</span>}
                       {doc.discipline && <span className="capitalize">{doc.discipline}</span>}
                       <span className="flex items-center">
@@ -193,8 +193,8 @@ export default function DocumentsPage() {
                     </div>
                     {doc.sha256Hash && (
                       <div className="flex items-center gap-2 mt-2">
-                        <Hash className="h-3 w-3 text-gray-400" />
-                        <code className="text-xs text-gray-500 font-mono truncate">
+                        <Hash className="h-3 w-3 text-muted-foreground" />
+                        <code className="text-xs text-muted-foreground font-mono truncate">
                           {doc.sha256Hash.slice(0, 32)}...
                         </code>
                       </div>

@@ -154,17 +154,17 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Search */}
-      <div className="card">
+      <div className="bg-card rounded-lg border border-border p-6">
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Search by name or email..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <Button onClick={handleSearch} size="sm">
@@ -174,45 +174,45 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Users Table */}
-      <div className="card overflow-hidden">
+      <div className="bg-card rounded-lg border border-border p-6 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
         ) : users.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-muted-foreground">
             {search ? 'No users match your search' : 'No users found'}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left font-medium text-gray-500 pb-3 pl-1">User</th>
-                  <th className="text-left font-medium text-gray-500 pb-3">Email</th>
-                  <th className="text-center font-medium text-gray-500 pb-3" title="Organizations">
+                <tr className="border-b border-border">
+                  <th className="text-left font-medium text-muted-foreground pb-3 pl-1">User</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">Email</th>
+                  <th className="text-center font-medium text-muted-foreground pb-3" title="Organizations">
                     <Building2 className="h-4 w-4 inline" />
                   </th>
-                  <th className="text-center font-medium text-gray-500 pb-3" title="Licenses">
+                  <th className="text-center font-medium text-muted-foreground pb-3" title="Licenses">
                     <Award className="h-4 w-4 inline" />
                   </th>
-                  <th className="text-center font-medium text-gray-500 pb-3" title="Stamps">
+                  <th className="text-center font-medium text-muted-foreground pb-3" title="Stamps">
                     <Stamp className="h-4 w-4 inline" />
                   </th>
-                  <th className="text-left font-medium text-gray-500 pb-3">Joined</th>
-                  <th className="text-left font-medium text-gray-500 pb-3">Actions</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">Joined</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-border">
                 {users.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
+                  <tr key={user.id} className="hover:bg-accent">
                     <td className="py-3 pl-1">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center text-white text-xs font-bold">
                           {user.firstName?.[0]}{user.lastName?.[0]}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">
+                          <p className="font-medium text-foreground">
                             {user.firstName} {user.lastName}
                           </p>
                           {user.isLicensedProfessional && (
@@ -223,11 +223,11 @@ export default function AdminUsersPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 text-gray-600">{user.email}</td>
-                    <td className="py-3 text-center text-gray-600">{user.orgCount}</td>
-                    <td className="py-3 text-center text-gray-600">{user.licenseCount}</td>
-                    <td className="py-3 text-center text-gray-600">{user.stampCount}</td>
-                    <td className="py-3 text-gray-400 whitespace-nowrap">
+                    <td className="py-3 text-muted-foreground">{user.email}</td>
+                    <td className="py-3 text-center text-muted-foreground">{user.orgCount}</td>
+                    <td className="py-3 text-center text-muted-foreground">{user.licenseCount}</td>
+                    <td className="py-3 text-center text-muted-foreground">{user.stampCount}</td>
+                    <td className="py-3 text-muted-foreground whitespace-nowrap">
                       {new Date(user.createdAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -237,7 +237,7 @@ export default function AdminUsersPage() {
                     <td className="py-3">
                       <button
                         onClick={() => setResetTarget(user)}
-                        className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-primary transition-colors"
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
                         title="Reset password"
                       >
                         <KeyRound className="h-3.5 w-3.5" />
@@ -253,8 +253,8 @@ export default function AdminUsersPage() {
 
         {/* Pagination */}
         {pagination.pages > 1 && (
-          <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-100">
-            <p className="text-sm text-gray-500">
+          <div className="flex items-center justify-between pt-4 mt-4 border-t border-border">
+            <p className="text-sm text-muted-foreground">
               Page {pagination.page} of {pagination.pages} ({pagination.total} users)
             </p>
             <div className="flex gap-2">
@@ -282,26 +282,26 @@ export default function AdminUsersPage() {
       {/* Reset Password Modal */}
       {resetTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
+          <div className="bg-card rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <KeyRound className="h-5 w-5 text-amber-500" />
                 Reset Password
               </h3>
-              <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">
+              <button onClick={closeModal} className="text-muted-foreground hover:text-muted-foreground">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <p className="text-sm text-gray-600 mb-4">
-              Set a new password for <span className="font-medium text-gray-900">{resetTarget.email}</span>
+            <p className="text-sm text-muted-foreground mb-4">
+              Set a new password for <span className="font-medium text-foreground">{resetTarget.email}</span>
             </p>
 
             {resetResult && (
               <div className={`mb-4 p-3 rounded-lg text-sm flex items-center gap-2 ${
                 resetResult.success
                   ? 'bg-green-50 text-green-700 border border-green-200'
-                  : 'bg-red-50 text-red-700 border border-red-200'
+                  : 'bg-destructive/10 text-destructive border border-destructive/20'
               }`}>
                 {resetResult.success ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
                 {resetResult.message}
@@ -315,7 +315,7 @@ export default function AdminUsersPage() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="New password (min 8 characters)"
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary mb-4"
+                  className="w-full px-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary mb-4"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && newPassword.length >= 8) handleResetPassword()
                   }}

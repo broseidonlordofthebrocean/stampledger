@@ -158,8 +158,8 @@ export default function DashboardPage() {
               <Building2 className="h-6 w-6 text-blue-600" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 text-lg">Create or Join an Organization</h3>
-              <p className="text-gray-600 mt-1">
+              <h3 className="font-semibold text-foreground text-lg">Create or Join an Organization</h3>
+              <p className="text-muted-foreground mt-1">
                 Organizations help you manage projects, team members, and specifications.
               </p>
               <Link href="/organizations">
@@ -180,8 +180,8 @@ export default function DashboardPage() {
               <Award className="h-6 w-6 text-amber-600" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 text-lg">Add Your Professional License</h3>
-              <p className="text-gray-600 mt-1">
+              <h3 className="font-semibold text-foreground text-lg">Add Your Professional License</h3>
+              <p className="text-muted-foreground mt-1">
                 Add your PE license to start stamping documents and earning tokens.
               </p>
               <Link href="/licenses">
@@ -199,7 +199,7 @@ export default function DashboardPage() {
       {currentOrg && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
+            <h2 className="text-lg font-semibold text-foreground">Quick Actions</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((action) => (
@@ -211,11 +211,11 @@ export default function DashboardPage() {
                   >
                     <action.icon className="h-5 w-5 text-white" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
+                  <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
                     {action.title}
                   </h3>
-                  <p className="text-sm text-gray-500 mt-1">{action.description}</p>
-                  <ChevronRight className="absolute bottom-6 right-6 h-5 w-5 text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  <p className="text-sm text-muted-foreground mt-1">{action.description}</p>
+                  <ChevronRight className="absolute bottom-6 right-6 h-5 w-5 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </div>
               </Link>
             ))}
@@ -227,7 +227,7 @@ export default function DashboardPage() {
       {currentOrg && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Overview</h2>
+            <h2 className="text-lg font-semibold text-foreground">Overview</h2>
             <Link href="/compliance" className="text-sm text-primary hover:text-primary-light transition-colors flex items-center gap-1">
               View all metrics
               <ChevronRight className="h-4 w-4" />
@@ -236,21 +236,21 @@ export default function DashboardPage() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="card">
+                <div key={i} className="bg-card rounded-lg border border-border p-6">
                   <div className="animate-pulse space-y-3">
-                    <div className="h-4 bg-gray-200 rounded w-24" />
-                    <div className="h-8 bg-gray-200 rounded w-16" />
+                    <div className="h-4 bg-muted rounded w-24" />
+                    <div className="h-8 bg-muted rounded w-16" />
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Link href="/stamps" className="card hover:shadow-md hover:border-gray-200 transition-all group">
+              <Link href="/stamps" className="bg-card rounded-lg border border-border p-6hover:shadow-md hover:border-border transition-all group">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Total Stamps</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                    <p className="text-sm font-medium text-muted-foreground">Total Stamps</p>
+                    <p className="text-3xl font-bold text-foreground mt-2">
                       {stats?.stamps || 0}
                     </p>
                   </div>
@@ -258,19 +258,19 @@ export default function DashboardPage() {
                     <Stamp className="h-6 w-6 text-orange-500" />
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <span className="text-sm text-gray-500 group-hover:text-primary transition-colors flex items-center gap-1">
+                <div className="mt-4 pt-4 border-t border-border">
+                  <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
                     View all stamps
                     <ArrowRight className="h-3 w-3" />
                   </span>
                 </div>
               </Link>
 
-              <Link href="/projects" className="card hover:shadow-md hover:border-gray-200 transition-all group">
+              <Link href="/projects" className="bg-card rounded-lg border border-border p-6hover:shadow-md hover:border-border transition-all group">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Active Projects</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                    <p className="text-sm font-medium text-muted-foreground">Active Projects</p>
+                    <p className="text-3xl font-bold text-foreground mt-2">
                       {stats?.projects || 0}
                     </p>
                   </div>
@@ -278,19 +278,19 @@ export default function DashboardPage() {
                     <FolderKanban className="h-6 w-6 text-teal-500" />
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <span className="text-sm text-gray-500 group-hover:text-primary transition-colors flex items-center gap-1">
+                <div className="mt-4 pt-4 border-t border-border">
+                  <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
                     View projects
                     <ArrowRight className="h-3 w-3" />
                   </span>
                 </div>
               </Link>
 
-              <Link href="/specifications" className="card hover:shadow-md hover:border-gray-200 transition-all group">
+              <Link href="/specifications" className="bg-card rounded-lg border border-border p-6hover:shadow-md hover:border-border transition-all group">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Specifications</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                    <p className="text-sm font-medium text-muted-foreground">Specifications</p>
+                    <p className="text-3xl font-bold text-foreground mt-2">
                       {stats?.specifications || 0}
                     </p>
                   </div>
@@ -298,19 +298,19 @@ export default function DashboardPage() {
                     <GitBranch className="h-6 w-6 text-green-500" />
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <span className="text-sm text-gray-500 group-hover:text-primary transition-colors flex items-center gap-1">
+                <div className="mt-4 pt-4 border-t border-border">
+                  <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
                     View specs
                     <ArrowRight className="h-3 w-3" />
                   </span>
                 </div>
               </Link>
 
-              <Link href="/compliance" className="card hover:shadow-md hover:border-gray-200 transition-all group">
+              <Link href="/compliance" className="bg-card rounded-lg border border-border p-6hover:shadow-md hover:border-border transition-all group">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Compliance Rate</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                    <p className="text-sm font-medium text-muted-foreground">Compliance Rate</p>
+                    <p className="text-3xl font-bold text-foreground mt-2">
                       {stats?.compliance?.percentage || 100}%
                     </p>
                   </div>
@@ -321,7 +321,7 @@ export default function DashboardPage() {
                         ? 'bg-green-50 group-hover:bg-green-100'
                         : (stats?.compliance?.percentage || 0) >= 70
                         ? 'bg-amber-50 group-hover:bg-amber-100'
-                        : 'bg-red-50 group-hover:bg-red-100'
+                        : 'bg-destructive/10 group-hover:bg-destructive/10'
                     )}
                   >
                     <ClipboardCheck
@@ -336,8 +336,8 @@ export default function DashboardPage() {
                     />
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <span className="text-sm text-gray-500 group-hover:text-primary transition-colors flex items-center gap-1">
+                <div className="mt-4 pt-4 border-t border-border">
+                  <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
                     View compliance
                     <ArrowRight className="h-3 w-3" />
                   </span>
@@ -350,14 +350,14 @@ export default function DashboardPage() {
 
       {/* Compliance Alert */}
       {currentOrg && stats && stats.compliance && stats.compliance.total > 0 && stats.compliance.percentage < 100 && (
-        <div className="card border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+        <div className="bg-card rounded-lg border border-border p-6border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
           <div className="flex items-start gap-4">
             <div className="bg-amber-100 p-2 rounded-lg">
               <AlertCircle className="h-5 w-5 text-amber-600" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900">Compliance Attention Needed</h3>
-              <p className="text-sm text-gray-600 mt-1">
+              <h3 className="font-semibold text-foreground">Compliance Attention Needed</h3>
+              <p className="text-sm text-muted-foreground mt-1">
                 {stats.compliance.total - stats.compliance.compliant} project-specification link
                 {stats.compliance.total - stats.compliance.compliant !== 1 ? 's' : ''} need
                 review to ensure your projects are using the latest specifications.
@@ -377,10 +377,10 @@ export default function DashboardPage() {
       {currentOrg && stats?.recentActivity && stats.recentActivity.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+            <h2 className="text-lg font-semibold text-foreground">Recent Activity</h2>
           </div>
-          <div className="card">
-            <div className="divide-y divide-gray-100">
+          <div className="bg-card rounded-lg border border-border p-6">
+            <div className="divide-y divide-border">
               {stats.recentActivity.map((activity, index) => (
                 <div
                   key={activity.id}
@@ -411,8 +411,8 @@ export default function DashboardPage() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{activity.title}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-sm font-medium text-foreground truncate">{activity.title}</p>
+                    <p className="text-xs text-muted-foreground">
                       {new Date(activity.timestamp).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',

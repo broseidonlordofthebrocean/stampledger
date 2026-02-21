@@ -106,9 +106,9 @@ export default function ProgramsPage() {
   if (!currentOrg) {
     return (
       <div className="text-center py-12">
-        <Layers className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">No Organization Selected</h2>
-        <p className="text-gray-500">Please select or create an organization to view programs.</p>
+        <Layers className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+        <h2 className="text-lg font-semibold text-foreground mb-2">No Organization Selected</h2>
+        <p className="text-muted-foreground">Please select or create an organization to view programs.</p>
       </div>
     )
   }
@@ -118,8 +118,8 @@ export default function ProgramsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Programs</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-foreground">Programs</h1>
+          <p className="text-muted-foreground mt-1">
             Organize related projects into programs for {currentOrg.name}
           </p>
         </div>
@@ -131,7 +131,7 @@ export default function ProgramsPage() {
 
       {/* Alerts */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
@@ -143,7 +143,7 @@ export default function ProgramsPage() {
 
       {/* Search */}
       <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search programs..."
           value={searchQuery}
@@ -155,13 +155,13 @@ export default function ProgramsPage() {
       {/* Programs List */}
       {loading ? (
         <div className="text-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto text-gray-400" />
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
         </div>
       ) : filteredPrograms.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <Layers className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Programs Found</h2>
-          <p className="text-gray-500 mb-4">
+        <div className="text-center py-12 bg-card rounded-lg border border-border">
+          <Layers className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+          <h2 className="text-lg font-semibold text-foreground mb-2">No Programs Found</h2>
+          <p className="text-muted-foreground mb-4">
             {searchQuery
               ? 'Try adjusting your search'
               : 'Programs help you group related projects together'}
@@ -174,25 +174,25 @@ export default function ProgramsPage() {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-200">
+        <div className="bg-card rounded-lg border border-border divide-y divide-border">
           {filteredPrograms.map((program) => (
             <Link
               key={program.id}
               href={`/programs/${program.id}`}
-              className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-between px-6 py-4 hover:bg-accent transition-colors"
             >
               <div className="flex items-center min-w-0">
                 <div className="bg-primary/10 p-2 rounded-lg mr-4">
                   <Layers className="h-6 w-6 text-primary" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="font-semibold text-gray-900">{program.name}</h3>
+                  <h3 className="font-semibold text-foreground">{program.name}</h3>
                   {program.description && (
-                    <p className="text-sm text-gray-500 truncate">{program.description}</p>
+                    <p className="text-sm text-muted-foreground truncate">{program.description}</p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-6 text-sm text-gray-500">
+              <div className="flex items-center gap-6 text-sm text-muted-foreground">
                 <span className="flex items-center">
                   <FolderKanban className="h-4 w-4 mr-1" />
                   {program.projectCount || 0} projects
@@ -207,7 +207,7 @@ export default function ProgramsPage() {
                     program.status === 'active'
                       ? 'bg-green-100 text-green-700'
                       : program.status === 'archived'
-                      ? 'bg-gray-100 text-gray-700'
+                      ? 'bg-muted text-foreground'
                       : 'bg-yellow-100 text-yellow-700'
                   )}
                 >
@@ -222,19 +222,19 @@ export default function ProgramsPage() {
       {/* Create Program Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg w-full max-w-md mx-4 p-6">
+          <div className="bg-card rounded-lg w-full max-w-md mx-4 p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Create New Program</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-muted-foreground hover:text-muted-foreground"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <form onSubmit={handleCreateProgram} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Program Name *
                 </label>
                 <Input
@@ -245,7 +245,7 @@ export default function ProgramsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Description
                 </label>
                 <textarea
@@ -253,7 +253,7 @@ export default function ProgramsPage() {
                   onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
                   placeholder="Brief description of the program..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">

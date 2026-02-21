@@ -156,7 +156,7 @@ export default function SpecificationsPage() {
         )
       case 'draft':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground">
             <Clock className="h-3 w-3 mr-1" />
             Draft
           </span>
@@ -170,7 +170,7 @@ export default function SpecificationsPage() {
         )
       default:
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground">
             {status}
           </span>
         )
@@ -180,9 +180,9 @@ export default function SpecificationsPage() {
   if (!currentOrg) {
     return (
       <div className="text-center py-12">
-        <GitBranch className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">No Organization Selected</h2>
-        <p className="text-gray-500">Please select or create an organization to view specifications.</p>
+        <GitBranch className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+        <h2 className="text-lg font-semibold text-foreground mb-2">No Organization Selected</h2>
+        <p className="text-muted-foreground">Please select or create an organization to view specifications.</p>
       </div>
     )
   }
@@ -192,8 +192,8 @@ export default function SpecificationsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Master Specifications</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-foreground">Master Specifications</h1>
+          <p className="text-muted-foreground mt-1">
             Track industry specifications and standards for {currentOrg.name}
           </p>
         </div>
@@ -205,7 +205,7 @@ export default function SpecificationsPage() {
 
       {/* Alerts */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
@@ -232,7 +232,7 @@ export default function SpecificationsPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search specifications..."
             value={searchQuery}
@@ -243,7 +243,7 @@ export default function SpecificationsPage() {
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <option value="all">All Categories</option>
           {CATEGORIES.map((cat) => (
@@ -257,13 +257,13 @@ export default function SpecificationsPage() {
       {/* Specifications List */}
       {loading ? (
         <div className="text-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto text-gray-400" />
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
         </div>
       ) : filteredSpecs.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <GitBranch className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Specifications Found</h2>
-          <p className="text-gray-500 mb-4">
+        <div className="text-center py-12 bg-card rounded-lg border border-border">
+          <GitBranch className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+          <h2 className="text-lg font-semibold text-foreground mb-2">No Specifications Found</h2>
+          <p className="text-muted-foreground mb-4">
             {searchQuery || categoryFilter !== 'all'
               ? 'Try adjusting your filters'
               : 'Add specifications your organization uses'}
@@ -276,12 +276,12 @@ export default function SpecificationsPage() {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-200">
+        <div className="bg-card rounded-lg border border-border divide-y divide-border">
           {filteredSpecs.map((spec) => (
             <Link
               key={spec.id}
               href={`/specifications/${spec.id}`}
-              className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-between px-6 py-4 hover:bg-accent transition-colors"
             >
               <div className="flex items-start min-w-0">
                 <div className="bg-primary/10 p-2 rounded-lg mr-4 mt-0.5">
@@ -289,11 +289,11 @@ export default function SpecificationsPage() {
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-3">
-                    <h3 className="font-semibold text-gray-900">{spec.specNumber}</h3>
+                    <h3 className="font-semibold text-foreground">{spec.specNumber}</h3>
                     {getStatusBadge(spec.status)}
                   </div>
-                  <p className="text-sm text-gray-700 mt-1 truncate">{spec.title}</p>
-                  <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                  <p className="text-sm text-foreground mt-1 truncate">{spec.title}</p>
+                  <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
                     {spec.issuingAuthority && (
                       <span className="flex items-center">
                         <Tag className="h-3 w-3 mr-1" />
@@ -314,12 +314,12 @@ export default function SpecificationsPage() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-4 text-sm text-gray-500 ml-4">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground ml-4">
                 <div className="text-right">
-                  <p className="text-xs text-gray-400">Linked Projects</p>
-                  <p className="font-medium text-gray-700">{spec.linkedProjectCount || 0}</p>
+                  <p className="text-xs text-muted-foreground">Linked Projects</p>
+                  <p className="font-medium text-foreground">{spec.linkedProjectCount || 0}</p>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-400" />
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
               </div>
             </Link>
           ))}
@@ -329,12 +329,12 @@ export default function SpecificationsPage() {
       {/* Create Spec Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-card rounded-lg w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Add Specification</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-muted-foreground hover:text-muted-foreground"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -342,7 +342,7 @@ export default function SpecificationsPage() {
             <form onSubmit={handleCreateSpec} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Spec Number *
                   </label>
                   <Input
@@ -355,7 +355,7 @@ export default function SpecificationsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Category
                   </label>
                   <select
@@ -363,7 +363,7 @@ export default function SpecificationsPage() {
                     onChange={(e) =>
                       setCreateForm({ ...createForm, category: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     {CATEGORIES.map((cat) => (
                       <option key={cat.value} value={cat.value}>
@@ -374,7 +374,7 @@ export default function SpecificationsPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Title *
                 </label>
                 <Input
@@ -385,7 +385,7 @@ export default function SpecificationsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Issuing Authority
                 </label>
                 <Input
@@ -397,7 +397,7 @@ export default function SpecificationsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Effective Date
                 </label>
                 <Input
@@ -409,7 +409,7 @@ export default function SpecificationsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Reference URL
                 </label>
                 <Input
@@ -422,7 +422,7 @@ export default function SpecificationsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Description
                 </label>
                 <textarea
@@ -432,7 +432,7 @@ export default function SpecificationsPage() {
                   }
                   placeholder="Brief description of the specification..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">

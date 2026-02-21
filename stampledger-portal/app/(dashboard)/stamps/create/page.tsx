@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
+// Native select used until full page rewrite to shadcn Select
 import {
   Upload,
   FileText,
@@ -142,14 +142,14 @@ export default function CreateStampPage() {
             else if (step === 'details') setStep('upload')
             else if (step === 'review') setStep('details')
           }}
-          className="p-2 hover:bg-gray-100 rounded-lg"
+          className="p-2 hover:bg-accent rounded-lg"
           disabled={step === 'success'}
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
         <div>
           <h1 className="text-2xl font-bold text-primary">Create Stamp</h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             {step === 'upload' && 'Step 1: Upload your document'}
             {step === 'details' && 'Step 2: Enter project details'}
             {step === 'review' && 'Step 3: Review and confirm'}
@@ -166,26 +166,26 @@ export default function CreateStampPage() {
             className={`flex-1 h-2 rounded-full ${
               ['upload', 'details', 'review', 'success'].indexOf(step) >= i
                 ? 'bg-cta'
-                : 'bg-gray-200'
+                : 'bg-muted'
             }`}
           />
         ))}
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg">
+        <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
 
       {/* Step: Upload */}
       {step === 'upload' && (
-        <div className="card space-y-6">
+        <div className="bg-card rounded-lg border border-border p-6space-y-6">
           <div
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
             className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
-              file ? 'border-accent bg-accent/5' : 'border-gray-300 hover:border-cta'
+              file ? 'border-accent bg-accent/5' : 'border-input hover:border-cta'
             }`}
           >
             {file ? (
@@ -194,15 +194,15 @@ export default function CreateStampPage() {
                   <CheckCircle className="h-8 w-8 text-accent" />
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">{file.name}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="font-semibold text-foreground">{file.name}</p>
+                  <p className="text-sm text-muted-foreground">
                     {(file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
                 {documentHash && (
-                  <div className="bg-gray-100 rounded-lg p-3">
-                    <p className="text-xs text-gray-500 mb-1">SHA-256 Hash</p>
-                    <p className="text-xs font-mono text-gray-700 break-all">
+                  <div className="bg-muted rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground mb-1">SHA-256 Hash</p>
+                    <p className="text-xs font-mono text-foreground break-all">
                       {documentHash}
                     </p>
                   </div>
@@ -210,14 +210,14 @@ export default function CreateStampPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-                  <Upload className="h-8 w-8 text-gray-400" />
+                <div className="bg-muted w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+                  <Upload className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-foreground">
                     Drop your document here
                   </p>
-                  <p className="text-sm text-gray-600">or click to browse</p>
+                  <p className="text-sm text-muted-foreground">or click to browse</p>
                 </div>
                 <input
                   type="file"
@@ -242,12 +242,13 @@ export default function CreateStampPage() {
 
       {/* Step: Details */}
       {step === 'details' && (
-        <div className="card space-y-6">
+        <div className="bg-card rounded-lg border border-border p-6space-y-6">
           <div>
-            <label className="input-label">Jurisdiction *</label>
-            <Select
+            <label className="text-sm font-medium text-foreground">Jurisdiction *</label>
+            <select
               value={jurisdictionId}
               onChange={(e) => setJurisdictionId(e.target.value)}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <option value="">Select jurisdiction</option>
               {JURISDICTIONS.map((j) => (
@@ -255,11 +256,11 @@ export default function CreateStampPage() {
                   {j.name}
                 </option>
               ))}
-            </Select>
+            </select>
           </div>
 
           <div>
-            <label className="input-label">Project Name</label>
+            <label className="text-sm font-medium text-foreground">Project Name</label>
             <Input
               placeholder="e.g., Smith Residence Addition"
               value={projectName}
@@ -268,7 +269,7 @@ export default function CreateStampPage() {
           </div>
 
           <div>
-            <label className="input-label">Permit Number</label>
+            <label className="text-sm font-medium text-foreground">Permit Number</label>
             <Input
               placeholder="e.g., E-2026-1234"
               value={permitNumber}
@@ -277,9 +278,9 @@ export default function CreateStampPage() {
           </div>
 
           <div>
-            <label className="input-label">Notes</label>
+            <label className="text-sm font-medium text-foreground">Notes</label>
             <textarea
-              className="flex w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-base placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta focus-visible:ring-offset-2"
+              className="flex w-full rounded-lg border border-input bg-card px-4 py-3 text-base placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta focus-visible:ring-offset-2"
               rows={3}
               placeholder="Any additional notes..."
               value={notes}
@@ -288,15 +289,15 @@ export default function CreateStampPage() {
           </div>
 
           <div>
-            <label className="input-label">Scope & Liability Notes</label>
+            <label className="text-sm font-medium text-foreground">Scope & Liability Notes</label>
             <textarea
-              className="flex w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-base placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta focus-visible:ring-offset-2"
+              className="flex w-full rounded-lg border border-input bg-card px-4 py-3 text-base placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta focus-visible:ring-offset-2"
               rows={3}
               placeholder="Define scope of professional responsibility, limitations, or conditions..."
               value={scopeNotes}
               onChange={(e) => setScopeNotes(e.target.value)}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Visible on verification page and certificate. Use to limit liability scope.
             </p>
           </div>
@@ -314,41 +315,41 @@ export default function CreateStampPage() {
 
       {/* Step: Review */}
       {step === 'review' && (
-        <div className="card space-y-6">
+        <div className="bg-card rounded-lg border border-border p-6space-y-6">
           <div className="bg-primary/5 rounded-xl p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Stamp Summary</h3>
+            <h3 className="font-semibold text-foreground mb-4">Stamp Summary</h3>
             <dl className="space-y-3">
               <div className="flex justify-between">
-                <dt className="text-gray-600">Document</dt>
-                <dd className="font-medium text-gray-900">{file?.name}</dd>
+                <dt className="text-muted-foreground">Document</dt>
+                <dd className="font-medium text-foreground">{file?.name}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-600">Jurisdiction</dt>
-                <dd className="font-medium text-gray-900">
+                <dt className="text-muted-foreground">Jurisdiction</dt>
+                <dd className="font-medium text-foreground">
                   {JURISDICTIONS.find((j) => j.id === jurisdictionId)?.name}
                 </dd>
               </div>
               {projectName && (
                 <div className="flex justify-between">
-                  <dt className="text-gray-600">Project</dt>
-                  <dd className="font-medium text-gray-900">{projectName}</dd>
+                  <dt className="text-muted-foreground">Project</dt>
+                  <dd className="font-medium text-foreground">{projectName}</dd>
                 </div>
               )}
               {permitNumber && (
                 <div className="flex justify-between">
-                  <dt className="text-gray-600">Permit #</dt>
-                  <dd className="font-medium text-gray-900">{permitNumber}</dd>
+                  <dt className="text-muted-foreground">Permit #</dt>
+                  <dd className="font-medium text-foreground">{permitNumber}</dd>
                 </div>
               )}
               {scopeNotes && (
                 <div className="flex justify-between">
-                  <dt className="text-gray-600">Scope Notes</dt>
-                  <dd className="font-medium text-gray-900 text-right max-w-[250px]">{scopeNotes}</dd>
+                  <dt className="text-muted-foreground">Scope Notes</dt>
+                  <dd className="font-medium text-foreground text-right max-w-[250px]">{scopeNotes}</dd>
                 </div>
               )}
               <div className="flex justify-between">
-                <dt className="text-gray-600">PE</dt>
-                <dd className="font-medium text-gray-900">
+                <dt className="text-muted-foreground">PE</dt>
+                <dd className="font-medium text-foreground">
                   {user?.name}
                   {user?.peLicenseNumber && ` (${user.peState}-${user.peLicenseNumber})`}
                 </dd>
@@ -356,12 +357,12 @@ export default function CreateStampPage() {
             </dl>
           </div>
 
-          <div className="bg-gray-100 rounded-lg p-4">
+          <div className="bg-muted rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Hash className="h-4 w-4 text-gray-500" />
-              <span className="text-sm text-gray-600">Document Hash</span>
+              <Hash className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Document Hash</span>
             </div>
-            <p className="text-xs font-mono text-gray-700 break-all">
+            <p className="text-xs font-mono text-foreground break-all">
               {documentHash}
             </p>
           </div>
@@ -370,10 +371,10 @@ export default function CreateStampPage() {
             <div className="flex items-start gap-3">
               <Shield className="h-5 w-5 text-cta mt-0.5" />
               <div>
-                <p className="font-medium text-gray-900">
+                <p className="font-medium text-foreground">
                   This stamp will be permanently recorded
                 </p>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Once created, this stamp cannot be deleted. You can revoke it
                   if needed, but the record will remain on the blockchain.
                 </p>
@@ -403,28 +404,28 @@ export default function CreateStampPage() {
 
       {/* Step: Success */}
       {step === 'success' && stamp && (
-        <div className="card text-center space-y-6">
+        <div className="bg-card rounded-lg border border-border p-6text-center space-y-6">
           <div className="bg-accent/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto">
             <CheckCircle className="h-10 w-10 text-accent" />
           </div>
 
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-foreground">
               Stamp Created Successfully
             </h2>
-            <p className="text-gray-600 mt-2">
+            <p className="text-muted-foreground mt-2">
               Your document has been stamped and recorded.
             </p>
           </div>
 
           {stamp.verifyUrl && (
-            <div className="bg-white border rounded-xl p-6 inline-block">
+            <div className="bg-card border rounded-xl p-6 inline-block">
               <QRCodeImage
                 value={stamp.verifyUrl}
                 size={192}
                 className="mx-auto"
               />
-              <p className="text-sm text-gray-600 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Scan to verify this stamp
               </p>
             </div>

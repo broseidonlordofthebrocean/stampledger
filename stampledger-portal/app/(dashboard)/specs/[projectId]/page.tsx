@@ -153,14 +153,14 @@ export default function ProjectDetailPage({
       <div className="flex items-center gap-4">
         <button
           onClick={() => router.push('/specs')}
-          className="p-2 hover:bg-gray-100 rounded-lg"
+          className="p-2 hover:bg-accent rounded-lg"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-primary">{project.name}</h1>
           {project.description && (
-            <p className="text-gray-600">{project.description}</p>
+            <p className="text-muted-foreground">{project.description}</p>
           )}
         </div>
         <Button onClick={() => { setNewVersion(suggestNextVersion()); setShowCreateModal(true) }}>
@@ -172,9 +172,9 @@ export default function ProjectDetailPage({
       {/* Version Timeline */}
       {versions.length === 0 ? (
         <div className="card text-center py-12">
-          <GitBranch className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900">No versions yet</h3>
-          <p className="text-gray-600 mt-1">
+          <GitBranch className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-foreground">No versions yet</h3>
+          <p className="text-muted-foreground mt-1">
             Create the first version of this specification
           </p>
           <Button
@@ -187,12 +187,12 @@ export default function ProjectDetailPage({
         </div>
       ) : (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-foreground">
             Version History ({versions.length})
           </h2>
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200" />
+            <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-muted" />
 
             {/* Version entries */}
             <div className="space-y-4">
@@ -203,7 +203,7 @@ export default function ProjectDetailPage({
                     className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center ${
                       index === 0
                         ? 'bg-accent text-white'
-                        : 'bg-gray-200 text-gray-600'
+                        : 'bg-muted text-muted-foreground'
                     }`}
                   >
                     <GitCommit className="h-5 w-5" />
@@ -217,7 +217,7 @@ export default function ProjectDetailPage({
                           className={`inline-block px-3 py-1 rounded-full text-sm font-mono font-semibold ${
                             index === 0
                               ? 'bg-accent/10 text-accent'
-                              : 'bg-gray-100 text-gray-600'
+                              : 'bg-muted text-muted-foreground'
                           }`}
                         >
                           v{version.version}
@@ -228,17 +228,17 @@ export default function ProjectDetailPage({
                           </span>
                         )}
                       </div>
-                      <span className="flex items-center text-sm text-gray-500">
+                      <span className="flex items-center text-sm text-muted-foreground">
                         <Calendar className="h-3 w-3 mr-1" />
                         {new Date(version.createdAt).toLocaleDateString()}
                       </span>
                     </div>
 
                     {version.changelog && (
-                      <p className="mt-3 text-gray-700">{version.changelog}</p>
+                      <p className="mt-3 text-foreground">{version.changelog}</p>
                     )}
 
-                    <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+                    <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
                       <Hash className="h-3 w-3" />
                       <code className="font-mono">
                         {version.specHash.slice(0, 32)}...
@@ -255,14 +255,14 @@ export default function ProjectDetailPage({
       {/* Create Version Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6">
+          <div className="bg-card rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-foreground">
                 Create New Version
               </h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                className="p-2 hover:bg-accent rounded-lg"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -270,7 +270,7 @@ export default function ProjectDetailPage({
 
             <div className="space-y-4">
               <div>
-                <label className="input-label">Version Number *</label>
+                <label className="text-sm font-medium text-foreground">Version Number *</label>
                 <Input
                   placeholder="e.g., 1.0.0"
                   value={newVersion}
@@ -279,23 +279,23 @@ export default function ProjectDetailPage({
               </div>
 
               <div>
-                <label className="input-label">Specification File *</label>
+                <label className="text-sm font-medium text-foreground">Specification File *</label>
                 <div
                   className={`border-2 border-dashed rounded-lg p-4 text-center ${
-                    specFile ? 'border-accent bg-accent/5' : 'border-gray-300'
+                    specFile ? 'border-accent bg-accent/5' : 'border-input'
                   }`}
                 >
                   {specFile ? (
                     <div>
-                      <p className="font-medium text-gray-900">{specFile.name}</p>
-                      <p className="text-xs text-gray-500 mt-1 font-mono">
+                      <p className="font-medium text-foreground">{specFile.name}</p>
+                      <p className="text-xs text-muted-foreground mt-1 font-mono">
                         {specHash.slice(0, 32)}...
                       </p>
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <Upload className="h-6 w-6 text-gray-400 mx-auto" />
-                      <p className="text-sm text-gray-600">
+                      <Upload className="h-6 w-6 text-muted-foreground mx-auto" />
+                      <p className="text-sm text-muted-foreground">
                         Click to upload spec file
                       </p>
                     </div>
@@ -310,9 +310,9 @@ export default function ProjectDetailPage({
               </div>
 
               <div>
-                <label className="input-label">Changelog</label>
+                <label className="text-sm font-medium text-foreground">Changelog</label>
                 <textarea
-                  className="flex w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-base placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta focus-visible:ring-offset-2"
+                  className="flex w-full rounded-lg border border-input bg-card px-4 py-3 text-base placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta focus-visible:ring-offset-2"
                   rows={3}
                   placeholder="What changed in this version..."
                   value={newChangelog}

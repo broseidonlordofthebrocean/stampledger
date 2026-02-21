@@ -198,9 +198,9 @@ export default function BatchStampPage() {
   if (!currentOrg) {
     return (
       <div className="text-center py-12">
-        <Stamp className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">No Organization Selected</h2>
-        <p className="text-gray-500">Please select an organization to use batch stamping.</p>
+        <Stamp className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+        <h2 className="text-lg font-semibold text-foreground mb-2">No Organization Selected</h2>
+        <p className="text-muted-foreground">Please select an organization to use batch stamping.</p>
       </div>
     )
   }
@@ -208,9 +208,9 @@ export default function BatchStampPage() {
   if (licenses.length === 0) {
     return (
       <div className="text-center py-12">
-        <Award className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">No Professional License</h2>
-        <p className="text-gray-500 mb-4">You need a professional license to stamp documents.</p>
+        <Award className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+        <h2 className="text-lg font-semibold text-foreground mb-2">No Professional License</h2>
+        <p className="text-muted-foreground mb-4">You need a professional license to stamp documents.</p>
         <Link href="/licenses">
           <Button>Add License</Button>
         </Link>
@@ -225,18 +225,18 @@ export default function BatchStampPage() {
         <div>
           <Link
             href="/stamps"
-            className="text-sm text-gray-500 hover:text-gray-700 flex items-center mb-2"
+            className="text-sm text-muted-foreground hover:text-foreground flex items-center mb-2"
           >
             <ArrowLeft className="h-4 w-4 mr-1" />
             Back to Stamps
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Batch Stamping</h1>
-          <p className="text-gray-600 mt-1">Stamp multiple projects at once</p>
+          <h1 className="text-2xl font-bold text-foreground">Batch Stamping</h1>
+          <p className="text-muted-foreground mt-1">Stamp multiple projects at once</p>
         </div>
       </div>
 
       {/* Progress Steps */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-card rounded-lg border border-border p-4">
         <div className="flex items-center justify-between">
           {['select-projects', 'upload-documents', 'review', 'complete'].map((s, idx) => (
             <div key={s} className="flex items-center">
@@ -247,7 +247,7 @@ export default function BatchStampPage() {
                     ? 'bg-primary text-white'
                     : step === 'complete' || idx < ['select-projects', 'upload-documents', 'review', 'complete'].indexOf(step)
                     ? 'bg-green-500 text-white'
-                    : 'bg-gray-200 text-gray-500'
+                    : 'bg-muted text-muted-foreground'
                 )}
               >
                 {step === 'complete' || idx < ['select-projects', 'upload-documents', 'review', 'complete'].indexOf(step) ? (
@@ -262,14 +262,14 @@ export default function BatchStampPage() {
                     'w-16 md:w-24 h-1 mx-2',
                     idx < ['select-projects', 'upload-documents', 'review', 'complete'].indexOf(step)
                       ? 'bg-green-500'
-                      : 'bg-gray-200'
+                      : 'bg-muted'
                   )}
                 />
               )}
             </div>
           ))}
         </div>
-        <div className="flex justify-between mt-2 text-xs text-gray-500">
+        <div className="flex justify-between mt-2 text-xs text-muted-foreground">
           <span>Select Projects</span>
           <span>Upload Docs</span>
           <span>Review</span>
@@ -279,29 +279,29 @@ export default function BatchStampPage() {
 
       {/* Error Alert */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg flex items-center">
           <AlertCircle className="h-5 w-5 mr-2" />
           {error}
         </div>
       )}
 
       {/* Step Content */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-card rounded-lg border border-border p-6">
         {step === 'select-projects' && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Select Projects to Stamp</h2>
-            <p className="text-gray-600 text-sm">
+            <p className="text-muted-foreground text-sm">
               Choose the projects you want to stamp. You can select multiple projects.
             </p>
 
             {loading ? (
               <div className="text-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin mx-auto text-gray-400" />
+                <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
               </div>
             ) : projects.length === 0 ? (
               <div className="text-center py-8">
-                <FolderKanban className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p className="text-gray-500">No active projects found</p>
+                <FolderKanban className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+                <p className="text-muted-foreground">No active projects found</p>
               </div>
             ) : (
               <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -315,7 +315,7 @@ export default function BatchStampPage() {
                         'w-full flex items-center justify-between px-4 py-3 rounded-lg border transition-colors text-left',
                         isSelected
                           ? 'border-primary bg-primary/5'
-                          : 'border-gray-200 hover:border-gray-300'
+                          : 'border-border hover:border-input'
                       )}
                     >
                       <div className="flex items-center">
@@ -324,14 +324,14 @@ export default function BatchStampPage() {
                             'w-5 h-5 rounded border flex items-center justify-center mr-3',
                             isSelected
                               ? 'bg-primary border-primary'
-                              : 'border-gray-300'
+                              : 'border-input'
                           )}
                         >
                           {isSelected && <Check className="h-3 w-3 text-white" />}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{project.name}</p>
-                          <p className="text-sm text-gray-500">{project.projectNumber}</p>
+                          <p className="font-medium text-foreground">{project.name}</p>
+                          <p className="text-sm text-muted-foreground">{project.projectNumber}</p>
                         </div>
                       </div>
                     </button>
@@ -340,8 +340,8 @@ export default function BatchStampPage() {
               </div>
             )}
 
-            <div className="pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-500">
+            <div className="pt-4 border-t border-border">
+              <p className="text-sm text-muted-foreground">
                 {selectedProjects.length} project{selectedProjects.length !== 1 ? 's' : ''} selected
               </p>
             </div>
@@ -351,7 +351,7 @@ export default function BatchStampPage() {
         {step === 'upload-documents' && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Upload Documents</h2>
-            <p className="text-gray-600 text-sm">
+            <p className="text-muted-foreground text-sm">
               Upload the documents to be stamped for each project.
             </p>
 
@@ -359,12 +359,12 @@ export default function BatchStampPage() {
               {selectedProjects.map((sp) => (
                 <div
                   key={sp.projectId}
-                  className="border border-gray-200 rounded-lg p-4"
+                  className="border border-border rounded-lg p-4"
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="font-medium text-gray-900">{sp.project.name}</p>
-                      <p className="text-sm text-gray-500">{sp.project.projectNumber}</p>
+                      <p className="font-medium text-foreground">{sp.project.name}</p>
+                      <p className="text-sm text-muted-foreground">{sp.project.projectNumber}</p>
                     </div>
                     {sp.documentHash && (
                       <span className="flex items-center text-green-600 text-sm">
@@ -375,10 +375,10 @@ export default function BatchStampPage() {
                   </div>
 
                   {sp.documentHash ? (
-                    <div className="mt-3 flex items-center justify-between bg-gray-50 rounded px-3 py-2">
+                    <div className="mt-3 flex items-center justify-between bg-muted rounded px-3 py-2">
                       <div className="flex items-center text-sm">
-                        <FileText className="h-4 w-4 mr-2 text-gray-400" />
-                        <span className="text-gray-700">{sp.documentName}</span>
+                        <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <span className="text-foreground">{sp.documentName}</span>
                       </div>
                       <button
                         onClick={() =>
@@ -390,13 +390,13 @@ export default function BatchStampPage() {
                             )
                           )
                         }
-                        className="text-gray-400 hover:text-gray-600"
+                        className="text-muted-foreground hover:text-muted-foreground"
                       >
                         <X className="h-4 w-4" />
                       </button>
                     </div>
                   ) : (
-                    <label className="mt-3 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 cursor-pointer hover:border-primary transition-colors">
+                    <label className="mt-3 flex items-center justify-center border-2 border-dashed border-input rounded-lg p-4 cursor-pointer hover:border-primary transition-colors">
                       <input
                         type="file"
                         className="hidden"
@@ -406,8 +406,8 @@ export default function BatchStampPage() {
                           if (file) handleFileUpload(sp.projectId, file)
                         }}
                       />
-                      <Upload className="h-5 w-5 text-gray-400 mr-2" />
-                      <span className="text-sm text-gray-500">Upload document</span>
+                      <Upload className="h-5 w-5 text-muted-foreground mr-2" />
+                      <span className="text-sm text-muted-foreground">Upload document</span>
                     </label>
                   )}
                 </div>
@@ -419,19 +419,19 @@ export default function BatchStampPage() {
         {step === 'review' && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Review & Confirm</h2>
-            <p className="text-gray-600 text-sm">
+            <p className="text-muted-foreground text-sm">
               Review your batch stamp details before submitting.
             </p>
 
             {/* License Selection */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="bg-muted rounded-lg p-4">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Stamp with License
               </label>
               <select
                 value={selectedLicenseId}
                 onChange={(e) => setSelectedLicenseId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {licenses.map((license) => (
                   <option key={license.id} value={license.id}>
@@ -442,15 +442,15 @@ export default function BatchStampPage() {
             </div>
 
             {/* Summary */}
-            <div className="border border-gray-200 rounded-lg divide-y divide-gray-200">
-              <div className="px-4 py-3 bg-gray-50">
-                <p className="font-medium text-gray-900">Batch Summary</p>
+            <div className="border border-border rounded-lg divide-y divide-border">
+              <div className="px-4 py-3 bg-muted">
+                <p className="font-medium text-foreground">Batch Summary</p>
               </div>
               {selectedProjects.map((sp) => (
                 <div key={sp.projectId} className="px-4 py-3 flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-900">{sp.project.name}</p>
-                    <p className="text-sm text-gray-500">{sp.documentName}</p>
+                    <p className="font-medium text-foreground">{sp.project.name}</p>
+                    <p className="text-sm text-muted-foreground">{sp.documentName}</p>
                   </div>
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
                 </div>
@@ -462,7 +462,7 @@ export default function BatchStampPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Coins className="h-5 w-5 text-primary mr-2" />
-                  <span className="text-sm text-gray-700">Estimated tokens earned</span>
+                  <span className="text-sm text-foreground">Estimated tokens earned</span>
                 </div>
                 <span className="font-semibold text-primary">
                   +{selectedProjects.length * 10} tokens
@@ -475,8 +475,8 @@ export default function BatchStampPage() {
         {step === 'processing' && (
           <div className="text-center py-12">
             <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary mb-4" />
-            <h2 className="text-lg font-semibold text-gray-900">Processing Batch Stamps</h2>
-            <p className="text-gray-500 mt-2">
+            <h2 className="text-lg font-semibold text-foreground">Processing Batch Stamps</h2>
+            <p className="text-muted-foreground mt-2">
               Creating {selectedProjects.length} stamps on the blockchain...
             </p>
           </div>
@@ -487,32 +487,32 @@ export default function BatchStampPage() {
             <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <CheckCircle2 className="h-8 w-8 text-green-600" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Batch Complete!</h2>
-            <p className="text-gray-500 mb-6">
+            <h2 className="text-xl font-semibold text-foreground mb-2">Batch Complete!</h2>
+            <p className="text-muted-foreground mb-6">
               Successfully created {result.stampsCreated} stamps
             </p>
 
             {/* Results Summary */}
-            <div className="bg-gray-50 rounded-lg p-6 text-left max-w-md mx-auto mb-6">
+            <div className="bg-muted rounded-lg p-6 text-left max-w-md mx-auto mb-6">
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Batch ID</span>
+                  <span className="text-muted-foreground">Batch ID</span>
                   <span className="font-mono text-sm">{result.batchId.slice(0, 12)}...</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Stamps Created</span>
+                  <span className="text-muted-foreground">Stamps Created</span>
                   <span className="font-semibold">{result.stampsCreated}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Tokens Earned</span>
+                  <span className="text-muted-foreground">Tokens Earned</span>
                   <span className="font-semibold text-primary">+{result.tokensEarned}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Total Tokens</span>
+                  <span className="text-muted-foreground">Total Tokens</span>
                   <span className="font-semibold">{result.totalTokens}</span>
                 </div>
                 {result.milestoneReached && (
-                  <div className="pt-3 border-t border-gray-200">
+                  <div className="pt-3 border-t border-border">
                     <div className="flex items-center text-yellow-600">
                       <Award className="h-5 w-5 mr-2" />
                       <span className="font-medium">Milestone: {result.milestoneReached}</span>

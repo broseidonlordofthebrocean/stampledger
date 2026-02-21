@@ -85,12 +85,12 @@ export default function AdminOrgsPage() {
 
   const planBadge = (plan: string) => {
     const colors: Record<string, string> = {
-      free: 'bg-gray-100 text-gray-600',
+      free: 'bg-muted text-muted-foreground',
       starter: 'bg-blue-100 text-blue-700',
       professional: 'bg-purple-100 text-purple-700',
       enterprise: 'bg-amber-100 text-amber-700',
     }
-    return colors[plan] || 'bg-gray-100 text-gray-600'
+    return colors[plan] || 'bg-muted text-muted-foreground'
   }
 
   if (authLoading || !isAdmin) {
@@ -122,17 +122,17 @@ export default function AdminOrgsPage() {
       </div>
 
       {/* Search */}
-      <div className="card">
+      <div className="bg-card rounded-lg border border-border p-6">
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Search by name or slug..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <Button onClick={handleSearch} size="sm">
@@ -142,50 +142,50 @@ export default function AdminOrgsPage() {
       </div>
 
       {/* Orgs Table */}
-      <div className="card overflow-hidden">
+      <div className="bg-card rounded-lg border border-border p-6 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
         ) : orgs.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-muted-foreground">
             {search ? 'No organizations match your search' : 'No organizations found'}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left font-medium text-gray-500 pb-3 pl-1">Organization</th>
-                  <th className="text-left font-medium text-gray-500 pb-3">Type</th>
-                  <th className="text-left font-medium text-gray-500 pb-3">Plan</th>
-                  <th className="text-center font-medium text-gray-500 pb-3" title="Members">
+                <tr className="border-b border-border">
+                  <th className="text-left font-medium text-muted-foreground pb-3 pl-1">Organization</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">Type</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">Plan</th>
+                  <th className="text-center font-medium text-muted-foreground pb-3" title="Members">
                     <Users className="h-4 w-4 inline" />
                   </th>
-                  <th className="text-center font-medium text-gray-500 pb-3" title="Stamps">
+                  <th className="text-center font-medium text-muted-foreground pb-3" title="Stamps">
                     <Stamp className="h-4 w-4 inline" />
                   </th>
-                  <th className="text-left font-medium text-gray-500 pb-3">Created</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">Created</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-border">
                 {orgs.map((org) => (
-                  <tr key={org.id} className="hover:bg-gray-50">
+                  <tr key={org.id} className="hover:bg-accent">
                     <td className="py-3 pl-1">
                       <div>
-                        <p className="font-medium text-gray-900">{org.name}</p>
-                        <p className="text-xs text-gray-400">{org.slug}</p>
+                        <p className="font-medium text-foreground">{org.name}</p>
+                        <p className="text-xs text-muted-foreground">{org.slug}</p>
                       </div>
                     </td>
-                    <td className="py-3 text-gray-600 capitalize">{org.type}</td>
+                    <td className="py-3 text-muted-foreground capitalize">{org.type}</td>
                     <td className="py-3">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${planBadge(org.plan)}`}>
                         {org.plan}
                       </span>
                     </td>
-                    <td className="py-3 text-center text-gray-600">{org.memberCount}</td>
-                    <td className="py-3 text-center text-gray-600">{org.stampCount}</td>
-                    <td className="py-3 text-gray-400 whitespace-nowrap">
+                    <td className="py-3 text-center text-muted-foreground">{org.memberCount}</td>
+                    <td className="py-3 text-center text-muted-foreground">{org.stampCount}</td>
+                    <td className="py-3 text-muted-foreground whitespace-nowrap">
                       {new Date(org.createdAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -201,8 +201,8 @@ export default function AdminOrgsPage() {
 
         {/* Pagination */}
         {pagination.pages > 1 && (
-          <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-100">
-            <p className="text-sm text-gray-500">
+          <div className="flex items-center justify-between pt-4 mt-4 border-t border-border">
+            <p className="text-sm text-muted-foreground">
               Page {pagination.page} of {pagination.pages} ({pagination.total} organizations)
             </p>
             <div className="flex gap-2">

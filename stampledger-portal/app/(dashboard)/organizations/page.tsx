@@ -182,7 +182,7 @@ export default function OrganizationsPage() {
       case 'admin':
         return <Shield className="h-4 w-4 text-blue-500" />
       default:
-        return <Users className="h-4 w-4 text-gray-400" />
+        return <Users className="h-4 w-4 text-muted-foreground" />
     }
   }
 
@@ -193,8 +193,8 @@ export default function OrganizationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Organizations</h1>
-          <p className="text-gray-600 mt-1">Manage your organizations and team members</p>
+          <h1 className="text-2xl font-bold text-foreground">Organizations</h1>
+          <p className="text-muted-foreground mt-1">Manage your organizations and team members</p>
         </div>
         <Button onClick={() => setShowCreateModal(true)}>
           <Plus className="h-4 w-4 mr-2" />
@@ -204,7 +204,7 @@ export default function OrganizationsPage() {
 
       {/* Alerts */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
@@ -217,14 +217,14 @@ export default function OrganizationsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Org List */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
-              <h2 className="font-semibold text-gray-900">Your Organizations</h2>
+          <div className="bg-card rounded-lg border border-border overflow-hidden">
+            <div className="px-4 py-3 border-b border-border bg-muted">
+              <h2 className="font-semibold text-foreground">Your Organizations</h2>
             </div>
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-border">
               {organizations.length === 0 ? (
-                <div className="p-6 text-center text-gray-500">
-                  <Building2 className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                <div className="p-6 text-center text-muted-foreground">
+                  <Building2 className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
                   <p>No organizations yet</p>
                   <p className="text-sm mt-1">Create one to get started</p>
                 </div>
@@ -234,15 +234,15 @@ export default function OrganizationsPage() {
                     key={org.id}
                     onClick={() => fetchOrgDetails(org.id)}
                     className={cn(
-                      'w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors',
+                      'w-full flex items-center justify-between px-4 py-3 text-left hover:bg-accent transition-colors',
                       selectedOrg?.id === org.id && 'bg-blue-50'
                     )}
                   >
                     <div className="flex items-center min-w-0">
-                      <Building2 className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
+                      <Building2 className="h-5 w-5 text-muted-foreground mr-3 flex-shrink-0" />
                       <div className="min-w-0">
-                        <p className="font-medium text-gray-900 truncate">{org.name}</p>
-                        <p className="text-xs text-gray-500 capitalize">{org.role}</p>
+                        <p className="font-medium text-foreground truncate">{org.name}</p>
+                        <p className="text-xs text-muted-foreground capitalize">{org.role}</p>
                       </div>
                     </div>
                     {getRoleIcon(org.role)}
@@ -256,18 +256,18 @@ export default function OrganizationsPage() {
         {/* Org Details */}
         <div className="lg:col-span-2">
           {loading ? (
-            <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto text-gray-400" />
+            <div className="bg-card rounded-lg border border-border p-12 text-center">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
             </div>
           ) : selectedOrg ? (
             <div className="space-y-6">
               {/* Org Info */}
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="bg-card rounded-lg border border-border p-6">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">{selectedOrg.name}</h2>
-                    <p className="text-gray-500 mt-1">{selectedOrg.description || 'No description'}</p>
-                    <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                    <h2 className="text-xl font-bold text-foreground">{selectedOrg.name}</h2>
+                    <p className="text-muted-foreground mt-1">{selectedOrg.description || 'No description'}</p>
+                    <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Users className="h-4 w-4" />
                         {selectedOrg.memberCount} members
@@ -285,9 +285,9 @@ export default function OrganizationsPage() {
               </div>
 
               {/* Members */}
-              <div className="bg-white rounded-lg border border-gray-200">
-                <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-900">Team Members</h3>
+              <div className="bg-card rounded-lg border border-border">
+                <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+                  <h3 className="font-semibold text-foreground">Team Members</h3>
                   {canManageMembers && (
                     <Button size="sm" onClick={() => setShowInviteModal(true)}>
                       <UserPlus className="h-4 w-4 mr-2" />
@@ -295,29 +295,29 @@ export default function OrganizationsPage() {
                     </Button>
                   )}
                 </div>
-                <div className="divide-y divide-gray-200">
+                <div className="divide-y divide-border">
                   {selectedOrg.members.map((member) => (
                     <div
                       key={member.id}
                       className="px-6 py-4 flex items-center justify-between"
                     >
                       <div className="flex items-center min-w-0">
-                        <div className="bg-gray-100 p-2 rounded-full mr-3">
-                          <Users className="h-5 w-5 text-gray-500" />
+                        <div className="bg-muted p-2 rounded-full mr-3">
+                          <Users className="h-5 w-5 text-muted-foreground" />
                         </div>
                         <div className="min-w-0">
-                          <p className="font-medium text-gray-900 truncate">
+                          <p className="font-medium text-foreground truncate">
                             {member.firstName && member.lastName
                               ? `${member.firstName} ${member.lastName}`
                               : member.email}
                           </p>
-                          <p className="text-sm text-gray-500 truncate">{member.email}</p>
+                          <p className="text-sm text-muted-foreground truncate">{member.email}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1 text-sm">
                           {getRoleIcon(member.role)}
-                          <span className="capitalize text-gray-600">{member.role}</span>
+                          <span className="capitalize text-muted-foreground">{member.role}</span>
                         </div>
                         <span
                           className={cn(
@@ -332,7 +332,7 @@ export default function OrganizationsPage() {
                         {canManageMembers && member.role !== 'owner' && (
                           <button
                             onClick={() => handleRemoveMember(member.id)}
-                            className="text-gray-400 hover:text-red-500 transition-colors"
+                            className="text-muted-foreground hover:text-red-500 transition-colors"
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -344,9 +344,9 @@ export default function OrganizationsPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-              <Building2 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-gray-500">Select an organization to view details</p>
+            <div className="bg-card rounded-lg border border-border p-12 text-center">
+              <Building2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+              <p className="text-muted-foreground">Select an organization to view details</p>
             </div>
           )}
         </div>
@@ -355,16 +355,16 @@ export default function OrganizationsPage() {
       {/* Create Org Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg w-full max-w-md mx-4 p-6">
+          <div className="bg-card rounded-lg w-full max-w-md mx-4 p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Create Organization</h3>
-              <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setShowCreateModal(false)} className="text-muted-foreground hover:text-muted-foreground">
                 <X className="h-5 w-5" />
               </button>
             </div>
             <form onSubmit={handleCreateOrg} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Organization Name *
                 </label>
                 <Input
@@ -375,7 +375,7 @@ export default function OrganizationsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Slug (URL identifier) *
                 </label>
                 <Input
@@ -391,7 +391,7 @@ export default function OrganizationsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Description
                 </label>
                 <Input
@@ -414,16 +414,16 @@ export default function OrganizationsPage() {
       {/* Invite Modal */}
       {showInviteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg w-full max-w-md mx-4 p-6">
+          <div className="bg-card rounded-lg w-full max-w-md mx-4 p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Invite Team Member</h3>
-              <button onClick={() => setShowInviteModal(false)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setShowInviteModal(false)} className="text-muted-foreground hover:text-muted-foreground">
                 <X className="h-5 w-5" />
               </button>
             </div>
             <form onSubmit={handleInviteMember} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Email Address *
                 </label>
                 <Input
@@ -435,13 +435,13 @@ export default function OrganizationsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Role
                 </label>
                 <select
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
                   <option value="member">Member</option>
                   <option value="admin">Admin</option>

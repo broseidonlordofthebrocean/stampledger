@@ -89,8 +89,8 @@ export default function SpecsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="page-header mb-0">Specifications</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1 mb-0">Specifications</h1>
+          <p className="text-muted-foreground">
             Track specification versions with blockchain-verified history
           </p>
         </div>
@@ -106,10 +106,10 @@ export default function SpecsPage() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : projects.length === 0 ? (
-        <div className="card text-center py-12">
-          <GitBranch className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900">No projects yet</h3>
-          <p className="text-gray-600 mt-1">
+        <div className="bg-card rounded-lg border border-border p-6text-center py-12">
+          <GitBranch className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-foreground">No projects yet</h3>
+          <p className="text-muted-foreground mt-1">
             Create your first specification project to start tracking versions
           </p>
           <Button onClick={() => setShowCreateModal(true)} className="mt-4">
@@ -127,21 +127,21 @@ export default function SpecsPage() {
                     <FolderOpen className="h-6 w-6 text-accent" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 truncate">
+                    <h3 className="font-semibold text-foreground truncate">
                       {project.name}
                     </h3>
                     {project.description && (
-                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                         {project.description}
                       </p>
                     )}
-                    <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                    <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
                       <span className="flex items-center">
                         <Tag className="h-3 w-3 mr-1" />
                         {project.versionCount} version{project.versionCount !== 1 ? 's' : ''}
                       </span>
                       {project.latestVersion && (
-                        <span className="font-mono text-xs bg-gray-100 px-2 py-0.5 rounded">
+                        <span className="font-mono text-xs bg-muted px-2 py-0.5 rounded">
                           v{project.latestVersion}
                         </span>
                       )}
@@ -157,21 +157,21 @@ export default function SpecsPage() {
       {/* Create Project Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6">
+          <div className="bg-card rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-foreground">
                 Create New Project
               </h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                className="p-2 hover:bg-accent rounded-lg"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="input-label">Project Name *</label>
+                <label className="text-sm font-medium text-foreground">Project Name *</label>
                 <Input
                   placeholder="e.g., Building A Structural Plans"
                   value={newProjectName}
@@ -179,9 +179,9 @@ export default function SpecsPage() {
                 />
               </div>
               <div>
-                <label className="input-label">Description</label>
+                <label className="text-sm font-medium text-foreground">Description</label>
                 <textarea
-                  className="flex w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-base placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta focus-visible:ring-offset-2"
+                  className="flex w-full rounded-lg border border-input bg-white px-4 py-3 text-base placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta focus-visible:ring-offset-2"
                   rows={3}
                   placeholder="Brief description of the project..."
                   value={newProjectDesc}

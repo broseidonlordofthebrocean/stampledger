@@ -141,7 +141,7 @@ export default function AdminLicensesPage() {
         )
       case 'expired':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive">
             <AlertTriangle className="h-3 w-3" /> Expired
           </span>
         )
@@ -153,13 +153,13 @@ export default function AdminLicensesPage() {
         )
       case 'revoked':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive">
             <XCircle className="h-3 w-3" /> Revoked
           </span>
         )
       default:
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground">
             {status}
           </span>
         )
@@ -195,7 +195,7 @@ export default function AdminLicensesPage() {
       </div>
 
       {/* Status Filter Tabs */}
-      <div className="card">
+      <div className="bg-card rounded-lg border border-border p-6">
         <div className="flex flex-wrap gap-2">
           {STATUS_TABS.map((tab) => (
             <button
@@ -204,7 +204,7 @@ export default function AdminLicensesPage() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 statusFilter === tab.key
                   ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  : 'bg-muted text-muted-foreground hover:bg-accent'
               }`}
             >
               {tab.label}
@@ -214,39 +214,39 @@ export default function AdminLicensesPage() {
       </div>
 
       {/* Licenses Table */}
-      <div className="card overflow-hidden">
+      <div className="bg-card rounded-lg border border-border p-6 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
         ) : licenses.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-muted-foreground">
             No licenses found {statusFilter ? `with status "${statusFilter.replace('_', ' ')}"` : ''}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left font-medium text-gray-500 pb-3 pl-1">License</th>
-                  <th className="text-left font-medium text-gray-500 pb-3">User</th>
-                  <th className="text-left font-medium text-gray-500 pb-3">State</th>
-                  <th className="text-left font-medium text-gray-500 pb-3">Status</th>
-                  <th className="text-left font-medium text-gray-500 pb-3">Source</th>
-                  <th className="text-left font-medium text-gray-500 pb-3">Submitted</th>
-                  <th className="text-left font-medium text-gray-500 pb-3">Actions</th>
+                <tr className="border-b border-border">
+                  <th className="text-left font-medium text-muted-foreground pb-3 pl-1">License</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">User</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">State</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">Status</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">Source</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">Submitted</th>
+                  <th className="text-left font-medium text-muted-foreground pb-3">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-border">
                 {licenses.map((license) => (
-                  <tr key={license.id} className="hover:bg-gray-50">
+                  <tr key={license.id} className="hover:bg-accent">
                     <td className="py-3 pl-1">
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-foreground">
                           {license.licenseType} #{license.licenseNumber}
                         </p>
                         {license.issuingBody && (
-                          <p className="text-xs text-gray-400 truncate max-w-[200px]">
+                          <p className="text-xs text-muted-foreground truncate max-w-[200px]">
                             {license.issuingBody}
                           </p>
                         )}
@@ -254,16 +254,16 @@ export default function AdminLicensesPage() {
                     </td>
                     <td className="py-3">
                       <div>
-                        <p className="font-medium text-gray-900">{license.userName}</p>
-                        <p className="text-xs text-gray-400">{license.userEmail}</p>
+                        <p className="font-medium text-foreground">{license.userName}</p>
+                        <p className="text-xs text-muted-foreground">{license.userEmail}</p>
                       </div>
                     </td>
-                    <td className="py-3 text-gray-600 font-medium">{license.issuingState}</td>
+                    <td className="py-3 text-muted-foreground font-medium">{license.issuingState}</td>
                     <td className="py-3">{statusBadge(license.status)}</td>
-                    <td className="py-3 text-gray-400 text-xs">
+                    <td className="py-3 text-muted-foreground text-xs">
                       {license.verificationSource?.replace('_', ' ') || '-'}
                     </td>
-                    <td className="py-3 text-gray-400 whitespace-nowrap">
+                    <td className="py-3 text-muted-foreground whitespace-nowrap">
                       {new Date(license.createdAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -292,14 +292,14 @@ export default function AdminLicensesPage() {
                             variant="outline"
                             onClick={() => handleAction(license.id, 'reject')}
                             disabled={actionLoading === license.id}
-                            className="border-red-200 text-red-600 hover:bg-red-50 h-7 px-3 text-xs"
+                            className="border-destructive/20 text-destructive hover:bg-destructive/10 h-7 px-3 text-xs"
                           >
                             <XCircle className="h-3 w-3 mr-1" /> Reject
                           </Button>
                         </div>
                       )}
                       {license.status === 'active' && license.lastVerifiedAt && (
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-muted-foreground">
                           Verified {new Date(license.lastVerifiedAt).toLocaleDateString()}
                         </span>
                       )}
@@ -313,8 +313,8 @@ export default function AdminLicensesPage() {
 
         {/* Pagination */}
         {pagination.pages > 1 && (
-          <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-100">
-            <p className="text-sm text-gray-500">
+          <div className="flex items-center justify-between pt-4 mt-4 border-t border-border">
+            <p className="text-sm text-muted-foreground">
               Page {pagination.page} of {pagination.pages} ({pagination.total} licenses)
             </p>
             <div className="flex gap-2">

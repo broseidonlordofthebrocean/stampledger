@@ -154,7 +154,7 @@ export default function ProjectsPage() {
         )
       default:
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground">
             {status}
           </span>
         )
@@ -182,7 +182,7 @@ export default function ProjectsPage() {
       )
     }
     return (
-      <span className="flex items-center text-gray-600 text-sm">
+      <span className="flex items-center text-muted-foreground text-sm">
         {percentage}% Compliant
       </span>
     )
@@ -191,9 +191,9 @@ export default function ProjectsPage() {
   if (!currentOrg) {
     return (
       <div className="text-center py-12">
-        <FolderKanban className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">No Organization Selected</h2>
-        <p className="text-gray-500">Please select or create an organization to view projects.</p>
+        <FolderKanban className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+        <h2 className="text-lg font-semibold text-foreground mb-2">No Organization Selected</h2>
+        <p className="text-muted-foreground">Please select or create an organization to view projects.</p>
       </div>
     )
   }
@@ -203,8 +203,8 @@ export default function ProjectsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-600 mt-1">Manage engineering projects for {currentOrg.name}</p>
+          <h1 className="text-2xl font-bold text-foreground">Projects</h1>
+          <p className="text-muted-foreground mt-1">Manage engineering projects for {currentOrg.name}</p>
         </div>
         <Button onClick={() => setShowCreateModal(true)}>
           <Plus className="h-4 w-4 mr-2" />
@@ -214,7 +214,7 @@ export default function ProjectsPage() {
 
       {/* Alerts */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
@@ -227,7 +227,7 @@ export default function ProjectsPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search projects..."
             value={searchQuery}
@@ -238,7 +238,7 @@ export default function ProjectsPage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <option value="all">All Status</option>
           <option value="active">Active</option>
@@ -250,13 +250,13 @@ export default function ProjectsPage() {
       {/* Projects Grid */}
       {loading ? (
         <div className="text-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto text-gray-400" />
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
         </div>
       ) : filteredProjects.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <FolderKanban className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Projects Found</h2>
-          <p className="text-gray-500 mb-4">
+        <div className="text-center py-12 bg-card rounded-lg border border-border">
+          <FolderKanban className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+          <h2 className="text-lg font-semibold text-foreground mb-2">No Projects Found</h2>
+          <p className="text-muted-foreground mb-4">
             {searchQuery || statusFilter !== 'all'
               ? 'Try adjusting your filters'
               : 'Create your first project to get started'}
@@ -274,41 +274,41 @@ export default function ProjectsPage() {
             <Link
               key={project.id}
               href={`/projects/${project.id}`}
-              className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition-shadow"
+              className="bg-card rounded-lg border border-border p-5 hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 truncate">{project.name}</h3>
-                  <p className="text-sm text-gray-500">{project.projectNumber}</p>
+                  <h3 className="font-semibold text-foreground truncate">{project.name}</h3>
+                  <p className="text-sm text-muted-foreground">{project.projectNumber}</p>
                 </div>
                 {getStatusBadge(project.status)}
               </div>
 
               {project.description && (
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">{project.description}</p>
+                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{project.description}</p>
               )}
 
-              <div className="space-y-2 text-sm text-gray-500">
+              <div className="space-y-2 text-sm text-muted-foreground">
                 {project.clientName && (
                   <p className="flex items-center">
-                    <FolderKanban className="h-4 w-4 mr-2 text-gray-400" />
+                    <FolderKanban className="h-4 w-4 mr-2 text-muted-foreground" />
                     {project.clientName}
                   </p>
                 )}
                 {project.location && (
                   <p className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-2 text-gray-400" />
+                    <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
                     {project.location}
                   </p>
                 )}
                 <p className="flex items-center">
-                  <Calendar className="h-4 w-4 mr-2 text-gray-400" />
+                  <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
                   {new Date(project.createdAt).toLocaleDateString()}
                 </p>
               </div>
 
               {project.complianceStatus && (
-                <div className="mt-4 pt-3 border-t border-gray-100">
+                <div className="mt-4 pt-3 border-t border-border">
                   {getComplianceIndicator(project.complianceStatus)}
                 </div>
               )}
@@ -320,19 +320,19 @@ export default function ProjectsPage() {
       {/* Create Project Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-card rounded-lg w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Create New Project</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-muted-foreground hover:text-muted-foreground"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <form onSubmit={handleCreateProject} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Project Name *
                 </label>
                 <Input
@@ -343,7 +343,7 @@ export default function ProjectsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Project Number *
                 </label>
                 <Input
@@ -354,7 +354,7 @@ export default function ProjectsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Client Name
                 </label>
                 <Input
@@ -364,7 +364,7 @@ export default function ProjectsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Location
                 </label>
                 <Input
@@ -374,7 +374,7 @@ export default function ProjectsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Description
                 </label>
                 <textarea
@@ -382,7 +382,7 @@ export default function ProjectsPage() {
                   onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
                   placeholder="Brief description of the project..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">
