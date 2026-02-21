@@ -8,13 +8,12 @@ import {
   Shield,
   AlertTriangle,
   CheckCircle,
-  XCircle,
-  Clock,
   Search,
   Loader2,
   ArrowRightLeft,
   BarChart3,
   RefreshCw,
+  Download,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
@@ -138,10 +137,32 @@ export default function MunicipalityPage() {
             Stamp verification oversight & compliance monitoring
           </p>
         </div>
-        <Button variant="outline" onClick={fetchData}>
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (!token) return
+              const url = `/api/admin/municipality/export${statusFilter !== 'all' ? `?status=${statusFilter}` : ''}`
+              fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+                .then(res => res.blob())
+                .then(blob => {
+                  const a = document.createElement('a')
+                  a.href = URL.createObjectURL(blob)
+                  a.download = `stampledger-export-${new Date().toISOString().slice(0, 10)}.csv`
+                  a.click()
+                  URL.revokeObjectURL(a.href)
+                })
+                .catch(err => console.error('Export failed:', err))
+            }}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
+          </Button>
+          <Button variant="outline" onClick={fetchData}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+        </div>
       </div>
 
       {/* Stats Grid */}

@@ -2,11 +2,23 @@ import { NextRequest, NextResponse } from 'next/server'
 import { authenticateRequest } from '@/lib/auth'
 import { getDb, stamps, users, professionalLicenses } from '@/lib/db'
 import { eq } from 'drizzle-orm'
+import { checkRateLimit, getRateLimitKey, withRateLimitHeaders } from '@/lib/rate-limit'
 
 // GET /api/insurance/verify-stamp?stamp_id=X&as_of_date=Y
 // API key auth required (for insurance company integrations)
 export async function GET(req: NextRequest) {
   try {
+    // Rate limit: 60 requests per minute per IP (higher for API consumers)
+    const rlKey = getRateLimitKey(req, 'insurance')
+    const rlResult = await checkRateLimit(rlKey, 60, 60)
+    if (!rlResult.allowed) {
+      const response = NextResponse.json(
+        { error: 'Too many requests. Rate limit exceeded.' },
+        { status: 429 }
+      )
+      return withRateLimitHeaders(response, rlResult, 60)
+    }
+
     const auth = await authenticateRequest(req)
 
     if (!auth.authenticated) {

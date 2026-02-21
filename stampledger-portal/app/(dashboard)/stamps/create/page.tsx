@@ -48,14 +48,27 @@ export default function CreateStampPage() {
   // Result
   const [stamp, setStamp] = useState<any>(null)
 
-  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0]
-    if (!selectedFile) return
+  const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100 MB
+  const ALLOWED_EXTENSIONS = ['.pdf', '.dwg', '.dxf']
+
+  const validateAndProcessFile = useCallback(async (selectedFile: File) => {
+    setError('')
+    setFile(null)
+    setDocumentHash('')
+
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      setError(`File too large. Maximum size is 100 MB (got ${(selectedFile.size / 1024 / 1024).toFixed(1)} MB)`)
+      return
+    }
+
+    const ext = selectedFile.name.toLowerCase().slice(selectedFile.name.lastIndexOf('.'))
+    if (!ALLOWED_EXTENSIONS.includes(ext)) {
+      setError(`File type not allowed. Accepted types: ${ALLOWED_EXTENSIONS.join(', ')}`)
+      return
+    }
 
     setFile(selectedFile)
-    setError('')
 
-    // Calculate hash
     try {
       const hash = await hashDocument(selectedFile)
       setDocumentHash(hash)
@@ -64,21 +77,18 @@ export default function CreateStampPage() {
     }
   }, [])
 
+  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0]
+    if (!selectedFile) return
+    await validateAndProcessFile(selectedFile)
+  }, [validateAndProcessFile])
+
   const handleDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault()
     const droppedFile = e.dataTransfer.files[0]
     if (!droppedFile) return
-
-    setFile(droppedFile)
-    setError('')
-
-    try {
-      const hash = await hashDocument(droppedFile)
-      setDocumentHash(hash)
-    } catch (err) {
-      setError('Failed to process file')
-    }
-  }, [])
+    await validateAndProcessFile(droppedFile)
+  }, [validateAndProcessFile])
 
   const handleSubmit = async () => {
     if (!token) return
@@ -212,7 +222,7 @@ export default function CreateStampPage() {
                 <input
                   type="file"
                   onChange={handleFileChange}
-                  accept=".pdf,.dwg"
+                  accept=".pdf,.dwg,.dxf"
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
               </div>

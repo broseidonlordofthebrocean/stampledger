@@ -32,9 +32,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    if (!sha256Hash || sha256Hash.length !== 64) {
+    // File size limit: 100 MB
+    const MAX_FILE_SIZE = 100 * 1024 * 1024
+    if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: 'Invalid SHA-256 hash' },
+        { error: `File too large. Maximum size is 100 MB (got ${(file.size / 1024 / 1024).toFixed(1)} MB)` },
+        { status: 400 }
+      )
+    }
+
+    // File type validation
+    const ALLOWED_TYPES = [
+      'application/pdf',
+      'application/acad', // .dwg
+      'application/x-acad',
+      'image/vnd.dwg',
+      'application/dxf',
+      'application/octet-stream', // fallback for .dwg files
+    ]
+    const ALLOWED_EXTENSIONS = ['.pdf', '.dwg', '.dxf']
+    const fileExtension = file.name.toLowerCase().slice(file.name.lastIndexOf('.'))
+
+    if (!ALLOWED_TYPES.includes(file.type) && !ALLOWED_EXTENSIONS.includes(fileExtension)) {
+      return NextResponse.json(
+        { error: `File type not allowed. Accepted types: ${ALLOWED_EXTENSIONS.join(', ')}` },
+        { status: 400 }
+      )
+    }
+
+    if (!sha256Hash || !/^[a-f0-9]{64}$/i.test(sha256Hash)) {
+      return NextResponse.json(
+        { error: 'Invalid SHA-256 hash (must be 64 hex characters)' },
         { status: 400 }
       )
     }

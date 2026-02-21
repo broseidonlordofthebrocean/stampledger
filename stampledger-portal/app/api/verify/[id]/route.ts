@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb, stamps, users, professionalLicenses, documents, verificationLogs, verificationScans } from '@/lib/db'
 import { generateId } from '@/lib/auth'
-import { eq, and, count } from 'drizzle-orm'
+import { eq, count } from 'drizzle-orm'
+import { checkRateLimit, getRateLimitKey, withRateLimitHeaders } from '@/lib/rate-limit'
 
 // GET /api/verify/[id] - Public verification endpoint (no auth required)
 export async function GET(
@@ -10,6 +11,18 @@ export async function GET(
 ) {
   try {
     const { id } = await params
+
+    // Rate limit: 30 requests per minute per IP
+    const rlKey = getRateLimitKey(req, 'verify')
+    const rlResult = await checkRateLimit(rlKey, 30, 60)
+    if (!rlResult.allowed) {
+      const response = NextResponse.json(
+        { valid: false, error: 'Too many requests', message: 'Rate limit exceeded. Please try again later.' },
+        { status: 429 }
+      )
+      return withRateLimitHeaders(response, rlResult, 30)
+    }
+
     const db = getDb()
     const now = new Date()
 

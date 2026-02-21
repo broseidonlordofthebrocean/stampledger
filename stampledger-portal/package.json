@@ -12,7 +12,9 @@
     "db:studio": "drizzle-kit studio",
     "pages:build": "npx @cloudflare/next-on-pages",
     "pages:preview": "npx wrangler pages dev .vercel/output/static --compatibility-flags=nodejs_compat",
-    "pages:deploy": "npx wrangler pages deploy .vercel/output/static --project-name=stampledger-portal"
+    "pages:deploy": "npx wrangler pages deploy .vercel/output/static --project-name=stampledger-portal",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@simplewebauthn/browser": "^13.2.2",
@@ -42,6 +44,7 @@
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
+    "vitest": "^4.0.18",
     "wrangler": "^4.0.0"
   }
 }

@@ -200,6 +200,89 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// PUT /api/licenses - Update an existing license (via query param id)
+export async function PUT(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const licenseId = searchParams.get('id')
+
+    if (!licenseId) {
+      return NextResponse.json({ error: 'License ID required' }, { status: 400 })
+    }
+
+    const authHeader = req.headers.get('Authorization')
+    const token = extractToken(authHeader)
+
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const payload = await verifyToken(token)
+    if (!payload) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    }
+
+    const db = getDb()
+
+    // Verify ownership
+    const license = await db
+      .select()
+      .from(professionalLicenses)
+      .where(eq(professionalLicenses.id, licenseId))
+      .get()
+
+    if (!license || license.userId !== payload.userId) {
+      return NextResponse.json({ error: 'License not found' }, { status: 404 })
+    }
+
+    const body = await req.json()
+    const {
+      issuingBody,
+      disciplines,
+      expirationDate,
+      insuranceProvider,
+      insurancePolicyNumber,
+      insuranceCoverageAmount,
+      insuranceExpirationDate,
+    } = body
+
+    const now = new Date()
+
+    // Build update set — only include fields that were provided
+    const updates: Record<string, any> = { updatedAt: now }
+
+    if (issuingBody !== undefined) updates.issuingBody = issuingBody || null
+    if (disciplines !== undefined) updates.disciplines = disciplines ? JSON.stringify(disciplines) : null
+    if (expirationDate !== undefined) updates.expirationDate = expirationDate ? new Date(expirationDate) : null
+    if (insuranceProvider !== undefined) updates.insuranceProvider = insuranceProvider || null
+    if (insurancePolicyNumber !== undefined) updates.insurancePolicyNumber = insurancePolicyNumber || null
+    if (insuranceCoverageAmount !== undefined) updates.insuranceCoverageAmount = insuranceCoverageAmount || null
+    if (insuranceExpirationDate !== undefined) updates.insuranceExpirationDate = insuranceExpirationDate ? new Date(insuranceExpirationDate) : null
+
+    await db
+      .update(professionalLicenses)
+      .set(updates)
+      .where(eq(professionalLicenses.id, licenseId))
+
+    const updated = await db
+      .select()
+      .from(professionalLicenses)
+      .where(eq(professionalLicenses.id, licenseId))
+      .get()
+
+    return NextResponse.json({
+      license: {
+        ...updated,
+        disciplines: updated?.disciplines ? JSON.parse(updated.disciplines) : [],
+      },
+      message: 'License updated',
+    })
+  } catch (error) {
+    console.error('Update license error:', error)
+    return NextResponse.json({ error: 'Failed to update license' }, { status: 500 })
+  }
+}
+
 // DELETE /api/licenses - Remove a license (via query param id)
 export async function DELETE(req: NextRequest) {
   try {

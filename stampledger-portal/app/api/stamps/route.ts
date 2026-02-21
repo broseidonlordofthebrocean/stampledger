@@ -3,6 +3,7 @@ import { verifyToken, extractToken, generateId } from '@/lib/auth'
 import { getDb, stamps, users, professionalLicenses } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 import { getVerifyUrl } from '@/lib/qrcode'
+import { submitToBlockchain } from '@/lib/blockchain'
 
 // GET /api/stamps - List user's stamps
 export async function GET(req: NextRequest) {
@@ -96,9 +97,15 @@ export async function POST(req: NextRequest) {
 
     const verifyUrl = getVerifyUrl(stampId)
 
-    // TODO: Submit to blockchain
-    // For now, we'll store locally and add blockchain integration later
-    const blockchainId = `local-${stampId}` // Placeholder
+    // Submit to blockchain (local anchor or chain RPC)
+    const chainResult = await submitToBlockchain({
+      stampId,
+      documentHash,
+      userId: payload.userId,
+      jurisdictionId,
+      projectName,
+    })
+    const blockchainId = chainResult.blockchainId
 
     // Capture insurance snapshot from user's license at stamp time
     // Prefer specific license if provided, otherwise fall back to user's first license
@@ -141,6 +148,7 @@ export async function POST(req: NextRequest) {
     await db.insert(stamps).values({
       id: stampId,
       blockchainId,
+      txHash: chainResult.txHash,
       documentHash,
       jurisdictionId,
       projectName: projectName || null,

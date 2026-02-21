@@ -139,8 +139,7 @@ The StampLedger Team
   },
 }
 
-// Placeholder email sending function
-// Replace with actual email service (SendGrid, Resend, Mailgun, etc.)
+// Send email via Resend API with console.log fallback
 export async function sendEmail(options: {
   to: string | string[]
   subject: string
@@ -149,30 +148,34 @@ export async function sendEmail(options: {
 }): Promise<{ success: boolean; error?: string }> {
   const { to, subject, body, html } = options
 
-  // Log email for development (replace with actual send logic)
-  console.log('=== EMAIL ===')
-  console.log('To:', Array.isArray(to) ? to.join(', ') : to)
-  console.log('Subject:', subject)
-  console.log('Body:', body)
-  console.log('=============')
+  let resendApiKey: string | undefined
+  try {
+    const { getRequestContext } = await import('@cloudflare/next-on-pages')
+    const { env } = getRequestContext()
+    resendApiKey = (env as any).RESEND_API_KEY
+  } catch {
+    // Not in Cloudflare context (e.g., build time)
+  }
 
-  // TODO: Implement actual email sending
-  // Example with fetch to email API:
-  /*
-  const RESEND_API_KEY = process.env.RESEND_API_KEY
-  if (!RESEND_API_KEY) {
-    return { success: false, error: 'Email not configured' }
+  if (!resendApiKey) {
+    // Fallback: log to console in dev / when key not configured
+    console.log('=== EMAIL (no RESEND_API_KEY) ===')
+    console.log('To:', Array.isArray(to) ? to.join(', ') : to)
+    console.log('Subject:', subject)
+    console.log('Body:', body)
+    console.log('=============')
+    return { success: true }
   }
 
   try {
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Authorization': `Bearer ${resendApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'StampLedger <noreply@stampledger.app>',
+        from: 'StampLedger <noreply@stampledger.com>',
         to: Array.isArray(to) ? to : [to],
         subject,
         text: body,
@@ -181,18 +184,16 @@ export async function sendEmail(options: {
     })
 
     if (!response.ok) {
-      const error = await response.text()
-      return { success: false, error }
+      const errorText = await response.text()
+      console.warn('Resend API error:', response.status, errorText)
+      return { success: false, error: `Resend API ${response.status}: ${errorText}` }
     }
 
     return { success: true }
   } catch (error) {
+    console.warn('Email send failed:', error)
     return { success: false, error: String(error) }
   }
-  */
-
-  // For now, return success (emails are logged but not sent)
-  return { success: true }
 }
 
 // Helper to send to default notification email
