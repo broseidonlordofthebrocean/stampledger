@@ -31,7 +31,9 @@ RATE_LIMIT_RPM = "60"
 vars = { CHAIN_RPC_URL = "http://localhost:26657", ALLOWED_ORIGINS = "*" }
 
 [env.production]
-vars = { CHAIN_RPC_URL = "http://stampledger-chain.internal:26657" }
+# Set CHAIN_RPC_URL to your server IP or Cloudflare Tunnel domain
+# e.g. "https://rpc.stampledger.com" or "http://YOUR_VPS_IP:26657"
+vars = { CHAIN_RPC_URL = "https://rpc.stampledger.com", ALLOWED_ORIGINS = "https://stampledger.com,https://app.stampledger.com,https://portal.stampledger.com" }
 
 # Routes (uncomment when ready to deploy)
 # routes = [

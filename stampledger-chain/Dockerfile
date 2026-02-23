@@ -13,33 +13,27 @@ RUN go mod download
 COPY . .
 
 # Build the binary
-RUN make build
+RUN go build -ldflags "-X github.com/cosmos/cosmos-sdk/version.Name=stampledgerchain" \
+    -mod=readonly -o build/stampledger-chaind ./cmd/stampledger-chaind
 
 # Runtime stage
 FROM alpine:3.19
 
-RUN apk add --no-cache ca-certificates curl jq
+RUN apk add --no-cache ca-certificates curl jq openssl
 
 WORKDIR /root
 
 # Copy the binary from builder
 COPY --from=builder /app/build/stampledger-chaind /usr/local/bin/
 
+# Copy entrypoint script
+COPY scripts/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Expose ports
-# P2P
-EXPOSE 26656
-# Tendermint RPC
-EXPOSE 26657
-# REST API
-EXPOSE 1317
-# gRPC
-EXPOSE 9090
-# gRPC-Web
-EXPOSE 9091
+EXPOSE 26656 26657 1317 9090 9091
 
 # Create data directory
 RUN mkdir -p /root/.stampledger-chain
 
-# Set entrypoint
-ENTRYPOINT ["stampledger-chaind"]
-CMD ["start"]
+ENTRYPOINT ["/entrypoint.sh"]

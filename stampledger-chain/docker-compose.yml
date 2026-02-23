@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # StampLedger Blockchain Node
   stampledger-chain:
     build:
       context: .
@@ -16,30 +13,32 @@ services:
     volumes:
       - chain-data:/root/.stampledger-chain
     environment:
-      - CHAIN_ID=stampledger-mainnet-1
+      - CHAIN_ID=stampledger-1
+      - MONIKER=stampledger-node
     networks:
       - stampledger-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:26657/status"]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 40s
+      retries: 5
+      start_period: 60s
 
-  # Cloudflare Tunnel for secure external access
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: stampledger-cloudflared
-    restart: unless-stopped
-    command: tunnel --config /etc/cloudflared/config.yml run
-    volumes:
-      - ./cloudflare-tunnel.yml:/etc/cloudflared/config.yml:ro
-      - cloudflared-creds:/root/.cloudflared:ro
-    depends_on:
-      stampledger-chain:
-        condition: service_healthy
-    networks:
-      - stampledger-network
+  # Optional: Cloudflare Tunnel for secure external access
+  # Uncomment after running: cloudflared tunnel create stampledger-chain
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   container_name: stampledger-cloudflared
+  #   restart: unless-stopped
+  #   command: tunnel --config /etc/cloudflared/config.yml run
+  #   volumes:
+  #     - ./cloudflare-tunnel.yml:/etc/cloudflared/config.yml:ro
+  #     - ${HOME}/.cloudflared:/root/.cloudflared:ro
+  #   depends_on:
+  #     stampledger-chain:
+  #       condition: service_healthy
+  #   networks:
+  #     - stampledger-network
 
 networks:
   stampledger-network:
@@ -47,6 +46,4 @@ networks:
 
 volumes:
   chain-data:
-    driver: local
-  cloudflared-creds:
     driver: local
