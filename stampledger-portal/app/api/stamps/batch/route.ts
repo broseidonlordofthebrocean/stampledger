@@ -3,6 +3,7 @@ import { verifyToken, extractToken, generateId } from '@/lib/auth'
 import { getDb, batchStamps, stamps, professionalLicenses, projects, projectSpecifications, changeNotifications, documentRevisions, orgMemberships, users } from '@/lib/db'
 import { eq, and, inArray, sql } from 'drizzle-orm'
 import { getVerifyUrl } from '@/lib/qrcode'
+import { autoSupersedePreviousStamps } from '@/lib/supersession'
 
 // Calculate milestone bonus tokens
 function calculateMilestoneBonus(currentCount: number, stampsToAdd: number): number {
@@ -162,6 +163,11 @@ export async function POST(req: NextRequest) {
         })
 
         stampResults.push(stampId)
+
+        // Auto-supersede previous active stamps for this project
+        await autoSupersedePreviousStamps(
+          db, payload.userId, stampId, project.name, project.id
+        )
 
         // Update any pending change notifications for this project as applied
         if (specChangeIds && specChangeIds.length > 0) {

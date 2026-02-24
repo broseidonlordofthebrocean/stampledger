@@ -4,6 +4,7 @@ import { getDb, stamps, users, professionalLicenses } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 import { getVerifyUrl } from '@/lib/qrcode'
 import { submitToBlockchain } from '@/lib/blockchain'
+import { autoSupersedePreviousStamps } from '@/lib/supersession'
 
 // GET /api/stamps - List user's stamps
 export async function GET(req: NextRequest) {
@@ -166,6 +167,11 @@ export async function POST(req: NextRequest) {
       userId: payload.userId,
     })
 
+    // Auto-supersede previous active stamps for this project
+    const superseded = await autoSupersedePreviousStamps(
+      db, payload.userId, stampId, projectName
+    )
+
     // Fetch the created stamp
     const newStamp = await db
       .select()
@@ -176,6 +182,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       stamp: newStamp,
       verifyUrl,
+      supersededCount: superseded.supersededCount,
+      supersededIds: superseded.supersededIds,
     })
   } catch (error) {
     console.error('Create stamp error:', error)

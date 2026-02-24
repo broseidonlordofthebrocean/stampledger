@@ -47,6 +47,7 @@ export default function CreateStampPage() {
 
   // Result
   const [stamp, setStamp] = useState<any>(null)
+  const [supersededCount, setSupersededCount] = useState(0)
 
   const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100 MB
   const ALLOWED_EXTENSIONS = ['.pdf', '.dwg', '.dxf']
@@ -121,6 +122,7 @@ export default function CreateStampPage() {
 
       const data = await res.json()
       setStamp(data.stamp)
+      setSupersededCount(data.supersededCount || 0)
       setStep('success')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create stamp')
@@ -417,6 +419,12 @@ export default function CreateStampPage() {
               Your document has been stamped and recorded.
             </p>
           </div>
+
+          {supersededCount > 0 && (
+            <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-lg p-4 text-sm text-amber-800 dark:text-amber-200">
+              {supersededCount} previous version{supersededCount > 1 ? 's' : ''} for this project {supersededCount > 1 ? 'were' : 'was'} automatically superseded. Anyone verifying the old stamp{supersededCount > 1 ? 's' : ''} will see a link to this new version.
+            </div>
+          )}
 
           {stamp.verifyUrl && (
             <div className="bg-card border rounded-xl p-6 inline-block">
